@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
+    <!-- Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -187,20 +189,25 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Initialisation Appwrite
+        const client = new Appwrite.Client()
+            .setEndpoint('https://nyc.cloud.appwrite.io/v1')
+            .setProject('ssaad');
+        const account = new Appwrite.Account(client);
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
-            
-            // Simulation d'une validation (remplacez par votre logique)
-            if (email === 'admin@example.com' && password === 'password') {
+            try {
+                await account.createEmailSession(email, password);
                 alert('Connexion réussie !');
                 // Redirection ou autre action
                 // window.location.href = 'dashboard.html';
-            } else {
+            } catch (err) {
                 errorMessage.style.display = 'block';
+                errorMessage.textContent = err.message || 'Email ou mot de passe incorrect';
                 setTimeout(() => {
                     errorMessage.style.display = 'none';
                 }, 3000);
