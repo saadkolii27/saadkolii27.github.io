@@ -1,0 +1,15 @@
+# Ignorer les dossiers de certificats et de configuration sensible
+ssaad-me/
+*.crt
+*.key
+*.pem
+*.ca-bundle
+
+# Fichiers d'environnement
+.env
+*.env
+SET.env
+
+# Fichiers système
+.DS_Store
+Thumbs.db
