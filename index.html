@@ -202,9 +202,18 @@
             const errorMessage = document.getElementById('errorMessage');
             try {
                 await account.createEmailSession(email, password);
-                alert('Connexion réussie !');
-                // Redirection ou autre action
-                // window.location.href = 'dashboard.html';
+                
+                // Vérifier si l'utilisateur est un administrateur
+                const user = await account.get();
+                const ADMIN_EMAILS = ['admin@ssaad.me', 'saadkolii27@gmail.com']; // Remplacez par vos emails d'administrateurs
+                
+                if (ADMIN_EMAILS.includes(user.email)) {
+                    // Rediriger vers le panneau d'administration
+                    window.location.href = 'admin.html';
+                } else {
+                    // Rediriger vers le tableau de bord utilisateur
+                    window.location.href = 'dashboard.html';
+                }
             } catch (err) {
                 errorMessage.style.display = 'block';
                 errorMessage.textContent = err.message || 'Email ou mot de passe incorrect';

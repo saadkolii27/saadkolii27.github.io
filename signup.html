@@ -227,6 +227,9 @@
             <h1>Inscription</h1>
             <p>Créez votre compte pour commencer</p>
         </div>
+        
+        <!-- Script d'approbation d'utilisateur -->
+        <script src="js/user-approval.js"></script>
 
         <div class="success-message" id="successMessage">
             Compte créé avec succès ! Redirection...
@@ -414,7 +417,7 @@
                         );
                         
                         console.log('Attente de la réponse Appwrite...');
-                        await promise;
+                        const user = await promise;
                     } catch (err) {
                         console.error('Erreur avec le SDK client:', err);
                         showError('Échec de création de compte via SDK client: ' + err.message);
@@ -448,6 +451,13 @@
                         
                         const result = await response.json();
                         console.log('Réponse du serveur proxy:', result);
+                        
+                        // Stocker l'utilisateur pour le système d'approbation
+                        const user = result.user || { 
+                            $id: ID.unique(), // Générer un ID si non fourni par le serveur
+                            $createdAt: new Date().toISOString(),
+                            $updatedAt: new Date().toISOString()
+                        };
                     } catch (err) {
                         console.error('Erreur avec le serveur proxy:', err);
                         throw err; // Remonter l'erreur pour le gestionnaire global
@@ -456,13 +466,30 @@
                 
                 console.log('Compte créé avec succès!');
                 
-                showSuccess('Compte créé avec succès ! Redirection...');
+                // Capturer l'inscription pour le système d'approbation
+                if (typeof captureSignup === 'function') {
+                    // L'utilisateur est déjà créé dans Appwrite, on va le stocker en local pour l'approbation
+                    captureSignup({
+                        $id: user.$id,
+                        name: `${data.firstName} ${data.lastName}`,
+                        email: data.email,
+                        $createdAt: user.$createdAt || new Date().toISOString(),
+                        $updatedAt: user.$updatedAt || new Date().toISOString()
+                    });
+                }
                 
-                // Optionnel: Connexion automatique après inscription
+                showSuccess('Compte créé avec succès ! Redirection vers la page d\'attente d\'approbation...');
+                
+                // Redirection vers la page du tableau de bord en attente d'approbation
                 try {
+                    // Connexion automatique pour rediriger vers le tableau de bord
                     await account.createEmailSession(data.email, data.password);
+                    
+                    // Stocker le fait que l'utilisateur vient de s'inscrire
+                    sessionStorage.setItem('newSignup', 'true');
+                    
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        window.location.href = 'dashboard.html';
                     }, 2000);
                 } catch (sessionError) {
                     console.log('Erreur lors de la création de session:', sessionError);
