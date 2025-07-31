@@ -279,6 +279,7 @@
             </div>
 
             <button type="button" class="btn" style="margin-bottom: 10px; background: #4285f4;" id="testConnectionBtn">Tester la connexion Appwrite</button>
+            <button type="button" class="btn" style="margin-bottom: 10px; background: #34a853;" id="testProxyBtn">Tester le serveur proxy</button>
             <button type="submit" class="btn" id="submitBtn">Créer mon compte</button>
         </form>
 
@@ -291,9 +292,14 @@
         // Configuration Appwrite
         const { Client, Account, ID } = Appwrite;
         
+        // Configuration du serveur proxy pour contourner les problèmes CORS
+        const PROXY_URL = "https://ssaad-proxy.onrender.com"; // À remplacer par votre URL de déploiement
+        const USE_PROXY = true; // Mettre à true pour utiliser le proxy, false pour essayer directement
+        
+        // Client Appwrite standard (peut avoir des problèmes CORS)
         const client = new Client()
-            .setEndpoint('https://nyc.cloud.appwrite.io/v1') // Endpoint Appwrite correctement configuré
-            .setProject('ssaad'); // Votre Project ID Appwrite
+            .setEndpoint('https://nyc.cloud.appwrite.io/v1') 
+            .setProject('ssaad');
         
         const account = new Account(client);
 
@@ -395,8 +401,7 @@
                 
                 // Deux options d'inscription
                 
-                // Option 1 : Direct avec SDK client (pour le développement local uniquement)
-                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                if (!USE_PROXY && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
                     console.log('Mode développement : Utilisation du SDK client Appwrite');
                     
                     try {
@@ -412,16 +417,17 @@
                         await promise;
                     } catch (err) {
                         console.error('Erreur avec le SDK client:', err);
+                        showError('Échec de création de compte via SDK client: ' + err.message);
                         throw err; // Remonter l'erreur pour le gestionnaire global
                     }
                 } 
-                // Option 2 : Via serveur proxy (pour la production)
+                // Option 2 : Via serveur proxy (pour la production ou si USE_PROXY = true)
                 else {
-                    console.log('Mode production : Utilisation du serveur proxy sécurisé');
+                    console.log('Utilisation du serveur proxy pour contourner CORS');
                     
                     try {
-                        // URL de votre serveur proxy (à adapter selon votre déploiement)
-                        const proxyUrl = 'http://localhost:3000/api/register';
+                        // URL de votre serveur proxy déployé
+                        const proxyUrl = `${PROXY_URL}/api/register`;
                         
                         const response = await fetch(proxyUrl, {
                             method: 'POST',
@@ -528,29 +534,121 @@
             this.textContent = 'Test en cours...';
             
             try {
-                // Récupérer la version de l'API Appwrite (endpoint public)
-                const response = await client.get('/health');
-                console.log('Réponse du serveur Appwrite:', response);
+                console.log('Test de connexion à Appwrite - Endpoint:', client.config.endpoint);
+                console.log('Test de connexion à Appwrite - Project ID:', client.config.project);
                 
-                showSuccess('Connexion à Appwrite réussie! Status: ' + (response.status || 'OK'));
+                // Essayer une méthode qui ne nécessite pas d'authentification
+                try {
+                    // Vérifie si le service est en ligne
+                    const response = await client.get('/health');
+                    console.log('Réponse du serveur Appwrite (health):', response);
+                    
+                    showSuccess('Connexion à Appwrite réussie! Service en ligne.');
+                } catch (healthError) {
+                    console.error('Échec du test health:', healthError);
+                    
+                    // Essayer une autre méthode si health échoue
+                    try {
+                        const response = await account.listSessions();
+                        console.log('Sessions actives:', response);
+                        showSuccess('Connexion à Appwrite réussie via account.listSessions()!');
+                    } catch (sessionError) {
+                        console.error('Échec des deux tests:', sessionError);
+                        throw sessionError;
+                    }
+                }
                 
                 setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
                 }, 5000);
             } catch (error) {
                 console.error('Erreur de connexion à Appwrite:', error);
+                console.error('Type d\'erreur:', error.constructor.name);
+                console.error('Code erreur:', error.code);
+                console.error('Message d\'erreur complet:', error.message);
                 
                 let errorDetail = 'Erreur de connexion à Appwrite: ';
-                if (error.message) {
+                
+                // Diagnostic plus précis selon le type d'erreur
+                if (error.message && error.message.includes('Failed to fetch')) {
+                    errorDetail += 'Impossible de se connecter au serveur Appwrite. Vérifiez:';
+                    errorDetail += '\n- Votre connexion internet';
+                    errorDetail += '\n- L\'URL de l\'endpoint: ' + client.config.endpoint;
+                    errorDetail += '\n- Les paramètres CORS dans Appwrite';
+                    
+                    // Teste si le problème est lié au SSL/HTTPS
+                    if (window.location.protocol === 'https:' && client.config.endpoint.includes('http:')) {
+                        errorDetail += '\n\nATTENTION: Vous êtes sur HTTPS mais l\'API est en HTTP. Cela va bloquer les requêtes!';
+                    }
+                } else if (error.code === 401) {
+                    errorDetail += 'Problème d\'authentification. Vérifiez le Project ID: ' + client.config.project;
+                } else if (error.message) {
                     errorDetail += error.message;
                 } else {
                     errorDetail += 'Vérifiez l\'URL de l\'endpoint et les paramètres CORS';
                 }
                 
                 showError(errorDetail);
+                
+                // Essayons de diagnostiquer les problèmes CORS
+                try {
+                    fetch(client.config.endpoint + '/health', { mode: 'no-cors' })
+                        .then(() => console.log('Requête sans CORS réussie - problème probable de CORS'))
+                        .catch(e => console.error('Même la requête sans CORS échoue:', e));
+                } catch (e) {
+                    console.error('Erreur lors du test CORS:', e);
+                }
+                
             } finally {
                 this.disabled = false;
                 this.textContent = 'Tester la connexion Appwrite';
+            }
+        });
+        
+        // Tester la connexion au serveur proxy
+        document.getElementById('testProxyBtn').addEventListener('click', async function() {
+            this.disabled = true;
+            this.textContent = 'Test du proxy en cours...';
+            
+            try {
+                // URL de votre serveur proxy déployé
+                const proxyUrl = `${PROXY_URL}/health`;
+                
+                console.log('Test de connexion au proxy:', proxyUrl);
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error('Erreur du serveur proxy: ' + (errorData.error || response.status));
+                }
+                
+                const result = await response.json();
+                console.log('Réponse du serveur proxy:', result);
+                
+                showSuccess('Connexion au serveur proxy réussie!');
+                
+            } catch (error) {
+                console.error('Erreur de connexion au proxy:', error);
+                
+                let errorDetail = 'Erreur de connexion au serveur proxy: ';
+                if (error.message && error.message.includes('Failed to fetch')) {
+                    errorDetail += 'Impossible de se connecter au serveur proxy. Vérifiez:';
+                    errorDetail += '\n- Que le serveur proxy est bien démarré sur le port 3000';
+                    errorDetail += '\n- Les paramètres CORS du serveur proxy';
+                } else if (error.message) {
+                    errorDetail += error.message;
+                }
+                
+                showError(errorDetail);
+            } finally {
+                this.disabled = false;
+                this.textContent = 'Tester le serveur proxy';
             }
         });
     </script>
