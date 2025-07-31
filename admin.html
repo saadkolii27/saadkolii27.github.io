@@ -398,6 +398,7 @@
                 <div class="form-group">
                     <label for="adminEmail">Email</label>
                     <input type="email" id="adminEmail" class="form-control" required>
+                    <input type="hidden" id="currentAdminEmail" value="">
                 </div>
                 <div class="form-group">
                     <label for="adminPassword">Mot de passe</label>
@@ -407,7 +408,7 @@
             </form>
 
             <div class="auth-actions">
-                <a href="index.html">Retour à l'accueil</a>
+                <a href="index">Retour à l'accueil</a>
             </div>
         </div>
     </div>
@@ -434,6 +435,7 @@
                         <li class="nav-tab active" data-tab="pending">Demandes en attente</li>
                         <li class="nav-tab" data-tab="approved">Comptes approuvés</li>
                         <li class="nav-tab" data-tab="rejected">Comptes rejetés</li>
+                        <li class="nav-tab" data-tab="admins">Gestion des administrateurs</li>
                     </ul>
                 </div>
 
@@ -464,6 +466,34 @@
                             <!-- Les utilisateurs rejetés seront ajoutés ici dynamiquement -->
                             <div class="empty-state">
                                 <p>Aucun compte rejeté</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Onglet de gestion des administrateurs -->
+                    <div class="tab-pane" id="admins">
+                        <div class="admin-management">
+                            <h2>Gestion des administrateurs</h2>
+                            <p>Ajoutez ou supprimez des comptes administrateurs. Seuls les administrateurs peuvent accéder à ce panneau.</p>
+                            
+                            <form id="addAdminForm" class="admin-form" style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                                <h3>Ajouter un nouvel administrateur</h3>
+                                <div class="form-group">
+                                    <label for="newAdminEmail">Email</label>
+                                    <input type="email" id="newAdminEmail" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newAdminName">Nom</label>
+                                    <input type="text" id="newAdminName" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-approve">Ajouter cet administrateur</button>
+                            </form>
+                            
+                            <div class="current-admins">
+                                <h3>Administrateurs actuels</h3>
+                                <div id="adminsList">
+                                    <!-- La liste des administrateurs sera affichée ici -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -512,8 +542,19 @@
         const closeModalBtn = document.getElementById('closeModalBtn');
         const modalCloseBtn = document.querySelector('.modal-close');
         
-        // Administrateurs autorisés (dans une vraie application, ceci serait géré par des rôles dans la base de données)
-        const ADMIN_EMAILS = ['admin@ssaad.me', 'saadkolii27@gmail.com']; // Remplacez par vos emails d'administrateurs
+        // Administrateurs autorisés - système amélioré avec localStorage
+        function getAdminUsers() {
+            // Récupérer les administrateurs du localStorage ou utiliser une liste par défaut
+            const defaultAdmins = [
+                { email: 'admin@ssaad.me', name: 'Admin Principal' },
+                { email: 'saadkolii27@gmail.com', name: 'Saad Admin' }
+            ];
+            
+            return JSON.parse(localStorage.getItem('adminUsers')) || defaultAdmins;
+        }
+        
+        // Liste des emails d'administrateurs pour vérification rapide
+        const ADMIN_EMAILS = getAdminUsers().map(admin => admin.email);
         
         // Vérification de l'état d'authentification
         async function checkAuth() {
@@ -530,12 +571,16 @@
                     adminInitials.textContent = getInitials(user.name);
                     adminName.textContent = user.name;
                     
+                    // Sauvegarder l'email pour référence ultérieure
+                    document.getElementById('adminEmail').value = user.email;
+                    
                     // Afficher l'interface d'administration
                     loadingState.classList.add('hidden');
                     authenticatedState.classList.remove('hidden');
                     
-                    // Charger les utilisateurs
+                    // Charger les utilisateurs et les administrateurs
                     loadUsers();
+                    loadAdmins();
                 } else {
                     // Utilisateur connecté mais pas administrateur
                     console.log('Utilisateur non autorisé:', user);
@@ -663,6 +708,9 @@
             const approvedUsers = JSON.parse(localStorage.getItem('approvedUsers') || '{}');
             const rejectedUsers = JSON.parse(localStorage.getItem('rejectedUsers') || '{}');
             
+            // Trier les utilisateurs par date de création (du plus récent au plus ancien)
+            users.sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
+            
             return {
                 pending: users.filter(user => !approvedUsers[user.$id] && !rejectedUsers[user.$id]),
                 approved: users.filter(user => approvedUsers[user.$id]),
@@ -673,9 +721,14 @@
         function approveUser(userId) {
             const approvedUsers = JSON.parse(localStorage.getItem('approvedUsers') || '{}');
             const rejectedUsers = JSON.parse(localStorage.getItem('rejectedUsers') || '{}');
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
             
             // Approuver l'utilisateur
             approvedUsers[userId] = true;
+            
+            // Enregistrer la date d'approbation
+            const approvalDate = new Date().toISOString();
+            approvedUsers[userId] = { approved: true, approvedAt: approvalDate };
             
             // Supprimer de la liste des rejetés si présent
             if (rejectedUsers[userId]) {
@@ -685,6 +738,12 @@
             // Sauvegarder les changements
             localStorage.setItem('approvedUsers', JSON.stringify(approvedUsers));
             localStorage.setItem('rejectedUsers', JSON.stringify(rejectedUsers));
+            
+            // Trouver l'utilisateur pour pouvoir afficher un message de confirmation
+            const user = users.find(u => u.$id === userId);
+            if (user) {
+                alert(`Le compte de ${user.name} (${user.email}) a été approuvé avec succès.`);
+            }
             
             // Recharger les utilisateurs
             loadUsers();
@@ -875,6 +934,116 @@
             }
         }
         
+        // Gestion des administrateurs
+        function loadAdmins() {
+            const adminsList = document.getElementById('adminsList');
+            const admins = getAdminUsers();
+            
+            if (admins.length === 0) {
+                adminsList.innerHTML = `
+                    <div class="empty-state">
+                        <p>Aucun administrateur configuré</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            adminsList.innerHTML = admins.map(admin => `
+                <div class="user-card">
+                    <div class="user-info">
+                        <div class="user-avatar">${getInitials(admin.name)}</div>
+                        <div class="user-details">
+                            <h3>${admin.name}</h3>
+                            <p>${admin.email}</p>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="btn btn-reject" onclick="removeAdmin('${admin.email}')">Supprimer</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function addAdmin(email, name) {
+            const admins = getAdminUsers();
+            
+            // Vérifier si l'email existe déjà
+            if (admins.some(admin => admin.email === email)) {
+                alert('Cet email est déjà enregistré comme administrateur.');
+                return false;
+            }
+            
+            // Ajouter le nouvel administrateur
+            admins.push({ email, name });
+            
+            // Sauvegarder les modifications
+            localStorage.setItem('adminUsers', JSON.stringify(admins));
+            
+            // Mettre à jour la liste des emails d'administrateurs
+            ADMIN_EMAILS.push(email);
+            
+            // Recharger la liste des administrateurs
+            loadAdmins();
+            
+            return true;
+        }
+        
+        function removeAdmin(email) {
+            let admins = getAdminUsers();
+            const currentUserEmail = document.getElementById('adminEmail').value;
+            
+            // Vérifier s'il s'agit du dernier administrateur
+            if (admins.length === 1) {
+                alert('Impossible de supprimer le dernier administrateur.');
+                return;
+            }
+            
+            // Vérifier si l'utilisateur essaie de se supprimer lui-même
+            if (email === currentUserEmail) {
+                if (!confirm('Attention : Vous êtes sur le point de supprimer votre propre compte administrateur. Continuer ?')) {
+                    return;
+                }
+            }
+            
+            // Supprimer l'administrateur
+            admins = admins.filter(admin => admin.email !== email);
+            
+            // Sauvegarder les modifications
+            localStorage.setItem('adminUsers', JSON.stringify(admins));
+            
+            // Mettre à jour la liste des emails d'administrateurs
+            const index = ADMIN_EMAILS.indexOf(email);
+            if (index > -1) {
+                ADMIN_EMAILS.splice(index, 1);
+            }
+            
+            // Recharger la liste des administrateurs
+            loadAdmins();
+            
+            // Si l'utilisateur a supprimé son propre compte admin, le rediriger
+            if (email === currentUserEmail) {
+                alert('Vous avez supprimé votre propre compte administrateur. Vous allez être redirigé vers la page de connexion.');
+                logoutBtn.click();
+            }
+        }
+        
+        // Gestionnaire du formulaire d'ajout d'admin
+        document.getElementById('addAdminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('newAdminEmail').value;
+            const name = document.getElementById('newAdminName').value;
+            
+            if (addAdmin(email, name)) {
+                // Réinitialiser le formulaire
+                this.reset();
+                alert(`${name} (${email}) a été ajouté comme administrateur avec succès.`);
+            }
+        });
+        
+        // Exposer la fonction au scope global
+        window.removeAdmin = removeAdmin;
+        
         // Initialisation
         checkAuth();
         
@@ -885,7 +1054,16 @@
                 if (e.key === 'users' || e.key === 'approvedUsers' || e.key === 'rejectedUsers') {
                     loadUsers();
                 }
+                
+                if (e.key === 'adminUsers') {
+                    loadAdmins();
+                }
             });
+            
+            // Charger les administrateurs
+            if (document.getElementById('adminsList')) {
+                loadAdmins();
+            }
         });
     </script>
 </body>
