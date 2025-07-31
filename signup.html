@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <!-- Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .signup-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .signup-header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .signup-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group input.error {
+            border-color: #c33;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .terms-checkbox input {
+            margin-right: 0.5rem;
+            margin-top: 0.2rem;
+        }
+
+        .terms-checkbox label {
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .terms-checkbox a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #28a745;
+            display: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #c33;
+            display: none;
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .strength-weak {
+            color: #dc3545;
+        }
+
+        .strength-medium {
+            color: #ffc107;
+        }
+
+        .strength-strong {
+            color: #28a745;
+        }
+
+        .password-requirements {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.2rem;
+        }
+
+        .requirement.valid {
+            color: #28a745;
+        }
+
+        .requirement::before {
+            content: "✗";
+            margin-right: 0.5rem;
+            color: #dc3545;
+        }
+
+        .requirement.valid::before {
+            content: "✓";
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>Inscription</h1>
+            <p>Créez votre compte pour commencer</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            Compte créé avec succès ! Redirection...
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            Une erreur s'est produite lors de l'inscription
+        </div>
+
+        <form id="signupForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">Prénom</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Nom</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required>
+                <div class="password-strength" id="passwordStrength"></div>
+                <div class="password-requirements">
+                    <div class="requirement" id="req-length">Au moins 8 caractères</div>
+                    <div class="requirement" id="req-uppercase">Une lettre majuscule</div>
+                    <div class="requirement" id="req-lowercase">Une lettre minuscule</div>
+                    <div class="requirement" id="req-number">Un chiffre</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+
+            <div class="terms-checkbox">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">
+                    J'accepte les <a href="#" target="_blank">conditions d'utilisation</a> 
+                    et la <a href="#" target="_blank">politique de confidentialité</a>
+                </label>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">Créer mon compte</button>
+        </form>
+
+        <div class="login-link">
+            Déjà un compte ? <a href="index.html">Se connecter</a>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Appwrite
+        const { Client, Account, ID } = Appwrite;
+        
+        const client = new Client()
+            .setEndpoint('https://cloud.appwrite.io/v1') // Remplacez par votre endpoint Appwrite
+            .setProject('ssaad'); // Votre Project ID Appwrite
+        
+        const account = new Account(client);
+
+        const form = document.getElementById('signupForm');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const submitBtn = document.getElementById('submitBtn');
+        const strengthIndicator = document.getElementById('passwordStrength');
+
+        // Validation du mot de passe en temps réel
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            validatePassword(password);
+            checkPasswordMatch();
+        });
+
+        confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+
+        function validatePassword(password) {
+            const requirements = {
+                'req-length': password.length >= 8,
+                'req-uppercase': /[A-Z]/.test(password),
+                'req-lowercase': /[a-z]/.test(password),
+                'req-number': /\d/.test(password)
+            };
+
+            let validCount = 0;
+            for (const [reqId, isValid] of Object.entries(requirements)) {
+                const element = document.getElementById(reqId);
+                if (isValid) {
+                    element.classList.add('valid');
+                    validCount++;
+                } else {
+                    element.classList.remove('valid');
+                }
+            }
+
+            // Indicateur de force
+            if (validCount === 0) {
+                strengthIndicator.textContent = '';
+            } else if (validCount < 3) {
+                strengthIndicator.textContent = 'Mot de passe faible';
+                strengthIndicator.className = 'password-strength strength-weak';
+            } else if (validCount === 3) {
+                strengthIndicator.textContent = 'Mot de passe moyen';
+                strengthIndicator.className = 'password-strength strength-medium';
+            } else {
+                strengthIndicator.textContent = 'Mot de passe fort';
+                strengthIndicator.className = 'password-strength strength-strong';
+            }
+
+            return validCount === 4;
+        }
+
+        function checkPasswordMatch() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                confirmPasswordInput.classList.add('error');
+                return false;
+            } else {
+                confirmPasswordInput.classList.remove('error');
+                return true;
+            }
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Validation
+            const isPasswordValid = validatePassword(data.password);
+            const doPasswordsMatch = checkPasswordMatch();
+            
+            if (!isPasswordValid) {
+                showError('Le mot de passe ne respecte pas les critères requis');
+                return;
+            }
+            
+            if (!doPasswordsMatch) {
+                showError('Les mots de passe ne correspondent pas');
+                return;
+            }
+            
+            if (!data.terms) {
+                showError('Vous devez accepter les conditions d\'utilisation');
+                return;
+            }
+
+            // Inscription avec Appwrite
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Création en cours...';
+            
+            try {
+                // Créer le compte utilisateur
+                const promise = account.create(
+                    ID.unique(),
+                    data.email,
+                    data.password,
+                    `${data.firstName} ${data.lastName}`
+                );
+                
+                await promise;
+                
+                showSuccess('Compte créé avec succès ! Redirection...');
+                
+                // Optionnel: Connexion automatique après inscription
+                try {
+                    await account.createEmailSession(data.email, data.password);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } catch (sessionError) {
+                    console.log('Erreur lors de la création de session:', sessionError);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                console.error('Erreur inscription:', error);
+                
+                // Gestion des erreurs spécifiques
+                let errorMessage = 'Une erreur s\'est produite lors de l\'inscription';
+                
+                if (error.code === 409) {
+                    errorMessage = 'Un compte avec cette adresse email existe déjà';
+                } else if (error.code === 400) {
+                    errorMessage = 'Données invalides. Vérifiez vos informations';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                showError(errorMessage);
+                
+                // Réactiver le bouton
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Créer mon compte';
+            }
+        });
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Masquer les messages lors de la saisie
+        form.addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            
+            if (submitBtn.disabled) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Créer mon compte';
+            }
+        });
+    </script>
+</body>
+</html>
