@@ -537,24 +537,43 @@
                 console.log('Test de connexion à Appwrite - Endpoint:', client.config.endpoint);
                 console.log('Test de connexion à Appwrite - Project ID:', client.config.project);
                 
-                // Essayer une méthode qui ne nécessite pas d'authentification
+                // Utiliser une méthode publique pour tester la connexion
                 try {
-                    // Vérifie si le service est en ligne
-                    const response = await client.get('/health');
-                    console.log('Réponse du serveur Appwrite (health):', response);
+                    // Utiliser l'API des langues qui est accessible sans authentification spéciale
+                    const response = await fetch(client.config.endpoint + '/locale/languages', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Appwrite-Project': client.config.project
+                        }
+                    });
                     
-                    showSuccess('Connexion à Appwrite réussie! Service en ligne.');
-                } catch (healthError) {
-                    console.error('Échec du test health:', healthError);
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Réponse du serveur Appwrite (languages):', data);
+                        showSuccess('Connexion à Appwrite réussie! API accessible.');
+                    } else {
+                        throw new Error('Erreur de réponse: ' + response.status);
+                    }
+                } catch (publicApiError) {
+                    console.error('Échec du test API publique:', publicApiError);
                     
-                    // Essayer une autre méthode si health échoue
+                    // Essayer une autre méthode
                     try {
-                        const response = await account.listSessions();
-                        console.log('Sessions actives:', response);
-                        showSuccess('Connexion à Appwrite réussie via account.listSessions()!');
-                    } catch (sessionError) {
-                        console.error('Échec des deux tests:', sessionError);
-                        throw sessionError;
+                        // Cette méthode va échouer si non authentifié, mais c'est normal
+                        // L'important est qu'elle ne renvoie pas d'erreur CORS ou "Failed to fetch"
+                        await account.get();
+                        console.log('Compte authentifié!');
+                        showSuccess('Connexion à Appwrite réussie! Vous êtes connecté.');
+                    } catch (authError) {
+                        // Erreur 401 signifie que l'API est accessible mais que vous n'êtes pas authentifié
+                        if (authError.code === 401) {
+                            console.log('API accessible mais non authentifié (normal)');
+                            showSuccess('Connexion à Appwrite réussie! API accessible mais non authentifié.');
+                        } else {
+                            console.error('Échec des deux tests:', authError);
+                            throw authError;
+                        }
                     }
                 }
                 
@@ -592,7 +611,7 @@
                 
                 // Essayons de diagnostiquer les problèmes CORS
                 try {
-                    fetch(client.config.endpoint + '/health', { mode: 'no-cors' })
+                    fetch(client.config.endpoint + '/locale/languages', { mode: 'no-cors' })
                         .then(() => console.log('Requête sans CORS réussie - problème probable de CORS'))
                         .catch(e => console.error('Même la requête sans CORS échoue:', e));
                 } catch (e) {
@@ -612,7 +631,7 @@
             
             try {
                 // URL de votre serveur proxy déployé
-                const proxyUrl = `${PROXY_URL}/health`;
+                const proxyUrl = `${PROXY_URL}/ping`;
                 
                 console.log('Test de connexion au proxy:', proxyUrl);
                 
