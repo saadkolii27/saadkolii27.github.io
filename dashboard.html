@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de bord</title>
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    <script src="js/router.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -314,11 +315,19 @@
         async function logout() {
             try {
                 await account.deleteSession('current');
-                window.location.href = 'index.html';
+                if (window.appRouter && window.appRouter.routeExists('/')) {
+                    window.appRouter.navigate('/');
+                } else {
+                    window.location.href = 'index.html';
+                }
             } catch (error) {
                 console.error('Erreur lors de la déconnexion:', error);
                 // Redirection forcée en cas d'erreur
-                window.location.href = 'index.html';
+                if (window.appRouter && window.appRouter.routeExists('/')) {
+                    window.appRouter.navigate('/');
+                } else {
+                    window.location.href = 'index.html';
+                }
             }
         }
         
