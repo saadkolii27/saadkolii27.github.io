@@ -8,11 +8,16 @@ ErrorDocument 404 /404.html
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# Remove .html extension from URLs (redirect to clean URLs)
+RewriteCond %{THE_REQUEST} /([^.]+)\.html [NC]
+RewriteRule ^ /%1? [NC,L,R=301]
+
 # Handle direct access to HTML files without .html extension
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !\.html$
 RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$
+RewriteCond %{REQUEST_URI} !^/api/
 RewriteRule ^([^\.]+)$ $1.html [NC,L]
 
 # Fallback for SPA routing - redirect all non-file requests to index.html
@@ -23,6 +28,7 @@ RewriteCond %{REQUEST_URI} !^/admin
 RewriteCond %{REQUEST_URI} !^/dashboard
 RewriteCond %{REQUEST_URI} !^/signup
 RewriteCond %{REQUEST_URI} !^/404
+RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$
 RewriteRule ^(.*)$ index.html [L]
 
 # Security headers
