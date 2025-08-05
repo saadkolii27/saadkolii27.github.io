@@ -19,8 +19,7 @@ app.get('*', (req, res) => {
         '/login': 'index.html',
         '/dashboard': 'dashboard.html',
         '/admin': 'admin.html',
-        '/signup': 'signup.html',
-        '/404': '404.html'
+        '/signup': 'signup.html'
     };
     
     // Check if the requested path is a valid route
@@ -31,7 +30,7 @@ app.get('*', (req, res) => {
         if (fs.existsSync(filePath)) {
             res.sendFile(filePath);
         } else {
-            res.status(404).sendFile(path.join(__dirname, '404.html'));
+            res.redirect('/?error=404');
         }
     } else {
         // Check if it's a direct file request
@@ -40,8 +39,8 @@ app.get('*', (req, res) => {
         if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
             res.sendFile(filePath);
         } else {
-            // Route not found, serve 404 page
-            res.status(404).sendFile(path.join(__dirname, '404.html'));
+            // Route not found, redirect to home with 404 error parameter
+            res.redirect('/?error=404');
         }
     }
 });
@@ -54,7 +53,7 @@ app.use((err, req, res, next) => {
 
 // Handle 404 errors
 app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, '404.html'));
+    res.redirect('/?error=404');
 });
 
 app.listen(PORT, () => {
@@ -64,5 +63,4 @@ app.listen(PORT, () => {
     console.log('- /dashboard (user dashboard)');
     console.log('- /admin (admin panel)');
     console.log('- /signup (registration page)');
-    console.log('- /404 (error page)');
 });

@@ -7,8 +7,7 @@ class AppRouter {
             '/login': 'index.html',
             '/dashboard': 'dashboard.html',
             '/admin': 'admin.html',
-            '/signup': 'signup.html',
-            '/404': '404.html'
+            '/signup': 'signup.html'
         };
         
         this.init();
@@ -34,13 +33,18 @@ class AppRouter {
     }
     
     handleRoute(path) {
-        const route = this.routes[path] || this.routes['/404'];
+        const route = this.routes[path];
         
         if (route) {
             this.loadPage(route);
         } else {
-            // If no route found, redirect to 404
-            window.location.href = '404.html';
+            // If no route found, show 404 popup
+            if (window.error404Popup) {
+                window.error404Popup.show();
+            } else {
+                // Fallback to redirect if popup not available
+                window.location.href = '404.html';
+            }
         }
     }
     

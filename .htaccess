@@ -1,8 +1,8 @@
 # Enable URL rewriting
 RewriteEngine On
 
-# Handle 404 errors
-ErrorDocument 404 /404.html
+# Handle 404 errors - redirect to home with error parameter
+ErrorDocument 404 /?error=404
 
 # Redirect to HTTPS (uncomment if you have SSL)
 # RewriteCond %{HTTPS} off
