@@ -12,7 +12,18 @@ ErrorDocument 404 /404.html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !\.html$
+RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$
 RewriteRule ^([^\.]+)$ $1.html [NC,L]
+
+# Fallback for SPA routing - redirect all non-file requests to index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{REQUEST_URI} !^/admin
+RewriteCond %{REQUEST_URI} !^/dashboard
+RewriteCond %{REQUEST_URI} !^/signup
+RewriteCond %{REQUEST_URI} !^/404
+RewriteRule ^(.*)$ index.html [L]
 
 # Security headers
 <IfModule mod_headers.c>

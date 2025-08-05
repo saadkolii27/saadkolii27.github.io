@@ -1,11 +1,11 @@
 {
-  "name": "appwrite-proxy",
+  "name": "appwrite-server",
   "version": "1.0.0",
-  "description": "Serveur proxy pour sécuriser les appels Appwrite",
-  "main": "appwrite-proxy.js",
+  "description": "Server utilities for Appwrite application",
+  "main": "index.js",
   "scripts": {
-    "start": "node appwrite-proxy.js",
-    "dev": "nodemon appwrite-proxy.js"
+    "start": "echo 'Server utilities package - no main server file'",
+    "dev": "echo 'Server utilities package - no main server file'"
   },
   "dependencies": {
     "cors": "^2.8.5",
