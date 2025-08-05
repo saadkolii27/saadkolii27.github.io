@@ -11,6 +11,7 @@ class AppRouter {
             '/404': '404.html'
         };
         
+        this.currentPage = null;
         this.init();
     }
     
@@ -36,11 +37,8 @@ class AppRouter {
     handleRoute(path) {
         const route = this.routes[path] || this.routes['/404'];
         
-        if (route) {
+        if (route && route !== this.currentPage) {
             this.loadPage(route);
-        } else {
-            // If no route found, redirect to 404
-            window.location.href = '404.html';
         }
     }
     
@@ -51,9 +49,9 @@ class AppRouter {
     }
     
     loadPage(page) {
-        // For now, we'll use simple redirects
-        // In a more complex SPA, you would load content dynamically
-        if (window.location.pathname !== '/' + page) {
+        // Simple page loading - just redirect to the actual file
+        if (page !== this.currentPage) {
+            this.currentPage = page;
             window.location.href = page;
         }
     }
@@ -85,16 +83,10 @@ function navigateTo(path) {
 
 // Error handling for navigation
 window.addEventListener('error', (e) => {
-    if (e.message.includes('general_route_not_found') || e.message.includes('Page not found')) {
-        console.error('Navigation error detected, redirecting to 404');
-        window.location.href = '404.html';
-    }
+    console.error('Navigation error:', e);
 });
 
 // Handle unhandled promise rejections
 window.addEventListener('unhandledrejection', (e) => {
-    if (e.reason && (e.reason.message.includes('general_route_not_found') || e.reason.message.includes('Page not found'))) {
-        console.error('Unhandled navigation error, redirecting to 404');
-        window.location.href = '404.html';
-    }
+    console.error('Unhandled navigation error:', e);
 });
