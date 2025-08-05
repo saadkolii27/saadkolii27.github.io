@@ -12,6 +12,7 @@ class AppRouter {
         };
         
         this.currentPage = null;
+        this.isNavigating = false;
         this.init();
     }
     
@@ -35,6 +36,8 @@ class AppRouter {
     }
     
     handleRoute(path) {
+        if (this.isNavigating) return;
+        
         const route = this.routes[path] || this.routes['/404'];
         
         if (route && route !== this.currentPage) {
@@ -43,17 +46,36 @@ class AppRouter {
     }
     
     navigate(path) {
+        if (this.isNavigating) return;
+        
         // Update browser history
         window.history.pushState({}, '', path);
         this.handleRoute(path);
     }
     
     loadPage(page) {
-        // Simple page loading - just redirect to the actual file
-        if (page !== this.currentPage) {
-            this.currentPage = page;
-            window.location.href = page;
-        }
+        if (this.isNavigating || page === this.currentPage) return;
+        
+        this.isNavigating = true;
+        this.currentPage = page;
+        
+        // Use fetch to check if page exists before redirecting
+        fetch(page, { method: 'HEAD' })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = page;
+                } else {
+                    console.error(`Page ${page} not found`);
+                    window.location.href = '404.html';
+                }
+            })
+            .catch(error => {
+                console.error('Navigation error:', error);
+                window.location.href = '404.html';
+            })
+            .finally(() => {
+                this.isNavigating = false;
+            });
     }
     
     // Utility method to check if a route exists
