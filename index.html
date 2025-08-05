@@ -6,6 +6,8 @@
     <title>Connexion</title>
     <!-- Appwrite SDK -->
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    <!-- Router -->
+    <script src="js/router.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -200,6 +202,7 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
+            
             try {
                 await account.createEmailSession(email, password);
                 
@@ -209,14 +212,34 @@
                 
                 if (ADMIN_EMAILS.includes(user.email)) {
                     // Rediriger vers le panneau d'administration
-                    window.location.href = 'admin.html';
+                    if (window.appRouter && window.appRouter.routeExists('/admin')) {
+                        window.appRouter.navigate('/admin');
+                    } else {
+                        window.location.href = 'admin.html';
+                    }
                 } else {
                     // Rediriger vers le tableau de bord utilisateur
-                    window.location.href = 'dashboard.html';
+                    if (window.appRouter && window.appRouter.routeExists('/dashboard')) {
+                        window.appRouter.navigate('/dashboard');
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
                 }
             } catch (err) {
+                console.error('Login error:', err);
                 errorMessage.style.display = 'block';
-                errorMessage.textContent = err.message || 'Email ou mot de passe incorrect';
+                
+                // Handle specific Appwrite errors
+                if (err.code === 401) {
+                    errorMessage.textContent = 'Email ou mot de passe incorrect';
+                } else if (err.code === 404) {
+                    errorMessage.textContent = 'Compte non trouvé';
+                } else if (err.message && err.message.includes('general_route_not_found')) {
+                    errorMessage.textContent = 'Erreur de connexion au serveur';
+                } else {
+                    errorMessage.textContent = err.message || 'Erreur de connexion';
+                }
+                
                 setTimeout(() => {
                     errorMessage.style.display = 'none';
                 }, 3000);
