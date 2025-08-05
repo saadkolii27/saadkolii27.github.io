@@ -6,8 +6,7 @@
     <title>Connexion</title>
     <!-- Appwrite SDK -->
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
-    <!-- Router -->
-    <script src="js/router.js"></script>
+    <!-- Router doit être chargé après le DOM -->
     <style>
         * {
             box-sizing: border-box;
@@ -150,109 +149,123 @@
             border-left: 4px solid #c33;
             display: none;
         }
+        
+        #loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            z-index: 9999;
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>Connexion</h1>
-            <p>Connectez-vous à votre compte</p>
-        </div>
-
-        <div class="error-message" id="errorMessage">
-            Email ou mot de passe incorrect
-        </div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+    <!-- Indicateur de chargement pour le routeur -->
+    <div id="loading-indicator"></div>
+    
+    <!-- Conteneur principal pour le routeur -->
+    <div id="content">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Connexion</h1>
+                <p>Connectez-vous à votre compte</p>
             </div>
 
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required>
+            <div class="error-message" id="errorMessage">
+                Email ou mot de passe incorrect
             </div>
 
-            <div class="form-options">
-                <div class="remember-me">
-                    <input type="checkbox" id="remember" name="remember">
-                    <label for="remember">Se souvenir de moi</label>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
                 </div>
-                <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Se souvenir de moi</label>
+                    </div>
+                    <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+                </div>
+
+                <button type="submit" class="btn">Se connecter</button>
+            </form>
+
+            <div class="signup-link">
+                Pas encore de compte ? <a href="/signup" onclick="event.preventDefault(); navigateTo('/signup');">Créer un compte</a>
             </div>
-
-            <button type="submit" class="btn">Se connecter</button>
-        </form>
-
-        <div class="signup-link">
-            Pas encore de compte ? <a href="signup.html">Créer un compte</a>
         </div>
     </div>
 
+    <!-- Router doit être chargé avant le script principal -->
+    <script src="js/router.js"></script>
+    
     <script>
-        // Initialisation Appwrite
-        const client = new Appwrite.Client()
-            .setEndpoint('https://nyc.cloud.appwrite.io/v1')
-            .setProject('ssaad');
-        const account = new Appwrite.Account(client);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation Appwrite
+            const client = new Appwrite.Client()
+                .setEndpoint('https://nyc.cloud.appwrite.io/v1')
+                .setProject('ssaad');
+            const account = new Appwrite.Account(client);
 
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
-            
-            try {
-                await account.createEmailSession(email, password);
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const errorMessage = document.getElementById('errorMessage');
                 
-                // Vérifier si l'utilisateur est un administrateur
-                const user = await account.get();
-                const ADMIN_EMAILS = ['admin@ssaad.me', 'saadkolii27@gmail.com']; // Remplacez par vos emails d'administrateurs
-                
-                if (ADMIN_EMAILS.includes(user.email)) {
-                    // Rediriger vers le panneau d'administration
-                    if (window.appRouter && window.appRouter.routeExists('/admin')) {
-                        window.appRouter.navigate('/admin');
+                try {
+                    await account.createEmailSession(email, password);
+                    
+                    // Vérifier si l'utilisateur est un administrateur
+                    const user = await account.get();
+                    const ADMIN_EMAILS = ['admin@ssaad.me', 'saadkolii27@gmail.com']; // Remplacez par vos emails d'administrateurs
+                    
+                    if (ADMIN_EMAILS.includes(user.email)) {
+                        // Rediriger vers le panneau d'administration
+                        navigateTo('/admin');
                     } else {
-                        window.location.href = 'admin.html';
+                        // Rediriger vers le tableau de bord utilisateur
+                        navigateTo('/dashboard');
                     }
-                } else {
-                    // Rediriger vers le tableau de bord utilisateur
-                    if (window.appRouter && window.appRouter.routeExists('/dashboard')) {
-                        window.appRouter.navigate('/dashboard');
+                } catch (err) {
+                    console.error('Login error:', err);
+                    errorMessage.style.display = 'block';
+                    
+                    // Handle specific Appwrite errors
+                    if (err.code === 401) {
+                        errorMessage.textContent = 'Email ou mot de passe incorrect';
+                    } else if (err.code === 404) {
+                        errorMessage.textContent = 'Compte non trouvé';
+                    } else if (err.message && err.message.includes('general_route_not_found')) {
+                        errorMessage.textContent = 'Erreur de connexion au serveur';
                     } else {
-                        window.location.href = 'dashboard.html';
+                        errorMessage.textContent = err.message || 'Erreur de connexion';
                     }
+                    
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                    }, 3000);
                 }
-            } catch (err) {
-                console.error('Login error:', err);
-                errorMessage.style.display = 'block';
-                
-                // Handle specific Appwrite errors
-                if (err.code === 401) {
-                    errorMessage.textContent = 'Email ou mot de passe incorrect';
-                } else if (err.code === 404) {
-                    errorMessage.textContent = 'Compte non trouvé';
-                } else if (err.message && err.message.includes('general_route_not_found')) {
-                    errorMessage.textContent = 'Erreur de connexion au serveur';
-                } else {
-                    errorMessage.textContent = err.message || 'Erreur de connexion';
-                }
-                
-                setTimeout(() => {
-                    errorMessage.style.display = 'none';
-                }, 3000);
-            }
-        });
+            });
 
-        // Masquer le message d'erreur lors de la saisie
-        document.getElementById('email').addEventListener('input', function() {
-            document.getElementById('errorMessage').style.display = 'none';
-        });
+            // Masquer le message d'erreur lors de la saisie
+            document.getElementById('email').addEventListener('input', function() {
+                document.getElementById('errorMessage').style.display = 'none';
+            });
 
-        document.getElementById('password').addEventListener('input', function() {
-            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('password').addEventListener('input', function() {
+                document.getElementById('errorMessage').style.display = 'none';
+            });
         });
     </script>
 </body>

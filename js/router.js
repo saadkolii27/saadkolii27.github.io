@@ -17,6 +17,9 @@ class AppRouter {
     }
     
     init() {
+        // Vérifier les redirections depuis la page 404
+        this.checkRedirections();
+        
         // Handle browser back/forward buttons
         window.addEventListener('popstate', (e) => {
             this.handleRoute(window.location.pathname);
@@ -27,21 +30,49 @@ class AppRouter {
         
         // Intercept all internal links
         document.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A' && e.target.href.startsWith(window.location.origin)) {
+            const anchor = e.target.closest('a');
+            if (anchor && anchor.href && anchor.href.startsWith(window.location.origin)) {
                 e.preventDefault();
-                const path = new URL(e.target.href).pathname;
+                const path = new URL(anchor.href).pathname;
                 this.navigate(path);
             }
         });
     }
     
+    checkRedirections() {
+        // Vérifier s'il y a un chemin de redirection depuis la page 404
+        const redirectPath = sessionStorage.getItem('redirect-path');
+        if (redirectPath) {
+            console.log('Redirection détectée pour: ' + redirectPath);
+            sessionStorage.removeItem('redirect-path');
+            
+            // Utiliser history API pour mettre à jour l'URL sans recharger la page
+            history.replaceState(null, '', redirectPath);
+            return true;
+        }
+        
+        // Vérifier également les paramètres d'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const pathParam = urlParams.get('path');
+        if (pathParam) {
+            console.log('Paramètre de chemin détecté: ' + pathParam);
+            history.replaceState(null, '', pathParam);
+            return true;
+        }
+        
+        return false;
+    }
+    
     handleRoute(path) {
         if (this.isNavigating) return;
+        
+        // Normaliser le chemin (enlever les slashes à la fin)
+        path = path.replace(/\/$/, '') || '/';
         
         const route = this.routes[path] || this.routes['/404'];
         
         if (route && route !== this.currentPage) {
-            this.loadPage(route);
+            this.loadPage(route, path);
         }
     }
     
@@ -53,21 +84,54 @@ class AppRouter {
         this.handleRoute(path);
     }
     
-    loadPage(page) {
+    loadPage(page, path) {
         if (this.isNavigating || page === this.currentPage) return;
         
         this.isNavigating = true;
         this.currentPage = page;
         
-        // Use fetch to check if page exists before redirecting
-        fetch(page, { method: 'HEAD' })
+        // Afficher un indicateur de chargement si nécessaire
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) loadingIndicator.style.display = 'block';
+        
+        // Utiliser fetch pour vérifier si la page existe
+        fetch(page)
             .then(response => {
                 if (response.ok) {
-                    window.location.href = page;
+                    return response.text();
                 } else {
                     console.error(`Page ${page} not found`);
-                    window.location.href = '404.html';
+                    return fetch('404.html').then(res => res.text());
                 }
+            })
+            .then(html => {
+                // Option 1: Si vous voulez remplacer uniquement le contenu principal
+                const contentArea = document.getElementById('content');
+                if (contentArea) {
+                    // Extraire le contenu principal de la page chargée
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    const newContent = tempDiv.querySelector('#content');
+                    if (newContent) {
+                        contentArea.innerHTML = newContent.innerHTML;
+                    } else {
+                        contentArea.innerHTML = html;
+                    }
+                } else {
+                    // Option 2: Si pas de zone de contenu, effectuer une redirection complète
+                    window.location.href = page;
+                }
+                
+                // Mettre à jour le titre de la page si disponible
+                const newTitle = html.match(/<title>(.*?)<\/title>/i);
+                if (newTitle && newTitle[1]) {
+                    document.title = newTitle[1];
+                }
+                
+                // Déclencher un événement pour informer que la page a changé
+                window.dispatchEvent(new CustomEvent('pageChanged', {
+                    detail: { path, page }
+                }));
             })
             .catch(error => {
                 console.error('Navigation error:', error);
@@ -75,6 +139,9 @@ class AppRouter {
             })
             .finally(() => {
                 this.isNavigating = false;
+                
+                // Cacher l'indicateur de chargement
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
             });
     }
     
