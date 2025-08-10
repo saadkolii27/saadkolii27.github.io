@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrières - SSAAD</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .careers-hero {
+            background: linear-gradient(135deg, var(--success) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: var(--spacing-xxl) 0;
+            text-align: center;
+        }
+
+        .careers-hero h1 {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .careers-hero p {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .benefits-section {
+            padding: var(--spacing-xxl) 0;
+            background: var(--background-light);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+        }
+
+        .benefit-card {
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: transform var(--transition);
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xl);
+            margin: 0 auto var(--spacing-md);
+        }
+
+        .benefit-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .benefit-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .jobs-section {
+            padding: var(--spacing-xxl) 0;
+        }
+
+        .job-filters {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            background: white;
+            color: var(--text-muted);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .jobs-grid {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+
+        .job-card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all var(--transition);
+        }
+
+        .job-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .job-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .job-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .job-meta {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .job-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+        }
+
+        .job-tags {
+            display: flex;
+            gap: var(--spacing-xs);
+            flex-wrap: wrap;
+        }
+
+        .job-tag {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .job-body {
+            padding: var(--spacing-lg);
+        }
+
+        .job-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .job-requirements {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .requirements-title {
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .requirements-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .requirements-list li {
+            padding: var(--spacing-xs) 0;
+            color: var(--text-muted);
+            position: relative;
+            padding-left: var(--spacing-md);
+        }
+
+        .requirements-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .job-footer {
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .job-salary {
+            font-weight: var(--font-weight-semibold);
+            color: var(--success);
+        }
+
+        .apply-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition);
+        }
+
+        .apply-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .apply-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: transform var(--transition);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .apply-modal.active .apply-content {
+            transform: translateY(0);
+        }
+
+        .apply-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .apply-close {
+            background: none;
+            border: none;
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: var(--spacing-xs);
+            border-radius: var(--border-radius-sm);
+            transition: all var(--transition);
+        }
+
+        .apply-close:hover {
+            background: var(--background-light);
+            color: var(--text-primary);
+        }
+
+        .apply-body {
+            padding: var(--spacing-xl);
+        }
+
+        .apply-footer {
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-md);
+        }
+
+        .no-jobs {
+            text-align: center;
+            padding: var(--spacing-xxl) var(--spacing-lg);
+            color: var(--text-muted);
+        }
+
+        .no-jobs p {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        @media (max-width: 768px) {
+            .job-filters {
+                flex-direction: column;
+            }
+            
+            .filter-btn {
+                text-align: center;
+            }
+            
+            .job-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .apply-content {
+                width: 95%;
+                margin: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-indicator"></div>
+    
+    <div id="content">
+        <section class="careers-hero">
+            <div class="container">
+                <h1>Rejoignez Notre Équipe</h1>
+                <p>Découvrez des opportunités de carrière enrichissantes dans le secteur médico-social et contribuez à améliorer la vie des personnes en situation de handicap.</p>
+            </div>
+        </section>
+
+        <section class="benefits-section">
+            <div class="container">
+                <div class="text-center mb-xl">
+                    <h2>Pourquoi nous rejoindre ?</h2>
+                    <p class="text-muted">Découvrez les avantages de travailler chez SSAAD</p>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">💼</div>
+                        <div class="benefit-title">Développement professionnel</div>
+                        <div class="benefit-description">
+                            Formation continue et opportunités d'évolution de carrière dans un secteur en pleine croissance.
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🤝</div>
+                        <div class="benefit-title">Travail d'équipe</div>
+                        <div class="benefit-description">
+                            Environnement collaboratif où chaque membre contribue à la réussite de notre mission.
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon">❤️</div>
+                        <div class="benefit-title">Mission sociale</div>
+                        <div class="benefit-description">
+                            Contribuez à une cause noble en aidant les personnes en situation de handicap.
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon">⚖️</div>
+                        <div class="benefit-title">Équilibre vie-travail</div>
+                        <div class="benefit-description">
+                            Horaires flexibles et congés généreux pour maintenir un bon équilibre personnel.
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🏥</div>
+                        <div class="benefit-title">Mutuelle santé</div>
+                        <div class="benefit-description">
+                            Couverture santé complète pour vous et votre famille.
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🎯</div>
+                        <div class="benefit-title">Reconnaissance</div>
+                        <div class="benefit-description">
+                            Votre travail est valorisé et reconnu par l'équipe et la direction.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="jobs-section">
+            <div class="container">
+                <div class="text-center mb-xl">
+                    <h2>Nos Offres d'Emploi</h2>
+                    <p class="text-muted">Découvrez les postes disponibles et postulez dès maintenant</p>
+                </div>
+
+                <div class="job-filters">
+                    <button class="filter-btn active" data-filter="all">Tous les postes</button>
+                    <button class="filter-btn" data-filter="caregiver">Aide à domicile</button>
+                    <button class="filter-btn" data-filter="admin">Administration</button>
+                    <button class="filter-btn" data-filter="management">Management</button>
+                </div>
+
+                <div class="jobs-grid" id="jobsGrid">
+                    <!-- Les offres d'emploi seront ajoutées ici dynamiquement -->
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="container">
+                <div class="card" style="max-width: 600px; margin: 0 auto;">
+                    <div class="card-body text-center">
+                        <h3>Vous ne trouvez pas votre poste ?</h3>
+                        <p class="text-muted mb-lg">
+                            Envoyez-nous votre CV et une lettre de motivation. 
+                            Nous étudierons votre profil pour de futures opportunités.
+                        </p>
+                        <button class="btn btn-primary" onclick="openApplyModal('Candidature spontanée')">
+                            Candidature spontanée
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal de candidature -->
+    <div class="apply-modal" id="applyModal">
+        <div class="apply-content">
+            <div class="apply-header">
+                <h3 id="applyJobTitle">Postuler à ce poste</h3>
+                <button class="apply-close" onclick="closeApplyModal()">&times;</button>
+            </div>
+            <div class="apply-body">
+                <form id="applyForm">
+                    <div class="form-group">
+                        <label for="applyName">Nom complet *</label>
+                        <input type="text" id="applyName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="applyEmail">Email *</label>
+                        <input type="email" id="applyEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="applyPhone">Téléphone</label>
+                        <input type="tel" id="applyPhone" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="applyMessage">Lettre de motivation *</label>
+                        <textarea id="applyMessage" class="form-control" rows="6" required 
+                            placeholder="Présentez-vous et expliquez pourquoi vous souhaitez rejoindre SSAAD..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="applyCV">CV (PDF) *</label>
+                        <input type="file" id="applyCV" class="form-control" accept=".pdf" required>
+                    </div>
+                </form>
+            </div>
+            <div class="apply-footer">
+                <button class="btn" onclick="closeApplyModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="submitApplication()">Envoyer ma candidature</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/router.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/footer.js"></script>
+    <script>
+        // Données des offres d'emploi
+        const jobs = [
+            {
+                id: 1,
+                title: "Aide à domicile - H/F",
+                type: "caregiver",
+                location: "Paris et région parisienne",
+                contract: "CDI",
+                salary: "1 800€ - 2 200€",
+                description: "Nous recherchons des aides à domicile passionnés pour accompagner nos bénéficiaires dans leur vie quotidienne. Vous interviendrez au domicile des personnes en situation de handicap pour les aider dans les tâches de la vie courante.",
+                requirements: [
+                    "Formation en aide à domicile ou expérience équivalente",
+                    "Permis B obligatoire",
+                    "Sens de l'écoute et de l'empathie",
+                    "Disponibilité en journée et soirée",
+                    "Bonne condition physique"
+                ],
+                tags: ["Aide à domicile", "CDI", "Paris"]
+            },
+            {
+                id: 2,
+                title: "Coordinateur de services",
+                type: "management",
+                location: "Lyon",
+                contract: "CDI",
+                salary: "2 500€ - 3 200€",
+                description: "En tant que coordinateur de services, vous superviserez une équipe d'aides à domicile et assurerez la coordination des interventions auprès de nos bénéficiaires. Vous serez l'interface entre les familles, les professionnels et la direction.",
+                requirements: [
+                    "Bac+3 minimum en sciences sociales ou équivalent",
+                    "Expérience de 3 ans minimum dans le secteur médico-social",
+                    "Capacité d'encadrement et de coordination",
+                    "Excellentes compétences relationnelles",
+                    "Maîtrise des outils informatiques"
+                ],
+                tags: ["Coordination", "CDI", "Lyon"]
+            },
+            {
+                id: 3,
+                title: "Assistant administratif",
+                type: "admin",
+                location: "Marseille",
+                contract: "CDD 6 mois",
+                salary: "1 600€ - 1 900€",
+                description: "Vous apporterez votre soutien à l'équipe administrative dans la gestion des dossiers des bénéficiaires, la facturation et le suivi administratif. Poste idéal pour débuter dans le secteur médico-social.",
+                requirements: [
+                    "Bac minimum",
+                    "Maîtrise des outils bureautiques",
+                    "Rigueur et organisation",
+                    "Sens du service client",
+                    "Première expérience appréciée"
+                ],
+                tags: ["Administration", "CDD", "Marseille"]
+            },
+            {
+                id: 4,
+                title: "Infirmier(e) coordinateur(trice)",
+                type: "caregiver",
+                location: "Toulouse",
+                contract: "CDI",
+                salary: "2 800€ - 3 500€",
+                description: "Infirmier(e) expérimenté(e), vous coordonnerez les soins et l'accompagnement des bénéficiaires nécessitant des soins infirmiers. Vous travaillerez en étroite collaboration avec l'équipe médicale et les familles.",
+                requirements: [
+                    "Diplôme d'État d'infirmier(e)",
+                    "Expérience de 2 ans minimum",
+                    "Spécialisation en gérontologie appréciée",
+                    "Capacité d'organisation et de coordination",
+                    "Sens de l'écoute et de l'empathie"
+                ],
+                tags: ["Soins infirmiers", "CDI", "Toulouse"]
+            }
+        ];
+
+        // Filtrage des offres
+        function filterJobs(category) {
+            const filteredJobs = category === 'all' ? jobs : jobs.filter(job => job.type === category);
+            displayJobs(filteredJobs);
+        }
+
+        // Affichage des offres
+        function displayJobs(jobsToShow) {
+            const jobsGrid = document.getElementById('jobsGrid');
+            
+            if (jobsToShow.length === 0) {
+                jobsGrid.innerHTML = `
+                    <div class="no-jobs">
+                        <p>Aucune offre d'emploi disponible dans cette catégorie pour le moment.</p>
+                        <p>N'hésitez pas à nous envoyer une candidature spontanée !</p>
+                    </div>
+                `;
+                return;
+            }
+
+            jobsGrid.innerHTML = jobsToShow.map(job => `
+                <div class="job-card">
+                    <div class="job-header">
+                        <div class="job-title">${job.title}</div>
+                        <div class="job-meta">
+                            <div class="job-meta-item">📍 ${job.location}</div>
+                            <div class="job-meta-item">📋 ${job.contract}</div>
+                            <div class="job-meta-item">💰 ${job.salary}</div>
+                        </div>
+                        <div class="job-tags">
+                            ${job.tags.map(tag => `<span class="job-tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="job-body">
+                        <div class="job-description">${job.description}</div>
+                        <div class="job-requirements">
+                            <div class="requirements-title">Profil recherché :</div>
+                            <ul class="requirements-list">
+                                ${job.requirements.map(req => `<li>${req}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="job-footer">
+                        <div class="job-salary">Salaire : ${job.salary}</div>
+                        <button class="btn btn-primary" onclick="openApplyModal('${job.title}')">
+                            Postuler
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Gestion des filtres
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Retirer la classe active de tous les boutons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Ajouter la classe active au bouton cliqué
+                    this.classList.add('active');
+                    
+                    // Filtrer les offres
+                    const filter = this.getAttribute('data-filter');
+                    filterJobs(filter);
+                });
+            });
+
+            // Afficher toutes les offres au chargement
+            displayJobs(jobs);
+        });
+
+        // Gestion de la modale de candidature
+        function openApplyModal(jobTitle) {
+            document.getElementById('applyJobTitle').textContent = `Postuler à : ${jobTitle}`;
+            document.getElementById('applyModal').classList.add('active');
+        }
+
+        function closeApplyModal() {
+            document.getElementById('applyModal').classList.remove('active');
+            document.getElementById('applyForm').reset();
+        }
+
+        // Soumission de la candidature
+        function submitApplication() {
+            const form = document.getElementById('applyForm');
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Simuler l'envoi de la candidature
+            const submitBtn = document.querySelector('.apply-footer .btn-primary');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Envoi en cours...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                alert('Votre candidature a été envoyée avec succès ! Nous vous recontacterons dans les plus brefs délais.');
+                closeApplyModal();
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        }
+
+        // Fermer la modale en cliquant à l'extérieur
+        document.getElementById('applyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeApplyModal();
+            }
+        });
+    </script>
+</body>
+</html>

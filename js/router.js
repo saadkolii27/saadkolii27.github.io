@@ -8,6 +8,8 @@ class AppRouter {
             '/about': 'about.html',
             '/services': 'services.html',
             '/contact': 'contact.html',
+            '/team': 'team.html',
+            '/careers': 'careers.html',
             '/dashboard': 'dashboard.html',
             '/admin': 'admin.html',
             '/signup': 'signup.html',

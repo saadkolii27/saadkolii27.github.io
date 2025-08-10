@@ -26,13 +26,15 @@ class Navigation {
                         SSAAD
                     </a>
                     
-                    <ul class="navbar-nav">
-                        <li><a href="/" class="nav-link" data-page="home">Accueil</a></li>
-                        <li><a href="/about" class="nav-link" data-page="about">À propos</a></li>
-                        <li><a href="/services" class="nav-link" data-page="services">Services</a></li>
-                        <li><a href="/contact" class="nav-link" data-page="contact">Contact</a></li>
-                        <li><a href="/dashboard" class="nav-link" data-page="dashboard">Tableau de bord</a></li>
-                    </ul>
+                                                    <ul class="navbar-nav">
+                                    <li><a href="/" class="nav-link" data-page="home">Accueil</a></li>
+                                    <li><a href="/about" class="nav-link" data-page="about">À propos</a></li>
+                                    <li><a href="/services" class="nav-link" data-page="services">Services</a></li>
+                                    <li><a href="/team" class="nav-link" data-page="team">Notre Équipe</a></li>
+                                    <li><a href="/careers" class="nav-link" data-page="careers">Carrières</a></li>
+                                    <li><a href="/contact" class="nav-link" data-page="contact">Contact</a></li>
+                                    <li><a href="/dashboard" class="nav-link" data-page="dashboard">Tableau de bord</a></li>
+                                </ul>
                     
                     <div class="navbar-toggle" id="mobileMenuToggle">
                         <span></span>
