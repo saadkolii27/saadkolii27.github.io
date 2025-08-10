@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Services - SSAAD</title>
+    <meta name="description" content="Découvrez notre gamme complète de services technologiques : développement web, applications mobiles, solutions cloud et plus encore.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Custom styles for this page -->
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: var(--spacing-20) 0;
+            text-align: center;
+        }
+        
+        .page-header-content {
+            max-width: var(--max-width-2xl);
+            margin: 0 auto;
+            padding: 0 var(--spacing-4);
+        }
+        
+        .page-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: var(--spacing-6);
+            line-height: 1.1;
+        }
+        
+        .page-subtitle {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .services-hero {
+            padding: var(--spacing-20) 0;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+        }
+        
+        .services-hero-content {
+            text-align: center;
+            max-width: var(--max-width-2xl);
+            margin: 0 auto;
+        }
+        
+        .services-hero h2 {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-6);
+            color: var(--gray-900);
+        }
+        
+        .services-hero p {
+            font-size: var(--font-size-lg);
+            color: var(--gray-600);
+            line-height: 1.7;
+            margin-bottom: var(--spacing-8);
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-8);
+            margin-top: var(--spacing-12);
+        }
+        
+        .service-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-8);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transform: scaleX(0);
+            transition: transform var(--transition-normal);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-color);
+        }
+        
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-6);
+            color: var(--white);
+        }
+        
+        .service-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-4);
+            color: var(--gray-900);
+        }
+        
+        .service-description {
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-6);
+        }
+        
+        .service-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .service-features li {
+            color: var(--gray-600);
+            margin-bottom: var(--spacing-2);
+            padding-left: var(--spacing-4);
+            position: relative;
+        }
+        
+        .service-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .pricing-section {
+            padding: var(--spacing-20) 0;
+            background-color: var(--gray-50);
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-8);
+            margin-top: var(--spacing-12);
+        }
+        
+        .pricing-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-8);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            transition: all var(--transition-normal);
+            border: 2px solid var(--gray-200);
+            position: relative;
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-8px);
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            color: var(--white);
+            padding: var(--spacing-2) var(--spacing-4);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+        }
+        
+        .pricing-name {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-4);
+            color: var(--gray-900);
+        }
+        
+        .pricing-price {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-2);
+        }
+        
+        .pricing-period {
+            color: var(--gray-500);
+            margin-bottom: var(--spacing-6);
+        }
+        
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 var(--spacing-6) 0;
+        }
+        
+        .pricing-features li {
+            color: var(--gray-600);
+            margin-bottom: var(--spacing-3);
+            padding-left: var(--spacing-4);
+            position: relative;
+        }
+        
+        .pricing-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .cta-section {
+            padding: var(--spacing-20) 0;
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+            color: var(--white);
+            text-align: center;
+        }
+        
+        .cta-content {
+            max-width: var(--max-width-xl);
+            margin: 0 auto;
+        }
+        
+        .cta-title {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-6);
+        }
+        
+        .cta-description {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-8);
+            opacity: 0.9;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: var(--spacing-4);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-6);
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-6);
+            }
+            
+            .pricing-card.featured {
+                transform: none;
+            }
+            
+            .pricing-card.featured:hover {
+                transform: translateY(-8px);
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .page-header {
+                padding: var(--spacing-12) 0;
+            }
+            
+            .services-hero,
+            .pricing-section,
+            .cta-section {
+                padding: var(--spacing-12) 0;
+            }
+            
+            .service-card {
+                padding: var(--spacing-6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading indicator -->
+    <div id="loading-indicator"></div>
+    
+    <!-- Main content -->
+    <div id="content">
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="page-header-content">
+                <h1 class="page-title">Nos Services</h1>
+                <p class="page-subtitle">
+                    Des solutions technologiques sur mesure pour propulser votre entreprise 
+                    vers le succès numérique
+                </p>
+            </div>
+        </section>
+
+        <!-- Services Hero -->
+        <section class="services-hero">
+            <div class="container">
+                <div class="services-hero-content">
+                    <h2>Solutions Complètes pour Votre Transformation Numérique</h2>
+                    <p>
+                        De la conception initiale au déploiement et à la maintenance, 
+                        nous vous accompagnons à chaque étape de votre projet technologique. 
+                        Notre expertise couvre tous les aspects du développement moderne.
+                    </p>
+                </div>
+                
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4"/>
+                                <path d="M21 12c-1 0-2-1-2-2s1-2 2-2 2 1 2 2-1 2-2 2z"/>
+                                <path d="M3 12c1 0 2-1 2-2s-1-2-2-2-2 1-2 2 1 2 2 2z"/>
+                                <path d="M12 3c0 1-1 2-2 2s-2 1-2 2 1 2 2 2 2 1 2 2 1-2 2-2 2-1 2-2-1-2-2-2-2-1-2-2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Développement Web</h3>
+                        <p class="service-description">
+                            Sites web modernes, applications web progressives et plateformes 
+                            e-commerce sur mesure.
+                        </p>
+                        <ul class="service-features">
+                            <li>Sites web responsifs et optimisés SEO</li>
+                            <li>Applications web progressives (PWA)</li>
+                            <li>E-commerce et solutions de paiement</li>
+                            <li>Intégration API et systèmes tiers</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Applications Mobiles</h3>
+                        <p class="service-description">
+                            Applications iOS et Android natives et cross-platform 
+                            pour tous vos besoins mobiles.
+                        </p>
+                        <ul class="service-features">
+                            <li>Applications iOS et Android natives</li>
+                            <li>Développement cross-platform (React Native, Flutter)</li>
+                            <li>Applications d'entreprise et B2B</li>
+                            <li>Maintenance et mises à jour continues</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Solutions Cloud</h3>
+                        <p class="service-description">
+                            Infrastructure cloud scalable, migration de données 
+                            et solutions de sauvegarde sécurisées.
+                        </p>
+                        <ul class="service-features">
+                            <li>Migration vers le cloud (AWS, Azure, GCP)</li>
+                            <li>Architecture cloud-native et microservices</li>
+                            <li>DevOps et CI/CD automatisés</li>
+                            <li>Sécurité et conformité cloud</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Intelligence Artificielle</h3>
+                        <p class="service-description">
+                            Solutions IA et machine learning pour automatiser 
+                            et optimiser vos processus métier.
+                        </p>
+                        <ul class="service-features">
+                            <li>Chatbots et assistants virtuels</li>
+                            <li>Analyse prédictive et business intelligence</li>
+                            <li>Automatisation des processus (RPA)</li>
+                            <li>Vision par ordinateur et NLP</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Cybersécurité</h3>
+                        <p class="service-description">
+                            Protection complète de vos systèmes et données 
+                            contre les menaces cybernétiques.
+                        </p>
+                        <ul class="service-features">
+                            <li>Audit de sécurité et tests de pénétration</li>
+                            <li>Conformité RGPD et normes internationales</li>
+                            <li>Surveillance 24/7 et réponse aux incidents</li>
+                            <li>Formation et sensibilisation des équipes</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Consulting & Formation</h3>
+                        <p class="service-description">
+                            Accompagnement stratégique et formation de vos équipes 
+                            aux technologies modernes.
+                        </p>
+                        <ul class="service-features">
+                            <li>Stratégie de transformation numérique</li>
+                            <li>Formation technique et méthodologique</li>
+                            <li>Accompagnement au changement</li>
+                            <li>Audit et optimisation des processus</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section class="pricing-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Nos Tarifs</h2>
+                    <p class="section-subtitle">
+                        Des forfaits flexibles adaptés à tous les budgets et besoins
+                    </p>
+                </div>
+                
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3 class="pricing-name">Starter</h3>
+                        <div class="pricing-price">299€</div>
+                        <div class="pricing-period">par mois</div>
+                        <ul class="pricing-features">
+                            <li>Site web responsive</li>
+                            <li>5 pages incluses</li>
+                            <li>Formulaire de contact</li>
+                            <li>Optimisation SEO de base</li>
+                            <li>Support par email</li>
+                        </ul>
+                        <button class="btn btn-primary">Commencer</button>
+                    </div>
+                    
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge">Populaire</div>
+                        <h3 class="pricing-name">Professional</h3>
+                        <div class="pricing-price">599€</div>
+                        <div class="pricing-period">par mois</div>
+                        <ul class="pricing-features">
+                            <li>Tout du plan Starter</li>
+                            <li>Application web complète</li>
+                            <li>Base de données</li>
+                            <li>API personnalisée</li>
+                            <li>Support prioritaire</li>
+                            <li>Maintenance incluse</li>
+                        </ul>
+                        <button class="btn btn-primary">Commencer</button>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3 class="pricing-name">Enterprise</h3>
+                        <div class="pricing-price">Sur mesure</div>
+                        <div class="pricing-period">devis personnalisé</div>
+                        <ul class="pricing-features">
+                            <li>Solution sur mesure complète</li>
+                            <li>Infrastructure cloud dédiée</li>
+                            <li>Intégration systèmes existants</li>
+                            <li>Formation des équipes</li>
+                            <li>Support 24/7</li>
+                            <li>Gestionnaire de projet dédié</li>
+                        </ul>
+                        <button class="btn btn-outline">Contactez-nous</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2 class="cta-title">Prêt à Démarrer Votre Projet ?</h2>
+                    <p class="cta-description">
+                        Discutons de vos besoins et trouvons ensemble la solution 
+                        parfaite pour votre entreprise.
+                    </p>
+                    <div class="cta-buttons">
+                        <button class="btn btn-primary btn-lg">Demander un Devis</button>
+                        <button class="btn btn-outline btn-lg">Appel Gratuit</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/router.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/footer.js"></script>
+</body>
+</html>

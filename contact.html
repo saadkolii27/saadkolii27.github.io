@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - SSAAD</title>
+    <meta name="description" content="Contactez l'équipe SSAAD pour discuter de votre projet, obtenir un devis ou simplement en savoir plus sur nos services.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Custom styles for this page -->
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: var(--spacing-20) 0;
+            text-align: center;
+        }
+        
+        .page-header-content {
+            max-width: var(--max-width-2xl);
+            margin: 0 auto;
+            padding: 0 var(--spacing-4);
+        }
+        
+        .page-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: var(--spacing-6);
+            line-height: 1.1;
+        }
+        
+        .page-subtitle {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .contact-section {
+            padding: var(--spacing-20) 0;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-12);
+            align-items: start;
+        }
+        
+        .contact-info {
+            background: var(--gray-50);
+            padding: var(--spacing-8);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .contact-info h3 {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--spacing-6);
+            color: var(--gray-900);
+        }
+        
+        .contact-method {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-6);
+            padding: var(--spacing-4);
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition-normal);
+        }
+        
+        .contact-method:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-4);
+            color: var(--white);
+            flex-shrink: 0;
+        }
+        
+        .contact-details h4 {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-1);
+            color: var(--gray-900);
+        }
+        
+        .contact-details p {
+            color: var(--gray-600);
+            margin: 0;
+        }
+        
+        .contact-form {
+            background: var(--white);
+            padding: var(--spacing-8);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .contact-form h3 {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--spacing-6);
+            color: var(--gray-900);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-6);
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: var(--spacing-2);
+            color: var(--gray-700);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: var(--spacing-3);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-base);
+            transition: all var(--transition-normal);
+            background: var(--white);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-4);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: var(--spacing-4);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--white);
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .success-message {
+            display: none;
+            background: var(--green-50);
+            color: var(--green-700);
+            padding: var(--spacing-4);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--green-200);
+            margin-top: var(--spacing-4);
+            text-align: center;
+        }
+        
+        .error-message {
+            display: none;
+            background: var(--red-50);
+            color: var(--red-700);
+            padding: var(--spacing-4);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--red-200);
+            margin-top: var(--spacing-4);
+            text-align: center;
+        }
+        
+        .office-section {
+            padding: var(--spacing-20) 0;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+        }
+        
+        .office-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-8);
+            margin-top: var(--spacing-12);
+        }
+        
+        .office-card {
+            background: var(--white);
+            padding: var(--spacing-8);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition-normal);
+        }
+        
+        .office-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-color);
+        }
+        
+        .office-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-6);
+            color: var(--white);
+        }
+        
+        .office-name {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-4);
+            color: var(--gray-900);
+        }
+        
+        .office-address {
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-4);
+        }
+        
+        .office-hours {
+            color: var(--gray-500);
+            font-size: var(--font-size-sm);
+        }
+        
+        .faq-section {
+            padding: var(--spacing-20) 0;
+        }
+        
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--spacing-6);
+            margin-top: var(--spacing-12);
+        }
+        
+        .faq-item {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+        
+        .faq-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .faq-question {
+            padding: var(--spacing-6);
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-900);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .faq-question:hover {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .faq-answer {
+            padding: var(--spacing-6);
+            color: var(--gray-600);
+            line-height: 1.6;
+            display: none;
+        }
+        
+        .faq-answer.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-8);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .office-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-6);
+            }
+            
+            .faq-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .page-header {
+                padding: var(--spacing-12) 0;
+            }
+            
+            .contact-section,
+            .office-section,
+            .faq-section {
+                padding: var(--spacing-12) 0;
+            }
+            
+            .contact-form,
+            .contact-info {
+                padding: var(--spacing-6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading indicator -->
+    <div id="loading-indicator"></div>
+    
+    <!-- Main content -->
+    <div id="content">
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="page-header-content">
+                <h1 class="page-title">Contactez-nous</h1>
+                <p class="page-subtitle">
+                    Prêt à démarrer votre projet ? Discutons de vos besoins 
+                    et trouvons ensemble la solution parfaite.
+                </p>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact-section">
+            <div class="container">
+                <div class="contact-grid">
+                    <!-- Contact Information -->
+                    <div class="contact-info">
+                        <h3>Informations de Contact</h3>
+                        
+                        <div class="contact-method">
+                            <div class="contact-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                </svg>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Téléphone</h4>
+                                <p>+33 1 23 45 67 89</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <div class="contact-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Email</h4>
+                                <p>contact@ssaad.fr</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <div class="contact-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Adresse</h4>
+                                <p>123 Rue de l'Innovation<br>75001 Paris, France</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <div class="contact-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12,6 12,12 16,14"/>
+                                </svg>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Horaires</h4>
+                                <p>Lun-Ven: 9h-18h<br>Sam: 9h-12h</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Form -->
+                    <div class="contact-form">
+                        <h3>Envoyez-nous un Message</h3>
+                        
+                        <form id="contactForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">Prénom *</label>
+                                    <input type="text" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Nom *</label>
+                                    <input type="text" id="lastName" name="lastName" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">Téléphone</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="company">Entreprise</label>
+                                <input type="text" id="company" name="company">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="service">Service d'intérêt</label>
+                                <select id="service" name="service">
+                                    <option value="">Sélectionnez un service</option>
+                                    <option value="web">Développement Web</option>
+                                    <option value="mobile">Applications Mobiles</option>
+                                    <option value="cloud">Solutions Cloud</option>
+                                    <option value="ai">Intelligence Artificielle</option>
+                                    <option value="security">Cybersécurité</option>
+                                    <option value="consulting">Consulting & Formation</option>
+                                    <option value="other">Autre</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message">Message *</label>
+                                <textarea id="message" name="message" placeholder="Décrivez votre projet ou votre demande..." required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn" id="submitBtn">
+                                <span class="btn-text">Envoyer le Message</span>
+                                <div class="loading-spinner"></div>
+                            </button>
+                        </form>
+                        
+                        <div class="success-message" id="successMessage">
+                            Merci ! Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.
+                        </div>
+                        
+                        <div class="error-message" id="errorMessage">
+                            Une erreur s'est produite lors de l'envoi du message. Veuillez réessayer.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Office Section -->
+        <section class="office-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Nos Bureaux</h2>
+                    <p class="section-subtitle">
+                        Présents dans plusieurs villes pour mieux vous servir
+                    </p>
+                </div>
+                
+                <div class="office-grid">
+                    <div class="office-card">
+                        <div class="office-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <h3 class="office-name">Paris</h3>
+                        <p class="office-address">
+                            123 Rue de l'Innovation<br>
+                            75001 Paris, France
+                        </p>
+                        <p class="office-hours">Lun-Ven: 9h-18h</p>
+                    </div>
+                    
+                    <div class="office-card">
+                        <div class="office-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <h3 class="office-name">Lyon</h3>
+                        <p class="office-address">
+                            456 Avenue de la Technologie<br>
+                            69001 Lyon, France
+                        </p>
+                        <p class="office-hours">Lun-Ven: 9h-18h</p>
+                    </div>
+                    
+                    <div class="office-card">
+                        <div class="office-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <h3 class="office-name">Marseille</h3>
+                        <p class="office-address">
+                            789 Boulevard du Digital<br>
+                            13001 Marseille, France
+                        </p>
+                        <p class="office-hours">Lun-Ven: 9h-18h</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Questions Fréquentes</h2>
+                    <p class="section-subtitle">
+                        Trouvez rapidement des réponses à vos questions
+                    </p>
+                </div>
+                
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            Combien de temps faut-il pour développer un projet ?
+                        </div>
+                        <div class="faq-answer">
+                            La durée dépend de la complexité de votre projet. Un site web simple peut prendre 2-4 semaines, 
+                            tandis qu'une application complexe peut nécessiter 3-6 mois. Nous vous fournissons un planning 
+                            détaillé dès le début du projet.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            Proposez-vous un support après la livraison ?
+                        </div>
+                        <div class="faq-answer">
+                            Oui, nous offrons différents niveaux de support et maintenance selon vos besoins. 
+                            Cela inclut la correction de bugs, les mises à jour de sécurité, et l'ajout de nouvelles fonctionnalités.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            Quelles sont vos méthodes de travail ?
+                        </div>
+                        <div class="faq-answer">
+                            Nous utilisons une approche agile avec des sprints de 2 semaines. Vous recevez des mises à jour 
+                            régulières et pouvez tester les fonctionnalités au fur et à mesure de leur développement.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            Travaillez-vous avec des entreprises internationales ?
+                        </div>
+                        <div class="faq-answer">
+                            Absolument ! Nous avons des clients dans plusieurs pays et nous adaptons nos services 
+                            aux besoins internationaux, y compris le support multilingue et la conformité aux réglementations locales.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            Comment se déroule la phase de conception ?
+                        </div>
+                        <div class="faq-answer">
+                            Nous commençons par une analyse approfondie de vos besoins, puis créons des maquettes 
+                            et prototypes que vous pouvez tester. Votre feedback est intégré à chaque étape pour 
+                            garantir un résultat parfait.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            Proposez-vous des formations pour nos équipes ?
+                        </div>
+                        <div class="faq-answer">
+                            Oui, nous proposons des programmes de formation personnalisés pour vos équipes techniques 
+                            et non-techniques, couvrant les technologies que nous utilisons et les bonnes pratiques de développement.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/router.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/footer.js"></script>
+    
+    <script>
+        // FAQ Toggle Function
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            const isActive = answer.classList.contains('active');
+            
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-answer').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Toggle current FAQ item
+            if (!isActive) {
+                answer.classList.add('active');
+            }
+        }
+        
+        // Contact Form Handling
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const spinner = submitBtn.querySelector('.loading-spinner');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Simulate form submission (replace with actual form handling)
+            setTimeout(() => {
+                // Show success message
+                successMessage.style.display = 'block';
+                
+                // Reset form
+                document.getElementById('contactForm').reset();
+                
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.style.display = 'block';
+                spinner.style.display = 'none';
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 5000);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

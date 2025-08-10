@@ -3,123 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration - Approbation des comptes</title>
+    <title>Administration - SSAAD</title>
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
-    <script src="js/router.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        .admin-hero {
+            background: linear-gradient(135deg, var(--danger-color) 0%, var(--warning-color) 100%);
+            color: white;
+            padding: var(--spacing-xxl) 0;
+            text-align: center;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
+        .admin-hero h1 {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-md);
         }
 
-        .container {
-            max-width: 1200px;
+        .admin-hero p {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+            max-width: 600px;
             margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .admin-header {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-title h1 {
-            font-size: 1.5rem;
-        }
-
-        .admin-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .admin-user {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .admin-user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #3498db;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background: #2980b9;
-        }
-
-        .btn.logout {
-            background: #e74c3c;
-        }
-
-        .btn.logout:hover {
-            background: #c0392b;
         }
 
         .admin-content {
             background: white;
-            margin-top: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin: var(--spacing-xl) 0;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
         }
 
         .admin-nav {
-            padding: 1rem;
-            background: #f8f9fa;
-            border-bottom: 1px solid #eee;
-            border-radius: 8px 8px 0 0;
+            padding: var(--spacing-lg);
+            background: var(--background-light);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
         }
 
         .nav-tabs {
             display: flex;
             list-style: none;
-            gap: 1rem;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
         }
 
         .nav-tab {
-            padding: 0.5rem 1rem;
+            padding: var(--spacing-sm) var(--spacing-md);
             cursor: pointer;
             border-bottom: 2px solid transparent;
+            transition: all var(--transition);
+            border-radius: var(--border-radius-sm);
+        }
+
+        .nav-tab:hover {
+            background: var(--background-light);
         }
 
         .nav-tab.active {
-            border-bottom: 2px solid #3498db;
-            font-weight: bold;
-            color: #3498db;
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: var(--font-weight-semibold);
+            color: var(--primary-color);
+            background: var(--primary-light);
         }
 
         .tab-content {
-            padding: 1.5rem;
+            padding: var(--spacing-xl);
         }
 
         .tab-pane {
@@ -134,82 +83,92 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid #eee;
-            transition: background 0.2s;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            transition: background var(--transition);
         }
 
         .user-card:hover {
-            background: #f8f9fa;
+            background: var(--background-light);
+        }
+
+        .user-card:last-child {
+            border-bottom: none;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: var(--spacing-md);
         }
 
         .user-avatar {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: #3498db;
+            background: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
+            font-weight: var(--font-weight-bold);
+            font-size: var(--font-size-lg);
         }
 
         .user-details h3 {
-            margin-bottom: 0.25rem;
+            margin-bottom: var(--spacing-xs);
+            color: var(--text-primary);
         }
 
         .user-details p {
-            color: #666;
-            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .user-details small {
+            color: var(--text-muted);
+            font-size: var(--font-size-xs);
         }
 
         .user-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
         }
 
         .btn-approve {
-            background: #2ecc71;
+            background: var(--success);
         }
 
         .btn-approve:hover {
-            background: #27ae60;
+            background: var(--success-dark);
         }
 
         .btn-reject {
-            background: #e74c3c;
+            background: var(--danger);
         }
 
         .btn-reject:hover {
-            background: #c0392b;
+            background: var(--danger-dark);
         }
 
         .btn-detail {
-            background: #f39c12;
+            background: var(--warning);
         }
 
         .btn-detail:hover {
-            background: #d35400;
+            background: var(--warning-dark);
         }
 
         .empty-state {
             text-align: center;
-            padding: 3rem 1rem;
-            color: #666;
+            padding: var(--spacing-xxl) var(--spacing-lg);
+            color: var(--text-muted);
         }
 
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #ccc;
+        .empty-state p {
+            font-size: var(--font-size-lg);
         }
 
         .modal {
@@ -225,7 +184,7 @@
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s;
+            transition: opacity var(--transition);
         }
 
         .modal.active {
@@ -237,10 +196,10 @@
             background: white;
             width: 90%;
             max-width: 600px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
             transform: translateY(20px);
-            transition: transform 0.3s;
+            transition: transform var(--transition);
         }
 
         .modal.active .modal-content {
@@ -248,8 +207,8 @@
         }
 
         .modal-header {
-            padding: 1rem;
-            border-bottom: 1px solid #eee;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -258,248 +217,234 @@
         .modal-close {
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: var(--font-size-xl);
             cursor: pointer;
-            color: #666;
+            color: var(--text-muted);
+            padding: var(--spacing-xs);
+            border-radius: var(--border-radius-sm);
+            transition: all var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--background-light);
+            color: var(--text-primary);
         }
 
         .modal-body {
-            padding: 1.5rem;
+            padding: var(--spacing-xl);
             max-height: 70vh;
             overflow-y: auto;
         }
 
         .modal-footer {
-            padding: 1rem;
-            border-top: 1px solid #eee;
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: flex-end;
-            gap: 1rem;
+            gap: var(--spacing-md);
         }
 
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-        }
-
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
             border-radius: 50%;
-            border-top: 4px solid #3498db;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
+        .admin-management {
+            padding: var(--spacing-lg);
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+        .admin-management h2 {
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
         }
 
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
+        .admin-management p {
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-lg);
         }
 
-        /* État d'authentification */
-        .auth-container {
-            max-width: 500px;
-            margin: 5rem auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .admin-form {
+            background: var(--background-light);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            margin-bottom: var(--spacing-xl);
         }
 
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2rem;
+        .admin-form h3 {
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
         }
 
-        .auth-header h1 {
-            color: #333;
-            margin-bottom: 0.5rem;
+        .current-admins h3 {
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
         }
 
-        .auth-header p {
-            color: #666;
-        }
-
-        .auth-form {
-            margin-bottom: 1.5rem;
-        }
-
-        .auth-actions {
-            text-align: center;
-            margin-top: 2rem;
-        }
-
-        /* Messages */
-        .alert {
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-
-        .alert-warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border-left: 4px solid #ffc107;
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .user-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-md);
+            }
+            
+            .user-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: var(--spacing-md);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- État de chargement -->
-    <div id="loadingState" class="loading">
-        <div class="spinner"></div>
-    </div>
-
-    <!-- État non authentifié -->
-    <div id="unauthenticatedState" class="hidden">
-        <div class="auth-container">
-            <div class="auth-header">
-                <h1>Administration</h1>
-                <p>Connectez-vous pour accéder au panneau d'administration</p>
-            </div>
-
-            <div id="authMessage" class="hidden alert"></div>
-
-            <form class="auth-form" id="loginForm">
-                <div class="form-group">
-                    <label for="adminEmail">Email</label>
-                    <input type="email" id="adminEmail" class="form-control" required>
-                    <input type="hidden" id="currentAdminEmail" value="">
-                </div>
-                <div class="form-group">
-                    <label for="adminPassword">Mot de passe</label>
-                    <input type="password" id="adminPassword" class="form-control" required>
-                </div>
-                <button type="submit" class="btn" style="width: 100%">Se connecter</button>
-            </form>
-
-            <div class="auth-actions">
-                <a href="index">Retour à l'accueil</a>
+    <div id="loading-indicator"></div>
+    
+    <div id="content">
+        <!-- État de chargement -->
+        <div id="loadingState" class="container">
+            <div class="text-center" style="padding: var(--spacing-xxl) 0;">
+                <div class="loading-spinner" style="margin: 0 auto var(--spacing-lg);"></div>
+                <h2>Chargement...</h2>
+                <p>Vérification de vos droits d'administration...</p>
             </div>
         </div>
-    </div>
 
-    <!-- État authentifié -->
-    <div id="authenticatedState" class="hidden">
-        <header class="admin-header">
-            <div class="admin-title">
-                <h1>Panneau d'administration</h1>
-            </div>
-            <div class="admin-actions">
-                <div class="admin-user">
-                    <div class="admin-user-avatar" id="adminInitials">A</div>
-                    <span id="adminName">Admin</span>
+        <!-- État non authentifié -->
+        <div id="unauthenticatedState" class="hidden">
+            <section class="admin-hero">
+                <div class="container">
+                    <h1>Administration</h1>
+                    <p>Connectez-vous pour accéder au panneau d'administration</p>
                 </div>
-                <button class="btn logout" id="logoutBtn">Déconnexion</button>
-            </div>
-        </header>
+            </section>
 
-        <div class="container">
-            <div class="admin-content">
-                <div class="admin-nav">
-                    <ul class="nav-tabs">
-                        <li class="nav-tab active" data-tab="pending">Demandes en attente</li>
-                        <li class="nav-tab" data-tab="approved">Comptes approuvés</li>
-                        <li class="nav-tab" data-tab="rejected">Comptes rejetés</li>
-                        <li class="nav-tab" data-tab="admins">Gestion des administrateurs</li>
-                    </ul>
-                </div>
+            <section class="container">
+                <div class="card" style="max-width: 500px; margin: var(--spacing-xxl) auto;">
+                    <div class="card-body">
+                        <div id="authMessage" class="hidden alert"></div>
 
-                <div class="tab-content">
-                    <!-- Onglet des demandes en attente -->
-                    <div class="tab-pane active" id="pending">
-                        <div id="pendingUsers">
-                            <!-- Les utilisateurs en attente seront ajoutés ici dynamiquement -->
-                            <div class="empty-state">
-                                <p>Aucune demande d'inscription en attente</p>
+                        <form class="form" id="loginForm">
+                            <div class="form-group">
+                                <label for="adminEmail">Email</label>
+                                <input type="email" id="adminEmail" class="form-control" required>
+                                <input type="hidden" id="currentAdminEmail" value="">
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Onglet des comptes approuvés -->
-                    <div class="tab-pane" id="approved">
-                        <div id="approvedUsers">
-                            <!-- Les utilisateurs approuvés seront ajoutés ici dynamiquement -->
-                            <div class="empty-state">
-                                <p>Aucun compte approuvé pour le moment</p>
+                            <div class="form-group">
+                                <label for="adminPassword">Mot de passe</label>
+                                <input type="password" id="adminPassword" class="form-control" required>
                             </div>
-                        </div>
-                    </div>
+                            <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+                        </form>
 
-                    <!-- Onglet des comptes rejetés -->
-                    <div class="tab-pane" id="rejected">
-                        <div id="rejectedUsers">
-                            <!-- Les utilisateurs rejetés seront ajoutés ici dynamiquement -->
-                            <div class="empty-state">
-                                <p>Aucun compte rejeté</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Onglet de gestion des administrateurs -->
-                    <div class="tab-pane" id="admins">
-                        <div class="admin-management">
-                            <h2>Gestion des administrateurs</h2>
-                            <p>Ajoutez ou supprimez des comptes administrateurs. Seuls les administrateurs peuvent accéder à ce panneau.</p>
-                            
-                            <form id="addAdminForm" class="admin-form" style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-                                <h3>Ajouter un nouvel administrateur</h3>
-                                <div class="form-group">
-                                    <label for="newAdminEmail">Email</label>
-                                    <input type="email" id="newAdminEmail" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="newAdminName">Nom</label>
-                                    <input type="text" id="newAdminName" class="form-control" required>
-                                </div>
-                                <button type="submit" class="btn btn-approve">Ajouter cet administrateur</button>
-                            </form>
-                            
-                            <div class="current-admins">
-                                <h3>Administrateurs actuels</h3>
-                                <div id="adminsList">
-                                    <!-- La liste des administrateurs sera affichée ici -->
-                                </div>
-                            </div>
+                        <div class="text-center mt-lg">
+                            <a href="/" class="btn btn-outline">Retour à l'accueil</a>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
+        </div>
+
+        <!-- État authentifié -->
+        <div id="authenticatedState" class="hidden">
+            <section class="admin-hero">
+                <div class="container">
+                    <h1>Panneau d'administration</h1>
+                    <p>Gestion des comptes utilisateurs et des administrateurs</p>
+                </div>
+            </section>
+
+            <section class="container">
+                <div class="admin-content">
+                    <div class="admin-nav">
+                        <ul class="nav-tabs">
+                            <li class="nav-tab active" data-tab="pending">Demandes en attente</li>
+                            <li class="nav-tab" data-tab="approved">Comptes approuvés</li>
+                            <li class="nav-tab" data-tab="rejected">Comptes rejetés</li>
+                            <li class="nav-tab" data-tab="admins">Gestion des administrateurs</li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content">
+                        <!-- Onglet des demandes en attente -->
+                        <div class="tab-pane active" id="pending">
+                            <div id="pendingUsers">
+                                <!-- Les utilisateurs en attente seront ajoutés ici dynamiquement -->
+                                <div class="empty-state">
+                                    <p>Aucune demande d'inscription en attente</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Onglet des comptes approuvés -->
+                        <div class="tab-pane" id="approved">
+                            <div id="approvedUsers">
+                                <!-- Les utilisateurs approuvés seront ajoutés ici dynamiquement -->
+                                <div class="empty-state">
+                                    <p>Aucun compte approuvé pour le moment</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Onglet des comptes rejetés -->
+                        <div class="tab-pane" id="rejected">
+                            <div id="rejectedUsers">
+                                <!-- Les utilisateurs rejetés seront ajoutés ici dynamiquement -->
+                                <div class="empty-state">
+                                    <p>Aucun compte rejeté</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Onglet de gestion des administrateurs -->
+                        <div class="tab-pane" id="admins">
+                            <div class="admin-management">
+                                <h2>Gestion des administrateurs</h2>
+                                <p>Ajoutez ou supprimez des comptes administrateurs. Seuls les administrateurs peuvent accéder à ce panneau.</p>
+                                
+                                <form id="addAdminForm" class="admin-form">
+                                    <h3>Ajouter un nouvel administrateur</h3>
+                                    <div class="form-group">
+                                        <label for="newAdminEmail">Email</label>
+                                        <input type="email" id="newAdminEmail" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newAdminName">Nom</label>
+                                        <input type="text" id="newAdminName" class="form-control" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-approve">Ajouter cet administrateur</button>
+                                </form>
+                                
+                                <div class="current-admins">
+                                    <h3>Administrateurs actuels</h3>
+                                    <div id="adminsList">
+                                        <!-- La liste des administrateurs sera affichée ici -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 
@@ -519,15 +464,17 @@
         </div>
     </div>
 
+    <script src="js/router.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/footer.js"></script>
     <script>
         // Configuration Appwrite
-        const { Client, Account, ID } = Appwrite;
+        const client = new Appwrite.Client();
+        client
+            .setEndpoint('https://cloud.appwrite.io/v1')
+            .setProject('your-project-id');
         
-        const client = new Client()
-            .setEndpoint('https://nyc.cloud.appwrite.io/v1')
-            .setProject('ssaad');
-        
-        const account = new Account(client);
+        const account = new Appwrite.Account(client);
         
         // Référence aux éléments du DOM
         const loadingState = document.getElementById('loadingState');
@@ -567,10 +514,6 @@
                 if (ADMIN_EMAILS.includes(user.email)) {
                     // Utilisateur administrateur
                     console.log('Administrateur connecté:', user);
-                    
-                    // Mettre à jour les informations d'administrateur
-                    adminInitials.textContent = getInitials(user.name);
-                    adminName.textContent = user.name;
                     
                     // Sauvegarder l'email pour référence ultérieure
                     document.getElementById('adminEmail').value = user.email;
@@ -655,17 +598,6 @@
             }
         });
         
-        // Déconnexion
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                await account.deleteSession('current');
-                window.location.reload();
-            } catch (error) {
-                console.error('Erreur lors de la déconnexion:', error);
-                window.location.reload();
-            }
-        });
-        
         // Gestion des onglets
         navTabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -699,10 +631,6 @@
         });
         
         // Fonctions pour gérer les utilisateurs
-        // Dans une vraie application, vous utiliseriez une base de données pour stocker ces informations
-        // Ici, nous utilisons localStorage pour simuler une persistance des données
-        
-        // Fonctions de gestion des utilisateurs
         function getUsers() {
             // Récupérer les utilisateurs du localStorage
             const users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -725,9 +653,6 @@
             const users = JSON.parse(localStorage.getItem('users') || '[]');
             
             // Approuver l'utilisateur
-            approvedUsers[userId] = true;
-            
-            // Enregistrer la date d'approbation
             const approvalDate = new Date().toISOString();
             approvedUsers[userId] = { approved: true, approvedAt: approvalDate };
             
@@ -796,7 +721,7 @@
             
             // Créer le contenu HTML
             userDetailContent.innerHTML = `
-                <div class="user-info" style="margin-bottom: 1.5rem;">
+                <div class="user-info" style="margin-bottom: var(--spacing-lg);">
                     <div class="user-avatar">${getInitials(user.name)}</div>
                     <div class="user-details">
                         <h3>${user.name}</h3>
@@ -833,9 +758,6 @@
         // Chargement des utilisateurs
         async function loadUsers() {
             try {
-                // Dans une vraie application, vous feriez une requête à votre base de données
-                // Ici, nous allons simuler avec les utilisateurs enregistrés dans le localStorage
-                
                 // Simuler l'attente d'une requête réseau
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
