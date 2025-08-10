@@ -16,10 +16,7 @@ app.get('*', (req, res) => {
     const validRoutes = {
         '/': 'index.html',
         '/index': 'index.html',
-        '/login': 'index.html',
-        '/dashboard': 'dashboard.html',
-        '/admin': 'admin.html',
-        '/signup': 'signup.html',
+        '/blog': 'blog.html',
         '/404': '404.html'
     };
     
@@ -60,9 +57,7 @@ app.use((req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log('Available routes:');
-    console.log('- / (login page)');
-    console.log('- /dashboard (user dashboard)');
-    console.log('- /admin (admin panel)');
-    console.log('- /signup (registration page)');
+    console.log('- / (home)');
+    console.log('- /blog (blog listing)');
     console.log('- /404 (error page)');
 });

@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "introducing-me",
+    "title": "Introducing Me",
+    "date": "2025-08-10",
+    "readTime": "2 min read",
+    "excerpt": "A short hello and what I plan to write about here."
+  },
+  {
+    "slug": "building-things",
+    "title": "On Building Things",
+    "date": "2025-08-09",
+    "readTime": "4 min read",
+    "excerpt": "Notes on learning by shipping small projects consistently."
+  }
+]

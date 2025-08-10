@@ -1,272 +1,155 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
-    <!-- Appwrite SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
-    <!-- Router doit être chargé après le DOM -->
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home • About Me & Blog</title>
+  <meta name="description" content="Personal website: About me, projects, and blog posts.">
+  <style>
+    :root {
+      --bg: #0f1226;
+      --bg-alt: #151838;
+      --text: #e7e8ee;
+      --muted: #a7abc7;
+      --primary: #7c5cff;
+      --primary-2: #5ec2ff;
+      --card: #1b1f45;
+      --border: #2a2f63;
+    }
+    * { box-sizing: border-box }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(124,92,255,.18), transparent 60%),
+                  radial-gradient(1000px 500px at 100% 10%, rgba(94,194,255,.18), transparent 60%),
+                  linear-gradient(180deg, var(--bg), var(--bg-alt));
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none }
+    a:hover { text-decoration: underline }
+    header {
+      max-width: 980px; margin: 0 auto; padding: 20px 16px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px }
+    .brand .avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-2)); display: grid; place-items: center; color: #0e1023; font-weight: 800 }
+    nav { display: flex; gap: 16px; font-weight: 600 }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .hero { max-width: 980px; margin: 32px auto 16px; padding: 0 16px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px }
+    .hero-card { background: rgba(27,31,69,.7); border: 1px solid var(--border); border-radius: 16px; padding: 24px }
+    .hero h1 { font-size: 36px; margin: 6px 0 10px }
+    .hero p { color: var(--muted); line-height: 1.6 }
+    .cta { margin-top: 16px; display: flex; gap: 10px }
+    .btn { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: #0f132e; color: var(--text); font-weight: 700 }
+    .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #0f1226; border-color: transparent }
 
-        .login-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
+    .section { max-width: 980px; margin: 24px auto; padding: 0 16px }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px }
+    .card { background: rgba(27,31,69,.7); border: 1px solid var(--border); border-radius: 14px; padding: 16px; transition: transform .2s ease }
+    .card:hover { transform: translateY(-3px) }
+    .meta { color: var(--muted); font-size: 13px }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+    footer { border-top: 1px solid var(--border); margin-top: 32px; padding: 20px 16px; color: var(--muted) }
 
-        .login-header h1 {
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .login-header p {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-group input:focus + .focus-border {
-            transform: scaleX(1);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-        }
-
-        .remember-me input {
-            margin-right: 0.5rem;
-        }
-
-        .forgot-password {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .forgot-password:hover {
-            text-decoration: underline;
-        }
-
-        .signup-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .signup-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .signup-link a:hover {
-            text-decoration: underline;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 0.75rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            border-left: 4px solid #c33;
-            display: none;
-        }
-        
-        #loading-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(to right, #667eea, #764ba2);
-            z-index: 9999;
-            display: none;
-        }
-    </style>
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr }
+      .grid { grid-template-columns: 1fr }
+    }
+  </style>
 </head>
 <body>
-    <!-- Indicateur de chargement pour le routeur -->
-    <div id="loading-indicator"></div>
-    
-    <!-- Conteneur principal pour le routeur -->
-    <div id="content">
-        <div class="login-container">
-            <div class="login-header">
-                <h1>Connexion</h1>
-                <p>Connectez-vous à votre compte</p>
-            </div>
-
-            <div class="error-message" id="errorMessage">
-                Email ou mot de passe incorrect
-            </div>
-
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-
-                <div class="form-options">
-                    <div class="remember-me">
-                        <input type="checkbox" id="remember" name="remember">
-                        <label for="remember">Se souvenir de moi</label>
-                    </div>
-                    <a href="#" class="forgot-password">Mot de passe oublié ?</a>
-                </div>
-
-                <button type="submit" class="btn">Se connecter</button>
-            </form>
-
-            <div class="signup-link">
-                Pas encore de compte ? <a href="/signup" onclick="event.preventDefault(); navigateTo('/signup');">Créer un compte</a>
-            </div>
-        </div>
+  <header>
+    <div class="brand">
+      <div class="avatar">∴</div>
+      <div>My Name</div>
     </div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/blog">Blog</a>
+      <a href="#projects">Projects</a>
+      <a href="mailto:me@example.com">Contact</a>
+    </nav>
+  </header>
 
-    <!-- Router doit être chargé avant le script principal -->
-    <script src="js/router.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialisation Appwrite
-            const client = new Appwrite.Client()
-                .setEndpoint('https://nyc.cloud.appwrite.io/v1')
-                .setProject('ssaad');
-            const account = new Appwrite.Account(client);
+  <main>
+    <section class="hero">
+      <div class="hero-card">
+        <div class="meta">Hello, I'm</div>
+        <h1>Your Name</h1>
+        <p>
+          I’m a developer who enjoys building delightful products and writing about
+          engineering, tools, and learning in public. This is my corner of the internet
+          where I share notes, projects, and ideas.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="/blog">Read the blog</a>
+          <a class="btn" href="#projects">See projects</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3 style="margin:0 0 8px">Now</h3>
+        <p class="meta">What I'm focused on</p>
+        <ul style="margin:12px 0 0 18px; line-height:1.7">
+          <li>Shipping small things weekly</li>
+          <li>Deep-diving into web performance</li>
+          <li>Writing short, useful posts</li>
+        </ul>
+      </div>
+    </section>
 
-            document.getElementById('loginForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const errorMessage = document.getElementById('errorMessage');
-                
-                try {
-                    await account.createEmailSession(email, password);
-                    
-                    // Vérifier si l'utilisateur est un administrateur
-                    const user = await account.get();
-                    const ADMIN_EMAILS = ['admin@ssaad.me', 'saadkolii27@gmail.com']; // Remplacez par vos emails d'administrateurs
-                    
-                    if (ADMIN_EMAILS.includes(user.email)) {
-                        // Rediriger vers le panneau d'administration
-                        navigateTo('/admin');
-                    } else {
-                        // Rediriger vers le tableau de bord utilisateur
-                        navigateTo('/dashboard');
-                    }
-                } catch (err) {
-                    console.error('Login error:', err);
-                    errorMessage.style.display = 'block';
-                    
-                    // Handle specific Appwrite errors
-                    if (err.code === 401) {
-                        errorMessage.textContent = 'Email ou mot de passe incorrect';
-                    } else if (err.code === 404) {
-                        errorMessage.textContent = 'Compte non trouvé';
-                    } else if (err.message && err.message.includes('general_route_not_found')) {
-                        errorMessage.textContent = 'Erreur de connexion au serveur';
-                    } else {
-                        errorMessage.textContent = err.message || 'Erreur de connexion';
-                    }
-                    
-                    setTimeout(() => {
-                        errorMessage.style.display = 'none';
-                    }, 3000);
-                }
-            });
+    <section class="section" id="latest">
+      <h2 style="margin:0 0 12px">Latest posts</h2>
+      <div id="posts" class="grid"></div>
+    </section>
 
-            // Masquer le message d'erreur lors de la saisie
-            document.getElementById('email').addEventListener('input', function() {
-                document.getElementById('errorMessage').style.display = 'none';
-            });
+    <section class="section" id="projects">
+      <h2 style="margin:0 0 12px">Projects</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Project One</h3>
+          <p class="meta">A short description of something cool you built.</p>
+        </div>
+        <div class="card">
+          <h3>Project Two</h3>
+          <p class="meta">Another concise description goes here.</p>
+        </div>
+        <div class="card">
+          <h3>Project Three</h3>
+          <p class="meta">Add, remove, or rename as you like.</p>
+        </div>
+      </div>
+    </section>
+  </main>
 
-            document.getElementById('password').addEventListener('input', function() {
-                document.getElementById('errorMessage').style.display = 'none';
-            });
-        });
-    </script>
+  <footer>
+    © <span id="year"></span> Your Name. All rights reserved.
+  </footer>
+
+  <script>
+    const year = new Date().getFullYear();
+    document.getElementById('year').textContent = year;
+
+    async function loadPosts() {
+      try {
+        const res = await fetch('/posts/posts.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to load posts');
+        const posts = await res.json();
+        const latest = posts.slice(0, 3);
+        const container = document.getElementById('posts');
+        container.innerHTML = latest.map(p => `
+          <article class="card">
+            <a href="/posts/${p.slug}.html" style="display:block">
+              <h3 style="margin:0 0 6px">${p.title}</h3>
+              <div class="meta">${new Date(p.date).toLocaleDateString()} • ${p.readTime || '3 min read'}</div>
+              <p style="margin:10px 0 0">${p.excerpt}</p>
+            </a>
+          </article>
+        `).join('');
+      } catch (e) {
+        document.getElementById('posts').innerHTML = '<div class="card">No posts yet. Coming soon.</div>'
+      }
+    }
+    loadPosts();
+  </script>
 </body>
 </html>

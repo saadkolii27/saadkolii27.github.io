@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog</title>
+  <meta name="description" content="Blog posts by Your Name.">
+  <style>
+    :root{--bg:#0f1226;--text:#e7e8ee;--muted:#a7abc7;--card:#1b1f45;--border:#2a2f63;--primary:#7c5cff;--primary-2:#5ec2ff}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto;color:var(--text);background:linear-gradient(180deg,#0f1226,#151838)}
+    a{color:var(--primary);text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{max-width:980px;margin:0 auto;padding:20px 16px;display:flex;align-items:center;justify-content:space-between}
+    .brand{font-weight:800}
+    .section{max-width:980px;margin:12px auto 24px;padding:0 16px}
+    .search{display:flex;gap:8px;margin:8px 0 16px}
+    input[type="search"]{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0f132e;color:var(--text)}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .card{background:rgba(27,31,69,.7);border:1px solid var(--border);border-radius:14px;padding:16px}
+    .meta{color:var(--muted);font-size:13px}
+    @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><a href="/">← Home</a></div>
+    <nav><a href="/blog">Blog</a></nav>
+  </header>
+
+  <main class="section">
+    <h1 style="margin:0 0 6px">Blog</h1>
+    <p class="meta">Thoughts on code, tools, and learning.</p>
+
+    <div class="search">
+      <input id="q" type="search" placeholder="Search posts..." aria-label="Search posts" />
+    </div>
+
+    <div id="list" class="grid"></div>
+  </main>
+
+  <script>
+    let allPosts=[];
+    function render(posts){
+      const list=document.getElementById('list');
+      if(!posts.length){list.innerHTML='<div class="card">No posts found.</div>';return}
+      list.innerHTML=posts.map(p=>`
+        <article class="card">
+          <a href="/posts/${p.slug}.html" style="display:block">
+            <h3 style="margin:0 0 6px">${p.title}</h3>
+            <div class="meta">${new Date(p.date).toLocaleDateString()} • ${p.readTime||'3 min read'}</div>
+            <p style="margin:10px 0 0">${p.excerpt}</p>
+          </a>
+        </article>
+      `).join('');
+    }
+    async function load(){
+      try{
+        const res=await fetch('/posts/posts.json',{cache:'no-store'});
+        allPosts=await res.json();
+        render(allPosts);
+      }catch(e){render([])}
+    }
+    document.getElementById('q').addEventListener('input',e=>{
+      const q=e.target.value.toLowerCase().trim();
+      if(!q){render(allPosts);return}
+      render(allPosts.filter(p=>p.title.toLowerCase().includes(q)||p.excerpt.toLowerCase().includes(q)));
+    });
+    load();
+  </script>
+</body>
+</html>
