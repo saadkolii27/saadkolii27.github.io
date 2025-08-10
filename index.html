@@ -3,174 +3,445 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <title>SSAAD - Solutions Innovantes et Durables</title>
+    <meta name="description" content="SSAAD est votre partenaire de confiance pour des solutions innovantes et durables. Développement web, applications mobiles, solutions cloud et consulting.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Appwrite SDK -->
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
-    <!-- Router doit être chargé après le DOM -->
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Custom styles for this page -->
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: var(--spacing-20) 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: var(--max-width-2xl);
+            margin: 0 auto;
+            padding: 0 var(--spacing-4);
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: var(--spacing-6);
+            line-height: 1.1;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            margin-bottom: var(--spacing-8);
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: var(--spacing-4);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .features-section {
+            padding: var(--spacing-20) 0;
+            background-color: var(--gray-50);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-8);
+            margin-top: var(--spacing-12);
+        }
+        
+        .feature-card {
+            background: var(--white);
+            padding: var(--spacing-8);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            transition: all var(--transition-normal);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-color);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--spacing-6);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--white);
         }
-
+        
+        .feature-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-4);
+            color: var(--gray-900);
+        }
+        
+        .feature-description {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+        
+        .cta-section {
+            padding: var(--spacing-20) 0;
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+            color: var(--white);
+            text-align: center;
+        }
+        
+        .cta-content {
+            max-width: var(--max-width-lg);
+            margin: 0 auto;
+            padding: 0 var(--spacing-4);
+        }
+        
+        .cta-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-6);
+            color: var(--white);
+        }
+        
+        .cta-description {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-8);
+            opacity: 0.9;
+        }
+        
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+        }
+        
+        .login-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
         .login-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            background: var(--white);
+            padding: var(--spacing-8);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
             width: 100%;
             max-width: 400px;
+            transform: scale(0.9);
+            transition: transform var(--transition-normal);
         }
-
+        
+        .login-modal.active .login-container {
+            transform: scale(1);
+        }
+        
         .login-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: var(--spacing-6);
         }
-
-        .login-header h1 {
-            color: #333;
-            margin-bottom: 0.5rem;
+        
+        .login-header h2 {
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-2);
         }
-
+        
         .login-header p {
-            color: #666;
-            font-size: 0.9rem;
+            color: var(--gray-600);
         }
-
+        
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--spacing-6);
         }
-
-        .form-group label {
+        
+        .form-label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
+            margin-bottom: var(--spacing-2);
+            color: var(--gray-700);
             font-weight: 500;
         }
-
-        .form-group input {
+        
+        .form-input {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
+            padding: var(--spacing-3);
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
         }
-
-        .form-group input:focus {
+        
+        .form-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(102 126 234 / 0.1);
         }
-
-        .form-group input:focus + .focus-border {
-            transform: scaleX(1);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
+        
         .form-options {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
+            margin-bottom: var(--spacing-6);
+            font-size: var(--font-size-sm);
         }
-
+        
         .remember-me {
             display: flex;
             align-items: center;
+            gap: var(--spacing-2);
         }
-
-        .remember-me input {
-            margin-right: 0.5rem;
-        }
-
+        
         .forgot-password {
-            color: #667eea;
+            color: var(--primary-color);
             text-decoration: none;
         }
-
+        
         .forgot-password:hover {
             text-decoration: underline;
         }
-
+        
         .signup-link {
             text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #666;
+            margin-top: var(--spacing-6);
+            font-size: var(--font-size-sm);
+            color: var(--gray-600);
         }
-
+        
         .signup-link a {
-            color: #667eea;
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: 600;
         }
-
+        
         .signup-link a:hover {
             text-decoration: underline;
         }
-
+        
         .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 0.75rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            border-left: 4px solid #c33;
+            background: #fef2f2;
+            color: var(--error-color);
+            padding: var(--spacing-3);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-4);
+            border-left: 4px solid var(--error-color);
             display: none;
+            font-size: var(--font-size-sm);
         }
         
-        #loading-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(to right, #667eea, #764ba2);
-            z-index: 9999;
-            display: none;
+        .close-modal {
+            position: absolute;
+            top: var(--spacing-4);
+            right: var(--spacing-4);
+            background: none;
+            border: none;
+            font-size: var(--font-size-xl);
+            color: var(--gray-500);
+            cursor: pointer;
+            padding: var(--spacing-2);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+        
+        .close-modal:hover {
+            background-color: var(--gray-100);
+            color: var(--gray-700);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: var(--spacing-16) 0;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-6);
+            }
+            
+            .feature-card {
+                padding: var(--spacing-6);
+            }
+            
+            .login-container {
+                margin: var(--spacing-4);
+                padding: var(--spacing-6);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-section {
+                padding: var(--spacing-12) 0;
+            }
+            
+            .features-section,
+            .cta-section {
+                padding: var(--spacing-12) 0;
+            }
+            
+            .feature-card {
+                padding: var(--spacing-4);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Indicateur de chargement pour le routeur -->
+    <!-- Loading indicator -->
     <div id="loading-indicator"></div>
     
-    <!-- Conteneur principal pour le routeur -->
+    <!-- Main content -->
     <div id="content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Solutions Innovantes et Durables</h1>
+                <p class="hero-subtitle">
+                    SSAAD est votre partenaire de confiance pour transformer vos idées en réalité. 
+                    Nous créons des solutions numériques qui propulsent votre entreprise vers l'avenir.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-lg" onclick="openLoginModal()">
+                        Se connecter
+                    </button>
+                    <a href="/signup" class="btn btn-outline btn-lg" onclick="event.preventDefault(); navigateTo('/signup');">
+                        Créer un compte
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Pourquoi choisir SSAAD ?</h2>
+                    <p class="section-subtitle">
+                        Nous combinons expertise technique, innovation et approche centrée sur l'utilisateur 
+                        pour créer des solutions qui font la différence.
+                    </p>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                                <path d="M2 17L12 22L22 17"/>
+                                <path d="M2 12L12 17L22 12"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Développement Web</h3>
+                        <p class="feature-description">
+                            Sites web modernes, applications web progressives et solutions e-commerce 
+                            sur mesure pour votre entreprise.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                                <line x1="12" y1="18" x2="12.01" y2="18"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Applications Mobiles</h3>
+                        <p class="feature-description">
+                            Applications iOS et Android natives et cross-platform qui offrent 
+                            une expérience utilisateur exceptionnelle.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Solutions Cloud</h3>
+                        <p class="feature-description">
+                            Infrastructure cloud scalable, migration de données et solutions 
+                            de sauvegarde sécurisées pour votre entreprise.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2 class="cta-title">Prêt à commencer votre projet ?</h2>
+                <p class="cta-description">
+                    Rejoignez des centaines d'entreprises qui font confiance à SSAAD pour 
+                    leurs solutions numériques. Commencez dès aujourd'hui !
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-lg" onclick="openLoginModal()">
+                        Commencer maintenant
+                    </button>
+                    <a href="/contact" class="btn btn-outline btn-lg" onclick="event.preventDefault(); navigateTo('/contact');">
+                        Nous contacter
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
         <div class="login-container">
+            <button class="close-modal" onclick="closeLoginModal()">&times;</button>
+            
             <div class="login-header">
-                <h1>Connexion</h1>
+                <h2>Connexion</h2>
                 <p>Connectez-vous à votre compte</p>
             </div>
 
@@ -180,13 +451,13 @@
 
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" required>
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" id="password" name="password" class="form-input" required>
                 </div>
 
                 <div class="form-options">
@@ -197,44 +468,77 @@
                     <a href="#" class="forgot-password">Mot de passe oublié ?</a>
                 </div>
 
-                <button type="submit" class="btn">Se connecter</button>
+                <button type="submit" class="btn btn-primary w-full">Se connecter</button>
             </form>
 
             <div class="signup-link">
-                Pas encore de compte ? <a href="/signup" onclick="event.preventDefault(); navigateTo('/signup');">Créer un compte</a>
+                Pas encore de compte ? <a href="/signup" onclick="event.preventDefault(); closeLoginModal(); navigateTo('/signup');">Créer un compte</a>
             </div>
         </div>
     </div>
 
-    <!-- Router doit être chargé avant le script principal -->
+    <!-- Scripts -->
     <script src="js/router.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/footer.js"></script>
     
     <script>
+        // Modal functions
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLoginModal();
+            }
+        });
+        
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialisation Appwrite
+            // Initialize Appwrite
             const client = new Appwrite.Client()
                 .setEndpoint('https://nyc.cloud.appwrite.io/v1')
                 .setProject('ssaad');
             const account = new Appwrite.Account(client);
 
+            // Handle login form submission
             document.getElementById('loginForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
                 const errorMessage = document.getElementById('errorMessage');
+                const submitButton = this.querySelector('button[type="submit"]');
+                
+                // Show loading state
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="spinner"></span> Connexion...';
                 
                 try {
                     await account.createEmailSession(email, password);
                     
-                    // Vérifier si l'utilisateur est un administrateur
+                    // Check if user is admin
                     const user = await account.get();
-                    const ADMIN_EMAILS = ['admin@ssaad.me', 'saadkolii27@gmail.com']; // Remplacez par vos emails d'administrateurs
+                    const ADMIN_EMAILS = ['admin@ssaad.me', 'saadkolii27@gmail.com'];
+                    
+                    closeLoginModal();
                     
                     if (ADMIN_EMAILS.includes(user.email)) {
-                        // Rediriger vers le panneau d'administration
                         navigateTo('/admin');
                     } else {
-                        // Rediriger vers le tableau de bord utilisateur
                         navigateTo('/dashboard');
                     }
                 } catch (err) {
@@ -255,10 +559,14 @@
                     setTimeout(() => {
                         errorMessage.style.display = 'none';
                     }, 3000);
+                } finally {
+                    // Reset button state
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = 'Se connecter';
                 }
             });
 
-            // Masquer le message d'erreur lors de la saisie
+            // Hide error message on input
             document.getElementById('email').addEventListener('input', function() {
                 document.getElementById('errorMessage').style.display = 'none';
             });
