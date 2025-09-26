@@ -1,3 +1,12 @@
+
+# Déploiement statique : ignorer les dossiers non frontend
+/commit
+/backend
+/node_modules
+*.log
+.env
+package-lock.json
+
 # Ignorer les dossiers de certificats et de configuration sensible
 ssaad-me/
 *.crt

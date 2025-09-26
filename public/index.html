@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle Page</title>
+</head>
+<body>
+    <h1>Tests de Debug (Frontend & Backend)</h1>
+    <section>
+        <h2>Backend</h2>
+        <button onclick="testAppwriteHealth()">Tester Appwrite Health</button>
+        <div id="result-appwrite"></div>
+        <button onclick="testRegister()">Tester API Register</button>
+        <div id="result-register"></div>
+    </section>
+    <section>
+        <h2>Frontend</h2>
+        <button onclick="testFrontend()">Tester JS Frontend</button>
+        <div id="result-frontend"></div>
+    </section>
+    <script>
+    async function testAppwriteHealth() {
+        const result = document.getElementById('result-appwrite');
+        result.textContent = 'Test en cours...';
+        try {
+            const res = await fetch('https://nyc.cloud.appwrite.io/v1/health');
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            result.textContent = 'Succès : ' + JSON.stringify(data);
+        } catch (e) {
+            result.textContent = 'Erreur : ' + e;
+        }
+    }
+
+    async function testRegister() {
+        const result = document.getElementById('result-register');
+        result.textContent = 'Test en cours...';
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: 'test@debug.com', password: 'azerty123', name: 'Debug' })
+            });
+            const data = await res.json();
+            result.textContent = 'Réponse : ' + JSON.stringify(data);
+        } catch (e) {
+            result.textContent = 'Erreur : ' + e;
+        }
+    }
+
+    function testFrontend() {
+        const result = document.getElementById('result-frontend');
+        try {
+            let sum = 2 + 2;
+            result.textContent = 'JS OK, 2+2=' + sum;
+        } catch (e) {
+            result.textContent = 'Erreur JS : ' + e;
+        }
+    }
+    </script>
+</body>
+</html>
