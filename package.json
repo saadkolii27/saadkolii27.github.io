@@ -1,0 +1,19 @@
+{
+  "name": "appwrite-server",
+  "version": "1.0.0",
+  "description": "Server utilities for Appwrite application",
+  "main": "index.js",
+  "scripts": {
+    "start": "echo 'Server utilities package - no main server file'",
+    "dev": "echo 'Server utilities package - no main server file'"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "node-appwrite": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}

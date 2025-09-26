@@ -1,0 +1,23 @@
+# Ignorer les dossiers de certificats et de configuration sensible
+ssaad-me/
+*.crt
+*.key
+*.pem
+*.ca-bundle
+
+# Fichiers d'environnement
+.env
+*.env
+SET.env
+server/.env
+
+# Node.js
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fichiers système
+.DS_Store
+Thumbs.db
