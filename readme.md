@@ -1,26 +1,41 @@
-# Javascript starter kit with Appwrite
+# Saad Kolii - Personal Website
 
-Kickstart your Javascript development with this ready-to-use starter project integrated with [Appwrite](https://www.appwrite.io)
+Welcome to my personal website repository! This is a fresh start for my GitHub Pages site.
 
-## 🚀Getting started
+## 🏠 About
 
-###
-Clone the Project
-Clone this repository to your local machine using Git:
+This is my personal website hosted at [ssaad.me](https://ssaad.me) via GitHub Pages.
 
-`git clone https://github.com/appwrite/starter-for-js`
+## 🚀 Status
 
-## 🛠️ Development guid
-1. **Configure Appwrite**<br/>
-   Navigate to `.env` and update the values to match your Appwrite project credentials.
-2. **Customize as needed**<br/>
-   Modify the starter kit to suit your app's requirements. Adjust UI, features, or backend
-   integrations as per your needs.
-3. **Install dependencies**<br/>
-   Run `npm install` to install all dependencies.
-4. **Run the app**<br/>
-   Start the project by running `npm run dev`.
+Currently undergoing a complete rebuild from the ground up. The site now features a clean, minimal design while I work on new content and features.
 
-## 💡 Additional notes
-- This starter project is designed to streamline your Javascript development with Appwrite.
-- Refer to the [Appwrite documentation](https://appwrite.io/docs) for detailed integration guidance.
+## 📝 What's Coming
+
+This space will be updated with:
+- Personal projects and portfolio
+- Blog posts and articles
+- Professional information
+- And much more!
+
+## 🛠️ Development
+
+This is a simple static website. To run locally:
+
+```bash
+# Option 1: Using Python
+python -m http.server 8000
+
+# Option 2: Using Node.js
+npx serve .
+
+# Then open http://localhost:8000
+```
+
+## 📄 License
+
+MIT License - see LICENSE file for details.
+
+---
+
+**Note**: This repository recently underwent a complete reset to start fresh. The previous complex application has been replaced with a clean, minimal approach.
