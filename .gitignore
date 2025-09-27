@@ -27,3 +27,11 @@ build/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# WebMonitor data files
+monitored-sites.json
+users.json
+sessions.json
+
+# Vite
+.vite/

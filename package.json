@@ -1,16 +1,33 @@
 {
   "name": "saadkolii27.github.io",
   "version": "1.0.0",
-  "description": "Personal website for Saad Kolii",
+  "description": "WebMonitor - Professional Website Change Monitoring Service",
   "main": "index.html",
+  "type": "module",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "start": "python -m http.server 8000",
-    "dev": "python -m http.server 8000"
+    "api": "node api-server.js",
+    "monitor": "node monitor-service.js daemon",
+    "add-site": "node monitor-service.js add",
+    "list-sites": "node monitor-service.js list"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/saadkolii27/saadkolii27.github.io.git"
   },
   "author": "Saad Kolii",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": ["website-monitoring", "change-detection", "notifications", "web-service", "appwrite"],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "appwrite": "^16.0.2"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
 }
