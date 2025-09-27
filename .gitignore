@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 .env
+# Ignorer le sous-module starter-for-js
+starter-for-js/
