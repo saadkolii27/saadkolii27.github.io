@@ -159,45 +159,132 @@ export class UIManager {
             minute: '2-digit'
         });
 
+        // Calculate total available tickets
+        const totalTickets = event.ticketPrices.reduce((sum, ticket) => sum + ticket.available, 0);
+        const availabilityStatus = totalTickets > 100 ? 'Available' : totalTickets > 0 ? 'Limited' : 'Sold Out';
+
         return `
             <div class="event-card">
-                <img src="${event.image || 'https://via.placeholder.com/400x200/800000/ffffff?text=CAF+Event'}" alt="${event.title}" class="event-image">
-                <div class="event-info">
+                <div class="event-header">
+                    <div class="event-badge">${availabilityStatus}</div>
                     <h3 class="event-title">${event.title}</h3>
-                    <p class="event-description">${event.description}</p>
-                    <div class="event-details">
-                        <div class="event-detail">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>${event.venue}, ${event.city}</span>
+                    <p class="event-subtitle">${event.venue} • ${event.city}</p>
+                </div>
+                
+                <div class="event-content">
+                    <div class="event-info-section">
+                        <p class="event-description">${event.description}</p>
+                        
+                        <div class="event-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>${formattedDate}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>${formattedTime}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${event.venue}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>${totalTickets} tickets available</span>
+                            </div>
                         </div>
-                        <div class="event-detail">
-                            <i class="fas fa-calendar"></i>
-                            <span>${formattedDate}</span>
+                        
+                        <div class="additional-info">
+                            <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Event Details</h4>
+                            <ul style="list-style: none; padding: 0; color: #64748b; font-size: 0.9rem;">
+                                <li style="margin-bottom: 0.25rem;">🏆 Official CAF Tournament Match</li>
+                                <li style="margin-bottom: 0.25rem;">🎫 E-tickets with QR codes</li>
+                                <li style="margin-bottom: 0.25rem;">📱 Mobile entry supported</li>
+                                <li style="margin-bottom: 0.25rem;">🔄 Refunds available until 24h before</li>
+                            </ul>
                         </div>
-                        <div class="event-detail">
-                            <i class="fas fa-clock"></i>
-                            <span>${formattedTime}</span>
+                    </div>
+                    
+                    <div class="event-booking-section">
+                        <div class="ticket-selection-header">
+                            <h4 style="font-weight: 700; color: #1e293b; margin: 0;">Select Tickets</h4>
+                            <p style="font-size: 0.85rem; color: #64748b; margin: 0.5rem 0 0 0;">Choose your preferred seating category</p>
+                        </div>
+                        
+                        <div class="ticket-options">
+                            ${event.ticketPrices.map(ticket => `
+                                <div class="ticket-option" data-event-id="${event.$id}" data-category="${ticket.category}">
+                                    <div class="ticket-info">
+                                        <div class="ticket-category">${ticket.category}</div>
+                                        <div class="ticket-description">${this.getTicketDescription(ticket.category)}</div>
+                                        <div class="ticket-availability">${ticket.available} tickets remaining</div>
+                                    </div>
+                                    <div class="ticket-price-section">
+                                        <div class="ticket-price">$${ticket.price}</div>
+                                        <div class="quantity-selector">
+                                            <button type="button" class="quantity-btn" onclick="this.parentNode.parentNode.parentNode.querySelector('.quantity-input').stepDown()">-</button>
+                                            <input type="number" class="quantity-input" value="1" min="1" max="10">
+                                            <button type="button" class="quantity-btn" onclick="this.parentNode.parentNode.parentNode.querySelector('.quantity-input').stepUp()">+</button>
+                                        </div>
+                                        <button onclick="window.uiManager.addToCartAdvanced('${event.$id}', '${ticket.category}', ${ticket.price}, '${event.title}', '${event.venue}', '${event.date}', this)" 
+                                                class="btn-add-cart">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="booking-summary" style="display: none;" id="summary-${event.$id}">
+                            <h5 style="font-weight: 600; color: #1e293b; margin: 0 0 1rem 0;">Selection Summary</h5>
+                            <div class="summary-items"></div>
+                            <div class="summary-total">
+                                <span>Total</span>
+                                <span class="total-amount">$0</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="tickets-section">
-                    ${event.ticketPrices.map(ticket => `
-                        <div class="ticket-option">
-                            <div>
-                                <span class="ticket-category">${ticket.category}</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="ticket-price">$${ticket.price}</span>
-                                <button onclick="window.uiManager.addToCart('${event.$id}', '${ticket.category}', ${ticket.price}, '${event.title}', '${event.venue}', '${event.date}')" 
-                                        class="btn-add-cart">
-                                    Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
             </div>
         `;
+    }
+
+    getTicketDescription(category) {
+        const descriptions = {
+            'VIP': 'Premium seating with exclusive amenities and hospitality',
+            'Premium': 'Excellent view with comfortable seating and easy access',
+            'Standard': 'Great atmosphere with good view of the action'
+        };
+        return descriptions[category] || 'Quality seating for an unforgettable experience';
+    }
+
+    addToCartAdvanced(eventId, category, price, eventTitle, venue, date, buttonElement) {
+        const quantityInput = buttonElement.parentNode.querySelector('.quantity-input');
+        const quantity = parseInt(quantityInput.value) || 1;
+        
+        for (let i = 0; i < quantity; i++) {
+            this.app.cartService.addItem({
+                eventId,
+                category,
+                price,
+                eventTitle,
+                venue,
+                date,
+                quantity: 1
+            });
+        }
+        
+        // Visual feedback
+        const originalText = buttonElement.textContent;
+        buttonElement.textContent = 'Added!';
+        buttonElement.style.background = '#047857';
+        
+        setTimeout(() => {
+            buttonElement.textContent = originalText;
+            buttonElement.style.background = '#059669';
+        }, 1500);
+        
+        this.showSuccessMessage(`${quantity} ${category} ticket${quantity > 1 ? 's' : ''} added to cart!`);
     }
 
     async getCartView() {
