@@ -1,4 +1,4 @@
-# Saad Kolii - Personal Website
+# ssaad - Personal Website
 
 Welcome to my personal website repository! This is a fresh start for my GitHub Pages site.
 
