@@ -21,19 +21,19 @@ export class UIManager {
     setupNavigation() {
         const nav = document.querySelector('header');
         nav.innerHTML = `
-            <div class="flex justify-between items-center w-full px-6">
+            <div class="flex justify-between items-center w-full px-6 h-full">
                 <div class="flex items-center">
-                    <img src="https://tickets.cafonline.com/cf_error_pages/assets/img/logo.svg" alt="CAF Logo" class="h-16">
-                    <span class="ml-4 text-xl font-bold text-white">CAF Tickets</span>
+                    <img src="https://tickets.cafonline.com/cf_error_pages/assets/img/logo.svg" alt="CAF Logo" class="h-10 brightness-0 invert">
+                    <span class="ml-3 text-xl font-bold text-white">CAF Tickets</span>
                 </div>
-                <nav class="flex items-center space-x-6">
-                    <a href="#events" class="nav-link text-white hover:text-green-400 transition-colors">Events</a>
+                <nav class="flex items-center space-x-8">
+                    <a href="#events" class="nav-link text-slate-200 hover:text-white transition-colors font-medium">Events</a>
                     <div class="relative">
-                        <a href="#cart" class="nav-link text-white hover:text-green-400 transition-colors flex items-center">
-                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <a href="#cart" class="nav-link text-slate-200 hover:text-white transition-colors flex items-center font-medium">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.68 8.32a2 2 0 002 2.32h9.36a2 2 0 002-2.32L17 13"></path>
                             </svg>
-                            Cart <span id="cart-counter" class="ml-1 bg-red-500 text-white rounded-full px-2 py-1 text-xs hidden">0</span>
+                            Cart <span id="cart-counter" class="ml-2 bg-red-500 text-white rounded-full px-2 py-1 text-xs font-semibold hidden">0</span>
                         </a>
                     </div>
                     <div id="auth-section">
@@ -47,9 +47,9 @@ export class UIManager {
     getLoggedInNav() {
         return `
             <div class="flex items-center space-x-4">
-                <span class="text-white">Welcome, ${this.app.currentUser.name}</span>
-                <a href="#my-tickets" class="nav-link text-white hover:text-green-400 transition-colors">My Tickets</a>
-                <button id="logout-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition-colors">Logout</button>
+                <span class="text-slate-200">Welcome, ${this.app.currentUser.name}</span>
+                <a href="#my-tickets" class="nav-link text-slate-200 hover:text-white transition-colors font-medium">My Tickets</a>
+                <button id="logout-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors font-medium">Logout</button>
             </div>
         `;
     }
@@ -57,8 +57,8 @@ export class UIManager {
     getLoggedOutNav() {
         return `
             <div class="flex items-center space-x-4">
-                <button id="login-btn" class="text-white hover:text-green-400 transition-colors">Login</button>
-                <button id="register-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors">Sign Up</button>
+                <button id="login-btn" class="text-slate-200 hover:text-white transition-colors font-medium">Login</button>
+                <button id="register-btn" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition-colors font-medium">Sign Up</button>
             </div>
         `;
     }
@@ -105,8 +105,8 @@ export class UIManager {
 
     async loadInitialView() {
         const main = document.querySelector('main');
-        main.className = 'container mx-auto px-6 py-8';
-        main.innerHTML = '<div id="app-content"></div>';
+        main.className = 'pt-0 min-h-screen bg-gray-50';
+        main.innerHTML = '<div id="app-content" class="container mx-auto px-6 py-8"></div>';
         
         await this.navigateToView('events');
     }
@@ -138,8 +138,8 @@ export class UIManager {
         const events = await this.app.eventService.getAllEvents();
         return `
             <div class="events-view">
-                <h1 class="text-4xl font-bold text-center mb-8 text-green-400">Upcoming Events</h1>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <h1 class="section-title">Upcoming Events</h1>
+                <div class="events-grid">
                     ${events.map(event => this.getEventCard(event)).join('')}
                 </div>
             </div>
@@ -160,30 +160,41 @@ export class UIManager {
         });
 
         return `
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <img src="${event.image || 'https://via.placeholder.com/400x200'}" alt="${event.title}" class="w-full h-48 object-cover">
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">${event.title}</h3>
-                    <p class="text-gray-600 mb-4">${event.description}</p>
-                    <div class="text-sm text-gray-500 mb-4">
-                        <p><i class="fas fa-map-marker-alt"></i> ${event.venue}, ${event.city}</p>
-                        <p><i class="fas fa-calendar"></i> ${formattedDate}</p>
-                        <p><i class="fas fa-clock"></i> ${formattedTime}</p>
+            <div class="event-card">
+                <img src="${event.image || 'https://via.placeholder.com/400x200/800000/ffffff?text=CAF+Event'}" alt="${event.title}" class="event-image">
+                <div class="event-info">
+                    <h3 class="event-title">${event.title}</h3>
+                    <p class="event-description">${event.description}</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${event.venue}, ${event.city}</span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fas fa-calendar"></i>
+                            <span>${formattedDate}</span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fas fa-clock"></i>
+                            <span>${formattedTime}</span>
+                        </div>
                     </div>
-                    <div class="space-y-2">
-                        ${event.ticketPrices.map(ticket => `
-                            <div class="flex justify-between items-center">
-                                <span class="font-medium">${ticket.category}</span>
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-green-600 font-bold">$${ticket.price}</span>
-                                    <button onclick="window.uiManager.addToCart('${event.$id}', '${ticket.category}', ${ticket.price}, '${event.title}', '${event.venue}', '${event.date}')" 
-                                            class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
-                                        Add to Cart
-                                    </button>
-                                </div>
+                </div>
+                <div class="tickets-section">
+                    ${event.ticketPrices.map(ticket => `
+                        <div class="ticket-option">
+                            <div>
+                                <span class="ticket-category">${ticket.category}</span>
                             </div>
-                        `).join('')}
-                    </div>
+                            <div class="flex items-center gap-3">
+                                <span class="ticket-price">$${ticket.price}</span>
+                                <button onclick="window.uiManager.addToCart('${event.$id}', '${ticket.category}', ${ticket.price}, '${event.title}', '${event.venue}', '${event.date}')" 
+                                        class="btn-add-cart">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         `;
