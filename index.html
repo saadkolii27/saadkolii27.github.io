@@ -1,1529 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebMonitor - Website Change Monitoring Service</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-        
-        :root {
-            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
-            --secondary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            --accent-color: #06b6d4;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --error-color: #ef4444;
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #64748b;
-            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-            --shadow-large: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            --blur-xs: blur(4px);
-            --blur-sm: blur(8px);
-            --blur-md: blur(16px);
-            --border-radius-sm: 8px;
-            --border-radius-md: 12px;
-            --border-radius-lg: 16px;
-            --border-radius-xl: 24px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        *::before,
-        *::after {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-feature-settings: 'cv11', 'ss01';
-            line-height: 1.7;
-            color: var(--text-primary);
-            background: var(--secondary-gradient);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .hero-section {
-            text-align: center;
-            margin-bottom: 4rem;
-            position: relative;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120%;
-            height: 200%;
-            background: var(--primary-gradient);
-            border-radius: 50%;
-            filter: var(--blur-md);
-            opacity: 0.1;
-            z-index: -1;
-        }
-
-        h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 800;
-            line-height: 0.9;
-            margin-bottom: 1.5rem;
-            background: var(--primary-gradient);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 8s ease-in-out infinite;
-            letter-spacing: -0.02em;
-            position: relative;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .subtitle {
-            font-size: 1.25rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 0.3s forwards;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur-sm);
-            border: 1px solid var(--glass-border);
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 3rem;
-            animation: float 3s ease-in-out infinite;
-            box-shadow: var(--shadow-soft);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero-description {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto 3rem;
-            line-height: 1.8;
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 0.6s forwards;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 4rem 0;
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 0.9s forwards;
-        }
-
-        .feature-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur-sm);
-            border: 1px solid var(--glass-border);
-            padding: 2rem;
-            border-radius: var(--border-radius-lg);
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary-gradient);
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-large);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .feature-card .icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            display: block;
-            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
-        }
-
-        .feature-card h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-            line-height: 1.3;
-        }
-
-        .feature-card p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .monitor-form {
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur-sm);
-            border: 1px solid var(--glass-border);
-            padding: 3rem;
-            border-radius: var(--border-radius-xl);
-            margin: 4rem 0;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-medium);
-        }
-
-        .monitor-form::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: var(--primary-gradient);
-        }
-
-        .form-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius-md);
-            font-size: 1rem;
-            color: var(--text-primary);
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            backdrop-filter: var(--blur-xs);
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: var(--text-muted);
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-1px);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .form-actions {
-            text-align: center;
-            margin-top: 2rem;
-        }
-
-        .btn {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem 2.5rem;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: var(--shadow-medium);
-            overflow: hidden;
-            min-width: 200px;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-large);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .status-message {
-            margin-top: 1.5rem;
-            padding: 1rem 1.25rem;
-            border-radius: var(--border-radius-md);
-            font-weight: 500;
-            backdrop-filter: var(--blur-xs);
-            border: 1px solid transparent;
-            animation: slideInUp 0.3s ease-out;
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .status-success {
-            background: rgba(16, 185, 129, 0.15);
-            border-color: rgba(16, 185, 129, 0.3);
-            color: #10b981;
-        }
-
-        .status-error {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-        }
-
-        .status-info {
-            background: rgba(59, 130, 246, 0.15);
-            border-color: rgba(59, 130, 246, 0.3);
-            color: #3b82f6;
-        }
-
-        .monitored-sites {
-            margin-top: 4rem;
-        }
-
-        .section-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .site-list {
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur-sm);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--border-radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .site-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.2s ease;
-        }
-
-        .site-item:last-child {
-            border-bottom: none;
-        }
-
-        .site-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .site-info {
-            flex: 1;
-        }
-
-        .site-url {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-            font-size: 1rem;
-        }
-
-        .site-meta {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .site-status {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-        }
-
-        .status-active {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--success-color);
-        }
-
-        .status-checking {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--warning-color);
-        }
-
-        .status-active::before,
-        .status-checking::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-            animation: pulse 2s infinite;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-muted);
-        }
-
-        .empty-state .icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        /* Authentication Modal Styles */
-        .auth-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: var(--blur-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .auth-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .auth-modal {
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur-md);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--border-radius-xl);
-            padding: 3rem;
-            max-width: 450px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-large);
-            transform: scale(0.9) translateY(20px);
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .auth-overlay.active .auth-modal {
-            transform: scale(1) translateY(0);
-        }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .auth-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .auth-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .auth-tabs {
-            display: flex;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--border-radius-md);
-            padding: 0.25rem;
-            margin-bottom: 2rem;
-        }
-
-        .auth-tab {
-            flex: 1;
-            padding: 0.75rem;
-            text-align: center;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            border-radius: var(--border-radius-sm);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .auth-tab.active {
-            background: var(--primary-gradient);
-            color: white;
-        }
-
-        .auth-form {
-            display: none;
-        }
-
-        .auth-form.active {
-            display: block;
-        }
-
-        .auth-form .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .auth-form .form-group:last-child {
-            margin-bottom: 2rem;
-        }
-
-        .auth-form .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-        }
-
-        .auth-form .form-group input {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius-md);
-            font-size: 1rem;
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-        }
-
-        .auth-form .form-group input:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .auth-form .form-group input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .close-modal:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--text-primary);
-        }
-
-        .auth-footer {
-            text-align: center;
-            margin-top: 2rem;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .auth-footer a {
-            color: #6366f1;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .auth-footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* User Header */
-        .user-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: var(--blur-sm);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 1rem 2rem;
-            z-index: 100;
-            display: none;
-        }
-
-        .user-header.active {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-header .logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: var(--text-primary);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .user-name {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        .user-email {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius-sm);
-            color: var(--text-secondary);
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.2);
-            color: var(--text-primary);
-        }
-
-        /* Authentication Required State */
-        .auth-required {
-            text-align: center;
-            padding: 3rem;
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur-sm);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--border-radius-lg);
-            margin: 2rem 0;
-        }
-
-        .auth-required h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-
-        .auth-required p {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
-        .auth-btn {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius-md);
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0 0.5rem;
-        }
-
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .auth-btn.secondary {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* Adjust container for header */
-        body.authenticated .container {
-            padding-top: 6rem;
-        }
-
-        .footer {
-            margin-top: 4rem;
-            text-align: center;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            padding: 2rem 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            h1 {
-                font-size: clamp(2.5rem, 10vw, 4rem);
-            }
-
-            .features {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .monitor-form {
-                padding: 2rem;
-                margin: 2rem 0;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .site-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .site-meta {
-                gap: 0.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-badge {
-                font-size: 0.875rem;
-                padding: 0.5rem 1rem;
-            }
-
-            .feature-card {
-                padding: 1.5rem;
-            }
-
-            .monitor-form {
-                padding: 1.5rem;
-            }
-        }
-
-        /* High contrast mode */
-        @media (prefers-contrast: high) {
-            :root {
-                --glass-bg: rgba(255, 255, 255, 0.15);
-                --glass-border: rgba(255, 255, 255, 0.25);
-            }
-        }
-
-        /* Reduced motion */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/images/appwrite.svg" />
+  <title>Appwrite + Javascript </title>
+  <link rel="stylesheet" href="./style/app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
+  <link
+          href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:opsz,wght@14..32,100..900&family=Poppins:wght@300;400&display=swap"
+          rel="stylesheet"
+  />
+  <link rel="icon" type="image/svg+xml" href="/appwrite.svg" />
 </head>
-<body>
-    <!-- User Header (shown when authenticated) -->
-    <div class="user-header" id="userHeader">
-        <div class="logo">WebMonitor</div>
-        <div class="user-info">
-            <div class="user-avatar" id="userAvatar"></div>
-            <div>
-                <div class="user-name" id="userName"></div>
-                <div class="user-email" id="userEmail"></div>
-            </div>
-            <button class="logout-btn" id="logoutBtn">Sign Out</button>
-        </div>
+<body class="bg-[#FAFAFB] font-[Inter] text-sm text-[#56565C]">
+<main class="checker-background flex flex-col items-center p-5" id="main">
+  <div class="mt-25 flex w-full max-w-[40em] items-center justify-center lg:mt-34">
+    <div class="rounded-[25%] border border-[#19191C0A] bg-[#F9F9FA] p-3 shadow-[0px_9.36px_9.36px_0px_hsla(0,0%,0%,0.04)]">
+      <div class="rounded-[25%] border border-[#FAFAFB] bg-white p-5 shadow-[0px_2px_12px_0px_hsla(0,0%,0%,0.03)] lg:p-9">
+        <img alt="Javascript logo" src="./images/javascript.svg" class="h-14 w-14" width="56" height="56">
+      </div>
     </div>
-
-    <!-- Authentication Modal -->
-    <div class="auth-overlay" id="authOverlay">
-        <div class="auth-modal">
-            <button class="close-modal" id="closeAuthModal">×</button>
-            
-            <div class="auth-header">
-                <h2 class="auth-title" id="authTitle">Welcome to WebMonitor</h2>
-                <p class="auth-subtitle" id="authSubtitle">Create an account or sign in to start monitoring your websites</p>
-            </div>
-
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="signin">Sign In</button>
-                <button class="auth-tab" data-tab="signup">Sign Up</button>
-            </div>
-
-            <!-- Sign In Form -->
-            <form class="auth-form active" id="signinForm">
-                <div class="form-group">
-                    <label for="signin-email">Email Address</label>
-                    <input type="email" id="signin-email" name="email" placeholder="Enter your email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="signin-password">Password</label>
-                    <input type="password" id="signin-password" name="password" placeholder="Enter your password" required>
-                </div>
-                
-                <button type="submit" class="btn" style="width: 100%;">
-                    <span>Sign In</span>
-                </button>
-            </form>
-
-            <!-- Sign Up Form -->
-            <form class="auth-form" id="signupForm">
-                <div class="form-group">
-                    <label for="signup-name">Full Name</label>
-                    <input type="text" id="signup-name" name="name" placeholder="Enter your full name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="signup-email">Email Address</label>
-                    <input type="email" id="signup-email" name="email" placeholder="Enter your email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" name="password" placeholder="Create a password (min 8 characters)" required minlength="8">
-                </div>
-                
-                <div class="form-group">
-                    <label for="signup-confirm-password">Confirm Password</label>
-                    <input type="password" id="signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
-                </div>
-                
-                <button type="submit" class="btn" style="width: 100%;">
-                    <span>Create Account</span>
-                </button>
-            </form>
-
-            <div class="auth-footer">
-                <p>By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
-            </div>
-        </div>
+    <div class="flex w-38 items-center transition-opacity duration-2500 opacity-0" id="success-icon">
+      <div class="to-[rgba(253, 54, 110, 0.15)] h-[1px] flex-1 bg-gradient-to-l from-[#f02e65]"></div>
+      <div class="icon-check flex h-5 w-5 items-center justify-center rounded-full border border-[#FD366E52] bg-[#FD366E14] text-[#FD366E]"></div>
+      <div class="to-[rgba(253, 54, 110, 0.15)] h-[1px] flex-1 bg-gradient-to-r from-[#f02e65]"></div>
     </div>
-
-    <div class="container">
-        <div class="hero-section">
-            <div class="hero-badge">
-                <span>🔍</span>
-                Monitor Your Websites for Changes
-            </div>
-            <h1>WebMonitor</h1>
-            <p class="subtitle">Professional Website Change Monitoring Service</p>
-            <p class="hero-description">Get notified instantly when content on your monitored websites changes. Perfect for tracking competitors, news sites, or any website updates that matter to your business.</p>
-        </div>
-        
-        <div class="features">
-            <div class="feature-card">
-                <span class="icon">🚀</span>
-                <h3>Real-time Monitoring</h3>
-                <p>Continuous monitoring of website content with intelligent change detection algorithms powered by advanced hashing techniques.</p>
-            </div>
-            <div class="feature-card">
-                <span class="icon">📧</span>
-                <h3>Smart Notifications</h3>
-                <p>Receive instant email alerts and webhook notifications when changes are detected, with customizable frequency and filtering options.</p>
-            </div>
-            <div class="feature-card">
-                <span class="icon">⚡</span>
-                <h3>Fast & Reliable</h3>
-                <p>Lightning-fast checks with 99.9% uptime guarantee, detailed change reports, and enterprise-grade infrastructure.</p>
-            </div>
-        </div>
-
-        <!-- Authentication Required State (shown when not logged in) -->
-        <div class="auth-required" id="authRequired" style="display: none;">
-            <h3>🔐 Account Required</h3>
-            <p>Create an account or sign in to start monitoring your websites and manage your monitoring dashboard.</p>
-            <button class="auth-btn" onclick="showAuthModal('signup')">Create Account</button>
-            <button class="auth-btn secondary" onclick="showAuthModal('signin')">Sign In</button>
-        </div>
-
-        <!-- Monitoring Form (shown when authenticated) -->
-        <div class="monitor-form" id="monitorForm">
-            <h2 class="form-title">Start Monitoring a Website</h2>
-            <form id="monitorFormEl">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="website-url">Website URL to Monitor</label>
-                        <input type="url" id="website-url" name="websiteUrl" placeholder="https://example.com" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="monitor-frequency">Check Frequency</label>
-                        <select id="monitor-frequency" name="monitorFrequency" required>
-                            <option value="5">Every 5 minutes</option>
-                            <option value="15">Every 15 minutes</option>
-                            <option value="30" selected>Every 30 minutes</option>
-                            <option value="60">Every hour</option>
-                            <option value="360">Every 6 hours</option>
-                            <option value="1440">Once daily</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="notification-webhook">Webhook URL (Optional)</label>
-                        <input type="url" id="notification-webhook" name="webhookUrl" placeholder="https://hooks.slack.com/webhook">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="monitoring-notes">Monitoring Notes (Optional)</label>
-                    <textarea id="monitoring-notes" name="notes" placeholder="Specify any particular content areas or elements you want to focus on monitoring..."></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="submit" class="btn" id="submitBtn">
-                        <span>Start Monitoring</span>
-                    </button>
-                </div>
-            </form>
-            
-            <div id="statusMessage" class="status-message" style="display: none;"></div>
-        </div>
-
-        <div class="monitored-sites">
-            <h2 class="section-title">Your Monitored Websites</h2>
-            <div class="site-list" id="siteList">
-                <div class="empty-state">
-                    <div class="icon">🌐</div>
-                    <p>No websites being monitored yet. Add one above to get started!</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>&copy; 2025 WebMonitor. Professional Website Monitoring Service.</p>
-        </div>
+    <div class="rounded-[25%] border border-[#19191C0A] bg-[#F9F9FA] p-3 shadow-[0px_9.36px_9.36px_0px_hsla(0,0%,0%,0.04)]">
+      <div class="rounded-[25%] border border-[#FAFAFB] bg-white p-5 shadow-[0px_2px_12px_0px_hsla(0,0%,0%,0.03)] lg:p-9">
+        <img alt="Appwrite logo" src="./images/appwrite.svg" class="h-14 w-14" width="56" height="56">
+      </div>
     </div>
+  </div>
 
-    <script type="module">
-        // Import Appwrite services
-        import { appwriteService, isAuthenticated } from './appwrite.js';
+  <section class="mt-12 flex h-52 flex-col items-center" id="status-section">
+    <div class="flex flex-row gap-4" id="loading-spinner" style="display: none;">
+      <div role="status">
+        <svg aria-hidden="true" class="h-5 w-5 animate-spin fill-[#FD366E] text-gray-200 dark:text-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+          <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+        </svg>
+        <span class="sr-only">Loading...</span>
+      </div>
+      <span>Waiting for connection...</span>
+    </div>
+    <h1 class="font-[Poppins] text-2xl font-light text-[#2D2D31]" id="status-message">Check connection</h1>
+    <p class="mt-2 mb-8" id="status-description">Send a ping to verify the connection</p>
+    <button class="cursor-pointer rounded-md bg-[#FD366E] px-2.5 py-1.5" id="ping-button">
+      <span class="text-white">Send a ping</span>
+    </button>
+  </section>
 
-        // Authentication and User Management System with Appwrite
-        class AuthManager {
-            constructor() {
-                this.currentUser = null;
-                this.appwrite = appwriteService;
-                this.initializeAuthListeners();
-                this.checkAuthenticationState();
-            }
+  <div class="grid grid-rows-3 gap-7 lg:grid-cols-3 lg:grid-rows-none">
+    <div class="flex h-full w-72 flex-col gap-2 rounded-md border border-[#EDEDF0] bg-white p-4">
+      <h2 class="text-xl font-light text-[#2D2D31]">Edit your app</h2>
+      <p>Edit <code class="rounded-sm bg-[#EDEDF0] p-1">app/page.js</code> to get started with building your app.</p>
+    </div>
+    <a href="https://cloud.appwrite.io" target="_blank" rel="noopener noreferrer">
+      <div class="flex h-full w-72 flex-col gap-2 rounded-md border border-[#EDEDF0] bg-white p-4">
+        <div class="flex flex-row items-center justify-between">
+          <h2 class="text-xl font-light text-[#2D2D31]">Go to console</h2>
+          <span class="icon-arrow-right text-[#D8D8DB]"></span>
+        </div>
+        <p>Navigate to the console to control and oversee the Appwrite services.</p>
+      </div>
+    </a>
+    <a href="https://appwrite.io/docs" target="_blank" rel="noopener noreferrer">
+      <div class="flex h-full w-72 flex-col gap-2 rounded-md border border-[#EDEDF0] bg-white p-4">
+        <div class="flex flex-row items-center justify-between">
+          <h2 class="text-xl font-light text-[#2D2D31]">Explore docs</h2>
+          <span class="icon-arrow-right text-[#D8D8DB]"></span>
+        </div>
+        <p>Discover the full power of Appwrite by diving into our documentation.</p>
+      </div>
+    </a>
+  </div>
 
-            async checkAuthenticationState() {
-                try {
-                    const user = await this.appwrite.getCurrentUser();
-                    if (user) {
-                        this.currentUser = user;
-                        this.updateUIState();
-                        console.log('User already authenticated:', user);
-                    }
-                } catch (error) {
-                    console.log('User not authenticated');
-                }
-            }
+  <aside class="fixed bottom-0 flex w-full cursor-pointer border-t border-[#EDEDF0] bg-white">
+    <details id="logs-details" class="w-full">
+      <summary class="flex w-full flex-row justify-between p-4 marker:content-none">
+        <div class="flex gap-2">
+          <span class="font-semibold">Logs</span>
+          <div class="flex items-center rounded-md bg-[#E6E6E6] px-2" id="log-count" style="display: none;">
+            <span class="font-semibold" id="log-count-value"></span>
+          </div>
+        </div>
+        <div class="icon">
+          <span class="icon-cheveron-down" aria-hidden="true"></span>
+        </div>
+      </summary>
+      <div class="flex w-full flex-col lg:flex-row">
+        <div class="flex flex-col border-r border-[#EDEDF0]">
+          <div class="border-y border-[#EDEDF0] bg-[#FAFAFB] px-4 py-2 text-[#97979B]">Project</div>
+          <div class="grid grid-cols-2 gap-4 p-4">
+            <div class="flex flex-col">
+              <span class="text-[#97979B]">Endpoint</span>
+              <span class="truncate" id="project-endpoint"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[#97979B]">Project-ID</span>
+              <span class="truncate" id="project-id"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[#97979B]">Project name</span>
+              <span class="truncate" id="project-name"></span>
+            </div>
+          </div>
+        </div>
+        <div class="flex-grow">
+          <table class="w-full">
+            <thead>
+            <tr class="border-y border-[#EDEDF0] bg-[#FAFAFB] text-[#97979B]">
+              <td class="w-52 py-2 pl-4">Date</td>
+              <td>Status</td>
+              <td>Method</td>
+              <td class="hidden lg:table-cell">Path</td>
+              <td class="hidden lg:table-cell">Response</td>
+            </tr>
+            </thead>
+            <tbody id="log-table">
+            <tr>
+              <td class="py-2 pl-4 font-[Fira_Code]">There are no logs to show</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+  </aside>
+</main>
 
-            initializeAuthListeners() {
-                // Auth modal controls
-                document.getElementById('closeAuthModal').addEventListener('click', () => this.hideAuthModal());
-                document.getElementById('authOverlay').addEventListener('click', (e) => {
-                    if (e.target === document.getElementById('authOverlay')) {
-                        this.hideAuthModal();
-                    }
-                });
+<script type="module">
+  import { client } from "./lib/appwrite.js";
+  import { AppwriteException } from "appwrite";
+  import "@appwrite.io/pink-icons";
 
-                // Auth tab switching
-                document.querySelectorAll('.auth-tab').forEach(tab => {
-                    tab.addEventListener('click', (e) => this.switchAuthTab(e.target.dataset.tab));
-                });
+  document.addEventListener("DOMContentLoaded", () => {
+    let logs = [];
+    let status = "idle";
+    let showLogs = false;
 
-                // Auth form submissions
-                document.getElementById('signinForm').addEventListener('submit', (e) => this.handleSignIn(e));
-                document.getElementById('signupForm').addEventListener('submit', (e) => this.handleSignUp(e));
-                
-                // Logout
-                document.getElementById('logoutBtn').addEventListener('click', () => this.signOut());
+    const detailsRef = document.getElementById("logs-details");
+    const main = document.getElementById("main");
+    const statusMessage = document.getElementById("status-message");
+    const statusDescription = document.getElementById("status-description");
+    const pingButton = document.getElementById("ping-button");
+    const loadingSpinner = document.getElementById("loading-spinner");
+    const successIcon = document.getElementById("success-icon");
+    const logCount = document.getElementById("log-count");
+    const logCountValue = document.getElementById("log-count-value");
+    const logTable = document.getElementById("log-table");
 
-                // ESC key to close modal
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') this.hideAuthModal();
-                });
+    const updateHeight = () => {
+      if (detailsRef) {
+        const height = detailsRef.clientHeight;
+        main.style.marginBottom = `${height}px`;
+      }
+    };
 
-                // Add ping button functionality
-                this.addPingButton();
-            }
+    window.addEventListener("resize", updateHeight);
 
-            addPingButton() {
-                // Create ping button to test Appwrite connection
-                const pingButton = document.createElement('button');
-                pingButton.textContent = 'Send a ping';
-                pingButton.className = 'auth-btn';
-                pingButton.style.position = 'fixed';
-                pingButton.style.bottom = '20px';
-                pingButton.style.right = '20px';
-                pingButton.style.zIndex = '1000';
-                
-                pingButton.addEventListener('click', async () => {
-                    const originalText = pingButton.textContent;
-                    pingButton.textContent = 'Pinging...';
-                    pingButton.disabled = true;
-                    
-                    try {
-                        const success = await this.appwrite.ping();
-                        this.showStatus(success ? '🟢 Ping successful! Appwrite connection working.' : '🔴 Ping failed! Check your Appwrite configuration.', success ? 'success' : 'error');
-                    } catch (error) {
-                        this.showStatus('🔴 Ping failed! ' + error.message, 'error');
-                    } finally {
-                        pingButton.textContent = originalText;
-                        pingButton.disabled = false;
-                    }
-                });
+    detailsRef.addEventListener("toggle", updateHeight);
 
-                document.body.appendChild(pingButton);
-            }
+    async function sendPing() {
+      if (status === "loading") return;
+      status = "loading";
+      statusMessage.textContent = "";
+      statusDescription.textContent = "";
+      pingButton.style.display = "none";
+      loadingSpinner.style.display = "flex";
 
-            showAuthModal(tab = 'signin') {
-                const overlay = document.getElementById('authOverlay');
-                overlay.classList.add('active');
-                this.switchAuthTab(tab);
-                
-                // Focus first input
-                setTimeout(() => {
-                    const firstInput = document.querySelector(`.auth-form.active input`);
-                    if (firstInput) firstInput.focus();
-                }, 300);
-            }
+      try {
+        const result = await client.ping();
+        const log = {
+          date: new Date(),
+          method: "GET",
+          path: "/v1/ping",
+          status: 200,
+          response: JSON.stringify(result),
+        };
+        logs.unshift(log);
+        status = "success";
+        statusMessage.textContent = "Congratulations!";
+        statusDescription.textContent = "You connected your app successfully.";
 
-            hideAuthModal() {
-                document.getElementById('authOverlay').classList.remove('active');
-                // Clear forms
-                document.getElementById('signinForm').reset();
-                document.getElementById('signupForm').reset();
-            }
+        updateLogs();
+      } catch (err) {
+        const log = {
+          date: new Date(),
+          method: "GET",
+          path: "/v1/ping",
+          status: err instanceof AppwriteException ? err.code : 500,
+          response: err instanceof AppwriteException ? err.message : "Something went wrong",
+        };
+        logs.unshift(log);
+        status = "error";
+        statusMessage.textContent = "Check connection";
+        statusDescription.textContent = "Send a ping to verify the connection";
+        updateLogs();
+      }
+      pingButton.style.display = "block";
+      loadingSpinner.style.display = "none";
+      successIcon.style.opacity = status === "success" ? "100" : "0";
+      showLogs = true;
+    }
 
-            switchAuthTab(tab) {
-                // Update tabs
-                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-                document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-                
-                // Update forms
-                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-                document.getElementById(`${tab}Form`).classList.add('active');
-
-                // Update modal content
-                if (tab === 'signin') {
-                    document.getElementById('authTitle').textContent = 'Welcome Back';
-                    document.getElementById('authSubtitle').textContent = 'Sign in to your WebMonitor account';
-                } else {
-                    document.getElementById('authTitle').textContent = 'Create Account';
-                    document.getElementById('authSubtitle').textContent = 'Join WebMonitor to start monitoring your websites';
-                }
-            }
-
-            async handleSignIn(e) {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                
-                const email = formData.get('email');
-                const password = formData.get('password');
-
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                
-                try {
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span>Signing In...</span>';
-
-                    // Use Appwrite to sign in
-                    const session = await this.appwrite.login(email, password);
-                    const user = await this.appwrite.getCurrentUser();
-                    
-                    this.currentUser = user;
-                    this.hideAuthModal();
-                    this.showStatus('✅ Successfully signed in!', 'success');
-                    this.updateUIState();
-
-                } catch (error) {
-                    console.error('Sign in error:', error);
-                    this.showStatus('❌ Invalid email or password', 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-                }
-            }
-
-            async handleSignUp(e) {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                
-                const name = formData.get('name');
-                const email = formData.get('email');
-                const password = formData.get('password');
-                const confirmPassword = formData.get('confirmPassword');
-
-                // Validate passwords match
-                if (password !== confirmPassword) {
-                    this.showStatus('❌ Passwords do not match', 'error');
-                    return;
-                }
-
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                
-                try {
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span>Creating Account...</span>';
-
-                    // Use Appwrite to create account
-                    const user = await this.appwrite.createAccount(email, password, name);
-                    
-                    // Automatically sign in after account creation
-                    await this.appwrite.login(email, password);
-                    const currentUser = await this.appwrite.getCurrentUser();
-                    
-                    this.currentUser = currentUser;
-                    this.hideAuthModal();
-                    this.showStatus('🎉 Account created successfully! Welcome to WebMonitor!', 'success');
-                    this.updateUIState();
-
-                } catch (error) {
-                    console.error('Sign up error:', error);
-                    if (error.code === 409) {
-                        this.showStatus('❌ Account with this email already exists', 'error');
-                    } else {
-                        this.showStatus('❌ Failed to create account: ' + error.message, 'error');
-                    }
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-                }
-            }
-
-            async signOut() {
-                try {
-                    await this.appwrite.logout();
-                    this.currentUser = null;
-                    this.updateUIState();
-                    this.showStatus('👋 You have been signed out', 'info');
-                } catch (error) {
-                    console.error('Sign out error:', error);
-                    this.showStatus('❌ Sign out failed', 'error');
-                }
-            }
-
-            updateUIState() {
-                const isAuthenticated = !!this.currentUser;
-                
-                // Update body class
-                document.body.classList.toggle('authenticated', isAuthenticated);
-                
-                // Show/hide UI elements
-                document.getElementById('userHeader').classList.toggle('active', isAuthenticated);
-                document.getElementById('authRequired').style.display = isAuthenticated ? 'none' : 'block';
-                document.getElementById('monitorForm').style.display = isAuthenticated ? 'block' : 'none';
-
-                if (isAuthenticated) {
-                    // Update user info in header
-                    const user = this.currentUser;
-                    document.getElementById('userName').textContent = user.name;
-                    document.getElementById('userEmail').textContent = user.email;
-                    document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
-                }
-            }
-
-            showStatus(message, type) {
-                // Create or update status element
-                let statusEl = document.getElementById('globalStatus');
-                if (!statusEl) {
-                    statusEl = document.createElement('div');
-                    statusEl.id = 'globalStatus';
-                    statusEl.className = 'status-message';
-                    statusEl.style.position = 'fixed';
-                    statusEl.style.top = '2rem';
-                    statusEl.style.right = '2rem';
-                    statusEl.style.zIndex = '9999';
-                    statusEl.style.maxWidth = '400px';
-                    document.body.appendChild(statusEl);
-                }
-                
-                statusEl.textContent = message;
-                statusEl.className = `status-message status-${type}`;
-                statusEl.style.display = 'block';
-                
-                // Auto-hide after 5 seconds
-                setTimeout(() => {
-                    statusEl.style.display = 'none';
-                }, 5000);
-            }
-
-            isAuthenticated() {
-                return !!this.currentUser;
-            }
-
-            getCurrentUser() {
-                return this.currentUser;
-            }
-        }
-
-        // Website monitoring functionality with Appwrite integration
-        class WebsiteMonitor {
-            constructor(authManager) {
-                this.authManager = authManager;
-                this.appwrite = appwriteService;
-                this.monitoredSites = [];
-                this.initializeEventListeners();
-                this.loadUserSites();
-            }
-
-            initializeEventListeners() {
-                const form = document.getElementById('monitorFormEl');
-                if (form) {
-                    form.addEventListener('submit', (e) => this.handleFormSubmit(e));
-                }
-            }
-
-            async loadUserSites() {
-                if (!this.authManager.isAuthenticated()) {
-                    this.monitoredSites = [];
-                    this.updateSiteList();
-                    return;
-                }
-
-                try {
-                    const user = this.authManager.getCurrentUser();
-                    const sites = await this.appwrite.getMonitoredSites(user.$id);
-                    this.monitoredSites = sites;
-                    this.updateSiteList();
-                } catch (error) {
-                    console.error('Failed to load user sites:', error);
-                    this.monitoredSites = [];
-                    this.updateSiteList();
-                }
-            }
-
-            async handleFormSubmit(e) {
-                e.preventDefault();
-                
-                if (!this.authManager.isAuthenticated()) {
-                    this.authManager.showAuthModal('signin');
-                    return;
-                }
-                
-                const submitBtn = document.getElementById('submitBtn');
-                const user = this.authManager.getCurrentUser();
-                
-                // Get form data
-                const formData = new FormData(e.target);
-                const websiteData = {
-                    url: formData.get('websiteUrl'),
-                    userId: user.$id,
-                    userEmail: user.email,
-                    frequency: parseInt(formData.get('monitorFrequency')),
-                    webhookUrl: formData.get('webhookUrl') || null,
-                    notes: formData.get('notes') || null,
-                    createdAt: new Date().toISOString(),
-                    status: 'active',
-                    lastChecked: null,
-                    changesDetected: 0
-                };
-
-                // Validate URL
-                if (!this.isValidUrl(websiteData.url)) {
-                    this.showStatus('Please enter a valid URL', 'error');
-                    return;
-                }
-
-                // Disable submit button
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span>Setting up monitoring...</span>';
-
-                try {
-                    // Create site in Appwrite database
-                    const site = await this.appwrite.createMonitoredSite(websiteData);
-                    
-                    // Add to local list
-                    this.monitoredSites.push(site);
-                    this.updateSiteList();
-                    
-                    // Reset form
-                    e.target.reset();
-                    
-                    // Show success message
-                    this.showStatus(`✅ Successfully started monitoring ${websiteData.url}!`, 'success');
-                    
-                } catch (error) {
-                    console.error('Error adding site:', error);
-                    this.showStatus('❌ Failed to set up monitoring. Please try again.', 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<span>Start Monitoring</span>';
-                }
-            }
-
-            updateSiteList() {
-                const siteList = document.getElementById('siteList');
-                
-                if (!this.authManager.isAuthenticated()) {
-                    siteList.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">🔐</div>
-                            <p>Sign in to view your monitored websites</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                if (this.monitoredSites.length === 0) {
-                    siteList.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">🌐</div>
-                            <p>No websites being monitored yet. Add one above to get started!</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                siteList.innerHTML = this.monitoredSites.map(site => `
-                    <div class="site-item">
-                        <div class="site-info">
-                            <div class="site-url">${site.url}</div>
-                            <div class="site-meta">
-                                <span>Added: ${new Date(site.createdAt || site.$createdAt).toLocaleDateString()}</span>
-                                ${site.lastChecked ? `<span>Last checked: ${new Date(site.lastChecked).toLocaleString()}</span>` : ''}
-                                ${site.changesDetected > 0 ? `<span>Changes detected: ${site.changesDetected}</span>` : ''}
-                                <span>Frequency: Every ${site.frequency} min</span>
-                            </div>
-                        </div>
-                        <div class="site-status status-${site.status}">
-                            ${site.status === 'active' ? 'Active' : 'Checking'}
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            isValidUrl(url) {
-                try {
-                    new URL(url);
-                    return true;
-                } catch {
-                    return false;
-                }
-            }
-
-            showStatus(message, type) {
-                const statusMessage = document.getElementById('statusMessage');
-                statusMessage.textContent = message;
-                statusMessage.className = `status-message status-${type}`;
-                statusMessage.style.display = 'block';
-                
-                setTimeout(() => {
-                    statusMessage.style.display = 'none';
-                }, 5000);
-            }
-        }
-
-        // Global functions for UI interactions
-        function showAuthModal(tab = 'signin') {
-            window.authManager.showAuthModal(tab);
-        }
-
-        // Make showAuthModal globally accessible
-        window.showAuthModal = showAuthModal;
-
-        // Initialize the application when page loads
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 Initializing WebMonitor with Appwrite...');
-            
-            // Initialize authentication system
-            window.authManager = new AuthManager();
-            
-            // Initialize website monitor
-            window.websiteMonitor = new WebsiteMonitor(window.authManager);
-
-            // Request notification permission
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
-
-            console.log('✅ WebMonitor initialized successfully!');
+    const updateLogs = () => {
+      logTable.innerHTML = "";
+      if (logs.length > 0) {
+        logCount.style.display = "flex";
+        logCountValue.textContent = logs.length;
+        logs.forEach((log) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+          <td class="py-2 pl-4 font-[Fira_Code]">${log.date.toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}</td>
+          <td>
+            <div class="w-fit rounded-sm ${log.status > 400 ? "bg-[#FF453A3D] text-[#B31212]" : "bg-[#10B9813D] text-[#0A714F]"} px-1">
+              ${log.status}
+            </div>
+          </td>
+          <td>${log.method}</td>
+          <td class="hidden lg:table-cell">${log.path}</td>
+          <td class="hidden font-[Fira_Code] lg:table-cell">${log.response}</td>
+        `;
+          logTable.appendChild(row);
         });
-    </script>
+      } else {
+        logCount.style.display = "none";
+        const row = document.createElement("tr");
+        row.innerHTML = `<td class="py-2 pl-4 font-[Fira_Code]">There are no logs to show</td>`;
+        logTable.appendChild(row);
+      }
+    };
+
+    pingButton.addEventListener("click", sendPing);
+    document.getElementById('project-endpoint').textContent = import.meta.env.VITE_APPWRITE_ENDPOINT;
+    document.getElementById('project-id').textContent = import.meta.env.VITE_APPWRITE_PROJECT_ID;
+    document.getElementById('project-name').textContent = import.meta.env.VITE_APPWRITE_PROJECT_NAME;
+    updateHeight();
+  });
+</script>
 </body>
 </html>
