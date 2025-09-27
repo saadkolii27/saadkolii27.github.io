@@ -1072,13 +1072,30 @@
         </div>
     </div>
 
-    <script>
-        // Authentication and User Management System
+    <script type="module">
+        // Import Appwrite services
+        import { appwriteService, isAuthenticated } from './appwrite.js';
+
+        // Authentication and User Management System with Appwrite
         class AuthManager {
             constructor() {
-                this.currentUser = this.loadCurrentUser();
+                this.currentUser = null;
+                this.appwrite = appwriteService;
                 this.initializeAuthListeners();
-                this.updateUIState();
+                this.checkAuthenticationState();
+            }
+
+            async checkAuthenticationState() {
+                try {
+                    const user = await this.appwrite.getCurrentUser();
+                    if (user) {
+                        this.currentUser = user;
+                        this.updateUIState();
+                        console.log('User already authenticated:', user);
+                    }
+                } catch (error) {
+                    console.log('User not authenticated');
+                }
             }
 
             initializeAuthListeners() {
@@ -1106,6 +1123,38 @@
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') this.hideAuthModal();
                 });
+
+                // Add ping button functionality
+                this.addPingButton();
+            }
+
+            addPingButton() {
+                // Create ping button to test Appwrite connection
+                const pingButton = document.createElement('button');
+                pingButton.textContent = 'Send a ping';
+                pingButton.className = 'auth-btn';
+                pingButton.style.position = 'fixed';
+                pingButton.style.bottom = '20px';
+                pingButton.style.right = '20px';
+                pingButton.style.zIndex = '1000';
+                
+                pingButton.addEventListener('click', async () => {
+                    const originalText = pingButton.textContent;
+                    pingButton.textContent = 'Pinging...';
+                    pingButton.disabled = true;
+                    
+                    try {
+                        const success = await this.appwrite.ping();
+                        this.showStatus(success ? '🟢 Ping successful! Appwrite connection working.' : '🔴 Ping failed! Check your Appwrite configuration.', success ? 'success' : 'error');
+                    } catch (error) {
+                        this.showStatus('🔴 Ping failed! ' + error.message, 'error');
+                    } finally {
+                        pingButton.textContent = originalText;
+                        pingButton.disabled = false;
+                    }
+                });
+
+                document.body.appendChild(pingButton);
             }
 
             showAuthModal(tab = 'signin') {
@@ -1161,22 +1210,17 @@
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '<span>Signing In...</span>';
 
-                    // Simulate API call
-                    await this.simulateAuth('signin', { email, password });
+                    // Use Appwrite to sign in
+                    const session = await this.appwrite.login(email, password);
+                    const user = await this.appwrite.getCurrentUser();
                     
-                    // Create user session
-                    const user = {
-                        id: this.generateUserId(),
-                        name: email.split('@')[0], // Use email prefix as name for demo
-                        email: email,
-                        createdAt: new Date().toISOString()
-                    };
-
-                    this.setCurrentUser(user);
+                    this.currentUser = user;
                     this.hideAuthModal();
                     this.showStatus('✅ Successfully signed in!', 'success');
+                    this.updateUIState();
 
                 } catch (error) {
+                    console.error('Sign in error:', error);
                     this.showStatus('❌ Invalid email or password', 'error');
                 } finally {
                     submitBtn.disabled = false;
@@ -1207,103 +1251,40 @@
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '<span>Creating Account...</span>';
 
-                    // Simulate API call
-                    await this.simulateAuth('signup', { name, email, password });
+                    // Use Appwrite to create account
+                    const user = await this.appwrite.createAccount(email, password, name);
                     
-                    // Create user session
-                    const user = {
-                        id: this.generateUserId(),
-                        name: name,
-                        email: email,
-                        createdAt: new Date().toISOString()
-                    };
-
-                    this.setCurrentUser(user);
+                    // Automatically sign in after account creation
+                    await this.appwrite.login(email, password);
+                    const currentUser = await this.appwrite.getCurrentUser();
+                    
+                    this.currentUser = currentUser;
                     this.hideAuthModal();
                     this.showStatus('🎉 Account created successfully! Welcome to WebMonitor!', 'success');
+                    this.updateUIState();
 
                 } catch (error) {
-                    this.showStatus('❌ Failed to create account. Email may already be in use.', 'error');
+                    console.error('Sign up error:', error);
+                    if (error.code === 409) {
+                        this.showStatus('❌ Account with this email already exists', 'error');
+                    } else {
+                        this.showStatus('❌ Failed to create account: ' + error.message, 'error');
+                    }
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalText;
                 }
             }
 
-            async simulateAuth(type, userData) {
-                // Simulate API delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Simulate occasional failures for realism
-                if (Math.random() < 0.1) {
-                    throw new Error('Auth failed');
-                }
-
-                // For demo purposes, check if user exists for signin
-                if (type === 'signin') {
-                    const existingUsers = this.loadAllUsers();
-                    const user = existingUsers.find(u => u.email === userData.email);
-                    if (!user) {
-                        throw new Error('User not found');
-                    }
-                }
-
-                // For signup, save user to demo storage
-                if (type === 'signup') {
-                    const existingUsers = this.loadAllUsers();
-                    const userExists = existingUsers.find(u => u.email === userData.email);
-                    if (userExists) {
-                        throw new Error('User already exists');
-                    }
-                    
-                    const newUser = {
-                        id: this.generateUserId(),
-                        name: userData.name,
-                        email: userData.email,
-                        password: userData.password, // In real app, this would be hashed
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    existingUsers.push(newUser);
-                    localStorage.setItem('webmonitor-users', JSON.stringify(existingUsers));
-                }
-            }
-
-            signOut() {
-                this.setCurrentUser(null);
-                this.showStatus('👋 You have been signed out', 'info');
-            }
-
-            setCurrentUser(user) {
-                this.currentUser = user;
-                if (user) {
-                    localStorage.setItem('webmonitor-current-user', JSON.stringify(user));
-                } else {
-                    localStorage.removeItem('webmonitor-current-user');
-                }
-                this.updateUIState();
-                
-                // Reinitialize the monitor if user is authenticated
-                if (user && window.websiteMonitor) {
-                    window.websiteMonitor.loadUserSites();
-                }
-            }
-
-            loadCurrentUser() {
+            async signOut() {
                 try {
-                    const saved = localStorage.getItem('webmonitor-current-user');
-                    return saved ? JSON.parse(saved) : null;
-                } catch {
-                    return null;
-                }
-            }
-
-            loadAllUsers() {
-                try {
-                    const saved = localStorage.getItem('webmonitor-users');
-                    return saved ? JSON.parse(saved) : [];
-                } catch {
-                    return [];
+                    await this.appwrite.logout();
+                    this.currentUser = null;
+                    this.updateUIState();
+                    this.showStatus('👋 You have been signed out', 'info');
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    this.showStatus('❌ Sign out failed', 'error');
                 }
             }
 
@@ -1325,10 +1306,6 @@
                     document.getElementById('userEmail').textContent = user.email;
                     document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
                 }
-            }
-
-            generateUserId() {
-                return Date.now().toString() + Math.random().toString(36).substr(2, 9);
             }
 
             showStatus(message, type) {
@@ -1365,10 +1342,11 @@
             }
         }
 
-        // Website monitoring functionality with user authentication
+        // Website monitoring functionality with Appwrite integration
         class WebsiteMonitor {
             constructor(authManager) {
                 this.authManager = authManager;
+                this.appwrite = appwriteService;
                 this.monitoredSites = [];
                 this.initializeEventListeners();
                 this.loadUserSites();
@@ -1381,36 +1359,22 @@
                 }
             }
 
-            loadUserSites() {
+            async loadUserSites() {
                 if (!this.authManager.isAuthenticated()) {
                     this.monitoredSites = [];
                     this.updateSiteList();
                     return;
                 }
 
-                const user = this.authManager.getCurrentUser();
-                const userKey = `webmonitor-sites-${user.id}`;
-                
                 try {
-                    const saved = localStorage.getItem(userKey);
-                    this.monitoredSites = saved ? JSON.parse(saved) : [];
-                } catch {
-                    this.monitoredSites = [];
-                }
-                
-                this.updateSiteList();
-            }
-
-            saveUserSites() {
-                if (!this.authManager.isAuthenticated()) return;
-                
-                const user = this.authManager.getCurrentUser();
-                const userKey = `webmonitor-sites-${user.id}`;
-                
-                try {
-                    localStorage.setItem(userKey, JSON.stringify(this.monitoredSites));
+                    const user = this.authManager.getCurrentUser();
+                    const sites = await this.appwrite.getMonitoredSites(user.$id);
+                    this.monitoredSites = sites;
+                    this.updateSiteList();
                 } catch (error) {
-                    console.error('Failed to save monitored sites:', error);
+                    console.error('Failed to load user sites:', error);
+                    this.monitoredSites = [];
+                    this.updateSiteList();
                 }
             }
 
@@ -1423,19 +1387,17 @@
                 }
                 
                 const submitBtn = document.getElementById('submitBtn');
-                const statusMessage = document.getElementById('statusMessage');
                 const user = this.authManager.getCurrentUser();
                 
                 // Get form data
                 const formData = new FormData(e.target);
                 const websiteData = {
                     url: formData.get('websiteUrl'),
-                    userId: user.id,
+                    userId: user.$id,
                     userEmail: user.email,
                     frequency: parseInt(formData.get('monitorFrequency')),
-                    webhookUrl: formData.get('webhookUrl'),
-                    notes: formData.get('notes'),
-                    id: Date.now().toString(),
+                    webhookUrl: formData.get('webhookUrl') || null,
+                    notes: formData.get('notes') || null,
                     createdAt: new Date().toISOString(),
                     status: 'active',
                     lastChecked: null,
@@ -1453,12 +1415,11 @@
                 submitBtn.innerHTML = '<span>Setting up monitoring...</span>';
 
                 try {
-                    // Simulate API call for demo purposes
-                    await this.simulateMonitorSetup(websiteData);
+                    // Create site in Appwrite database
+                    const site = await this.appwrite.createMonitoredSite(websiteData);
                     
-                    // Add to monitored sites
-                    this.monitoredSites.push(websiteData);
-                    this.saveUserSites();
+                    // Add to local list
+                    this.monitoredSites.push(site);
                     this.updateSiteList();
                     
                     // Reset form
@@ -1467,110 +1428,12 @@
                     // Show success message
                     this.showStatus(`✅ Successfully started monitoring ${websiteData.url}!`, 'success');
                     
-                    // Start monitoring this website
-                    this.startMonitoring(websiteData);
-                    
                 } catch (error) {
+                    console.error('Error adding site:', error);
                     this.showStatus('❌ Failed to set up monitoring. Please try again.', 'error');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<span>Start Monitoring</span>';
-                }
-            }
-
-            async simulateMonitorSetup(websiteData) {
-                // Simulate API delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Simulate occasional failures for realism
-                if (Math.random() < 0.1) {
-                    throw new Error('Setup failed');
-                }
-            }
-
-            async startMonitoring(websiteData) {
-                // Get initial content hash
-                try {
-                    const initialContent = await this.fetchWebsiteContent(websiteData.url);
-                    websiteData.contentHash = await this.hashContent(initialContent);
-                    websiteData.lastChecked = new Date().toISOString();
-                    this.saveUserSites();
-                } catch (error) {
-                    console.warn('Could not fetch initial content:', error);
-                }
-
-                // Set up periodic checking
-                this.scheduleCheck(websiteData);
-            }
-
-            scheduleCheck(websiteData) {
-                const intervalMs = websiteData.frequency * 60 * 1000;
-                
-                setTimeout(() => {
-                    this.checkForChanges(websiteData);
-                }, intervalMs);
-            }
-
-            async checkForChanges(websiteData) {
-                try {
-                    const currentContent = await this.fetchWebsiteContent(websiteData.url);
-                    const currentHash = await this.hashContent(currentContent);
-                    
-                    if (websiteData.contentHash && currentHash !== websiteData.contentHash) {
-                        websiteData.changesDetected++;
-                        websiteData.contentHash = currentHash;
-                        websiteData.lastChecked = new Date().toISOString();
-                        
-                        await this.sendChangeNotification(websiteData);
-                        
-                        this.saveUserSites();
-                        this.updateSiteList();
-                    }
-                    
-                    websiteData.lastChecked = new Date().toISOString();
-                    this.saveUserSites();
-                    this.scheduleCheck(websiteData);
-                    
-                } catch (error) {
-                    console.error('Error checking website:', error);
-                    setTimeout(() => this.checkForChanges(websiteData), 60000);
-                }
-            }
-
-            async fetchWebsiteContent(url) {
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        if (Math.random() < 0.9) {
-                            resolve(`Simulated content for ${url} at ${new Date().toISOString()}`);
-                        } else {
-                            reject(new Error('Failed to fetch content'));
-                        }
-                    }, 1000);
-                });
-            }
-
-            async hashContent(content) {
-                let hash = 0;
-                for (let i = 0; i < content.length; i++) {
-                    const char = content.charCodeAt(i);
-                    hash = ((hash << 5) - hash) + char;
-                    hash = hash & hash;
-                }
-                return hash.toString();
-            }
-
-            async sendChangeNotification(websiteData) {
-                console.log(`🔔 Change detected on ${websiteData.url}! Sending notification to ${websiteData.userEmail}`);
-                
-                if ('Notification' in window && Notification.permission === 'granted') {
-                    new Notification('Website Change Detected!', {
-                        body: `Changes detected on ${websiteData.url}`,
-                        icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyUzYuNDggMjIgMTIgMjJTMjIgMTcuNTIgMjIgMTJTMTcuNTIgMiAxMiAyWk0xMSAxN0g5VjE1SDExVjE3Wk0xMSAxM0g5VjdIMTFWMTNaIiBmaWxsPSIjNjY3RUVBIi8+Cjwvc3ZnPgo='
-                    });
-                }
-
-                if (websiteData.webhookUrl) {
-                    console.log(`📡 Calling webhook: ${websiteData.webhookUrl}`);
                 }
             }
 
@@ -1602,7 +1465,7 @@
                         <div class="site-info">
                             <div class="site-url">${site.url}</div>
                             <div class="site-meta">
-                                <span>Added: ${new Date(site.createdAt).toLocaleDateString()}</span>
+                                <span>Added: ${new Date(site.createdAt || site.$createdAt).toLocaleDateString()}</span>
                                 ${site.lastChecked ? `<span>Last checked: ${new Date(site.lastChecked).toLocaleString()}</span>` : ''}
                                 ${site.changesDetected > 0 ? `<span>Changes detected: ${site.changesDetected}</span>` : ''}
                                 <span>Frequency: Every ${site.frequency} min</span>
@@ -1641,8 +1504,13 @@
             window.authManager.showAuthModal(tab);
         }
 
+        // Make showAuthModal globally accessible
+        window.showAuthModal = showAuthModal;
+
         // Initialize the application when page loads
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Initializing WebMonitor with Appwrite...');
+            
             // Initialize authentication system
             window.authManager = new AuthManager();
             
@@ -1653,6 +1521,8 @@
             if ('Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission();
             }
+
+            console.log('✅ WebMonitor initialized successfully!');
         });
     </script>
 </body>

@@ -32,3 +32,6 @@ Thumbs.db
 monitored-sites.json
 users.json
 sessions.json
+
+# Vite
+.vite/
