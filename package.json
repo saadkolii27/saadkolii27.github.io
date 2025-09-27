@@ -1,21 +1,16 @@
 {
-  "name": "starter-for-js",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "saadkolii27.github.io",
+  "version": "1.0.0",
+  "description": "Personal website for Saad Kolii",
+  "main": "index.html",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
   },
-  "devDependencies": {
-    "prettier": "3.5.3",
-    "vite": "^6.2.0"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saadkolii27/saadkolii27.github.io.git"
   },
-  "dependencies": {
-    "@appwrite.io/pink-icons": "^1.0.0",
-    "@tailwindcss/vite": "^4.0.14",
-    "appwrite": "^17.0.0",
-    "tailwindcss": "^4.0.14"
-  }
+  "author": "Saad Kolii",
+  "license": "MIT"
 }

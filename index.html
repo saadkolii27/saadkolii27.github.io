@@ -1,492 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGZ4LM38XS"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-PGZ4LM38XS');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <meta name="description" content="Official CAF Ticketing Platform - Buy tickets for TotalEnergies CAF Africa Cup of Nations Morocco 2025">
-    <title>CAF Official Ticketing Platform</title>
-    
-    <!-- Tailwind CSS -->
-    <link href="./style/app.css" rel="stylesheet">
-    
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Custom styles -->
+    <title>Saad Kolii</title>
     <style>
-        /* Font - Gothams */
-        @font-face {
-            font-family: 'Gotham';
-            src: url('https://tickets.cafonline.com/cf_error_pages/assets/font/Gotham-Book.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        @font-face {
-            font-family: 'Gotham';
-            src: url('https://tickets.cafonline.com/cf_error_pages/assets/font/Gotham-Bold.woff') format('woff');
-            font-weight: bold;
-            font-style: normal;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Gotham', sans-serif;
-            background: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-        }
-
-        header {
-            background-color: #1e293b;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            height: 80px;
-        }
-
-        .hero-section {
-            background: linear-gradient(135deg, #800000 0%, #600000 100%);
-            color: white;
-            padding: 4rem 0;
-            margin-bottom: 3rem;
-        }
-
-        .event-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 2rem;
-        }
-
-        .event-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: #cbd5e1;
-        }
-
-        .event-header {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            color: white;
-            padding: 1.5rem;
-            position: relative;
-        }
-
-        .event-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: #059669;
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .event-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .event-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-        }
-
-        .event-info-section {
-            flex: 1;
-            min-width: 300px;
-            padding: 2rem;
-        }
-
-        .event-booking-section {
-            flex: 0 0 400px;
-            background: #f8fafc;
-            border-left: 1px solid #e2e8f0;
-            padding: 2rem;
-        }
-
-        .event-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: #f1f5f9;
-            border-radius: 8px;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: #475569;
-        }
-
-        .meta-item i {
-            color: #059669;
-            width: 16px;
-        }
-
-        .ticket-selection-header {
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .ticket-option {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.25rem;
-            border-bottom: 1px solid #f1f5f9;
-            background: white;
-            margin-bottom: 0.5rem;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s ease;
-        }
-
-        .ticket-option:hover {
-            border-color: #059669;
-            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
-        }
-
-        .ticket-info {
-            flex: 1;
-        }
-
-        .ticket-category {
-            font-weight: 700;
-            color: #1e293b;
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .ticket-description {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 0.5rem;
-        }
-
-        .ticket-availability {
-            font-size: 0.75rem;
-            color: #059669;
-            font-weight: 500;
-        }
-
-        .ticket-price-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .ticket-price {
-            font-weight: 700;
-            color: #059669;
-            font-size: 1.25rem;
-        }
-
-        .quantity-selector {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-right: 1rem;
-        }
-
-        .quantity-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid #d1d5db;
-            background: white;
-            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            padding: 2rem;
         }
 
-        .quantity-btn:hover {
-            background: #f3f4f6;
-            border-color: #9ca3af;
-        }
-
-        .quantity-input {
-            width: 50px;
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             text-align: center;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            padding: 0.25rem;
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(10px);
         }
 
-        .btn-add-cart {
-            background: #059669;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            min-width: 120px;
-        }
-
-        .btn-add-cart:hover {
-            background: #047857;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(5, 150, 105, 0.2);
-        }
-
-        .event-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 0.5rem;
-            line-height: 1.3;
-        }
-
-        .event-subtitle {
-            font-size: 1rem;
-            opacity: 0.9;
+        h1 {
+            font-size: 3rem;
             margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .event-description {
-            color: #64748b;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
         }
 
-        .booking-summary {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 1.5rem;
+        .coming-soon {
+            font-size: 1.5rem;
+            color: #444;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .footer {
             margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #888;
         }
 
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #f1f5f9;
+        .pulse {
+            animation: pulse 2s infinite;
         }
 
-        .summary-total {
-            display: flex;
-            justify-content: space-between;
-            padding: 1rem 0 0 0;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #1e293b;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .event-content {
-                flex-direction: column;
+        @keyframes pulse {
+            0% {
+                opacity: 1;
             }
-            
-            .event-booking-section {
-                flex: none;
-                border-left: none;
-                border-top: 1px solid #e2e8f0;
+            50% {
+                opacity: 0.7;
             }
-            
-            .event-meta {
-                grid-template-columns: 1fr 1fr;
+            100% {
+                opacity: 1;
             }
         }
 
         @media (max-width: 768px) {
-            .event-meta {
-                grid-template-columns: 1fr;
-            }
-            
-            .ticket-option {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 1rem;
-            }
-            
-            .ticket-price-section {
-                justify-content: space-between;
-            }
-            
-            .quantity-selector {
-                margin-right: 0;
-            }
-            
-            .hero-section {
-                padding: 2rem 0;
-            }
-            
-            .section-title {
+            h1 {
                 font-size: 2rem;
             }
-        }
-
-        .modal {
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        #loading-screen {
-            background: linear-gradient(135deg, #800000 0%, #600000 100%);
-        }
-
-        .spinner {
-            border-top: 3px solid #00a651;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 3rem;
-            color: #1e293b;
-        }
-
-        .events-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            
+            .container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .coming-soon {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-100">
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="fixed inset-0 flex items-center justify-center z-50">
-        <div class="text-center">
-            <div class="spinner w-16 h-16 border-4 border-gray-200 rounded-full mx-auto mb-4"></div>
-            <img src="https://tickets.cafonline.com/cf_error_pages/assets/img/logo.svg" alt="CAF Logo" class="h-20 mx-auto mb-4">
-            <p class="text-white text-xl">Loading CAF Ticketing Platform...</p>
+<body>
+    <div class="container">
+        <h1>Saad Kolii</h1>
+        <p class="subtitle">Welcome to my personal space on the web</p>
+        <div class="coming-soon pulse">
+            🚀 Fresh Start in Progress
+        </div>
+        <p>This site is being rebuilt from the ground up. Check back soon for updates!</p>
+        <div class="footer">
+            <p>&copy; 2025 Saad Kolii. All rights reserved.</p>
         </div>
     </div>
-
-    <!-- Main Application -->
-    <div id="main-app" class="hidden">
-        <!-- Hero Section -->
-        <div class="hero-section">
-            <div class="container mx-auto px-6 text-center">
-                <img src="https://tickets.cafonline.com/cf_error_pages/assets/img/logo.svg" alt="CAF Logo" class="h-20 mx-auto mb-6">
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">CAF Official Ticketing Platform</h1>
-                <p class="text-xl opacity-90 max-w-2xl mx-auto">Experience the excitement of African football with official tickets to the TotalEnergies CAF Africa Cup of Nations Morocco 2025</p>
-            </div>
-        </div>
-
-        <header class="fixed w-full top-0 z-40">
-            <!-- Navigation will be populated by UIManager -->
-        </header>
-
-        <main class="pt-0 min-h-screen bg-gray-50">
-            <!-- Main content will be populated by the application -->
-        </main>
-
-        <footer class="bg-slate-800 text-white py-12 mt-16">
-            <div class="container mx-auto px-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div>
-                        <img src="https://tickets.cafonline.com/cf_error_pages/assets/img/logo.svg" alt="CAF Logo" class="h-16 mb-4 brightness-0 invert">
-                        <p class="text-slate-300 leading-relaxed">Official ticketing platform for CAF competitions. Secure your place at the continent's most prestigious football tournaments.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold mb-4 text-white">Quick Links</h3>
-                        <ul class="space-y-3">
-                            <li><a href="#events" class="text-slate-300 hover:text-green-400 transition-colors">All Events</a></li>
-                            <li><a href="#" class="text-slate-300 hover:text-green-400 transition-colors">Help & Support</a></li>
-                            <li><a href="#" class="text-slate-300 hover:text-green-400 transition-colors">Terms & Conditions</a></li>
-                            <li><a href="#" class="text-slate-300 hover:text-green-400 transition-colors">Privacy Policy</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold mb-4 text-white">Contact</h3>
-                        <div class="space-y-3">
-                            <p class="text-slate-300 flex items-center gap-2">
-                                <i class="fas fa-envelope w-4"></i>
-                                tickets@cafonline.com
-                            </p>
-                            <p class="text-slate-300 flex items-center gap-2">
-                                <i class="fas fa-phone w-4"></i>
-                                +212 537 77 51 51
-                            </p>
-                            <p class="text-slate-300 flex items-center gap-2">
-                                <i class="fas fa-map-marker-alt w-4"></i>
-                                Casablanca, Morocco
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="border-t border-slate-700 mt-8 pt-8 text-center text-slate-400">
-                    <p>&copy; 2025 CAF. All rights reserved.</p>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Scripts -->
-    <script type="module">
-        import { TicketPlatform } from './src/TicketPlatform.js';
-        
-        // Make UIManager globally accessible for onclick handlers
-        window.uiManager = null;
-        
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const app = new TicketPlatform();
-                window.uiManager = app.uiManager;
-                
-                // Initialize app
-                await app.init();
-                
-                // Hide loading screen and show main app
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                
-                console.log('CAF Ticketing Platform loaded successfully');
-            } catch (error) {
-                console.error('Failed to initialize platform:', error);
-                document.getElementById('loading-screen').innerHTML = `
-                    <div class="text-center text-white">
-                        <h2 class="text-2xl font-bold mb-4">Error Loading Platform</h2>
-                        <p class="mb-4">${error.message}</p>
-                        <button onclick="location.reload()" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded">
-                            Retry
-                        </button>
-                    </div>
-                `;
-            }
-        });
-    </script>
 </body>
 </html>
