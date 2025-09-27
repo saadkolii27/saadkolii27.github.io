@@ -48,7 +48,18 @@ class WebMonitorAPI {
 
         console.log(`${method} ${pathname}`);
 
-        if (pathname === '/api/sites' && method === 'GET') {
+        // Authentication endpoints
+        if (pathname === '/api/auth/signup' && method === 'POST') {
+            await this.handleSignup(req, res);
+        } else if (pathname === '/api/auth/signin' && method === 'POST') {
+            await this.handleSignin(req, res);
+        } else if (pathname === '/api/auth/signout' && method === 'POST') {
+            await this.handleSignout(req, res);
+        } else if (pathname === '/api/auth/me' && method === 'GET') {
+            await this.handleGetCurrentUser(req, res);
+        }
+        // Site management endpoints (require authentication)
+        else if (pathname === '/api/sites' && method === 'GET') {
             await this.handleGetSites(req, res);
         } else if (pathname === '/api/sites' && method === 'POST') {
             await this.handleAddSite(req, res);
@@ -61,19 +72,232 @@ class WebMonitorAPI {
         }
     }
 
+    async handleSignup(req, res) {
+        try {
+            const body = await this.getRequestBody(req);
+            const userData = JSON.parse(body);
+
+            // Validate required fields
+            if (!userData.name || !userData.email || !userData.password) {
+                return this.sendError(res, 400, 'Name, email and password are required');
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(userData.email)) {
+                return this.sendError(res, 400, 'Invalid email format');
+            }
+
+            // Validate password strength
+            if (userData.password.length < 8) {
+                return this.sendError(res, 400, 'Password must be at least 8 characters long');
+            }
+
+            // Check if user already exists (in a real app, this would be in a database)
+            const existingUsers = this.loadUsers();
+            if (existingUsers.find(u => u.email === userData.email)) {
+                return this.sendError(res, 409, 'User with this email already exists');
+            }
+
+            // Create new user
+            const newUser = {
+                id: this.generateUserId(),
+                name: userData.name,
+                email: userData.email,
+                password: this.hashPassword(userData.password), // In production, use proper hashing
+                createdAt: new Date().toISOString()
+            };
+
+            existingUsers.push(newUser);
+            this.saveUsers(existingUsers);
+
+            // Create session token
+            const sessionToken = this.generateSessionToken();
+            const userSession = {
+                userId: newUser.id,
+                token: sessionToken,
+                createdAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
+            };
+
+            this.saveSessions([...this.loadSessions(), userSession]);
+
+            // Return user data without password
+            const { password, ...userResponse } = newUser;
+            
+            this.sendJSON(res, 201, {
+                success: true,
+                user: userResponse,
+                token: sessionToken,
+                message: 'Account created successfully'
+            });
+
+        } catch (error) {
+            console.error('Error creating account:', error);
+            if (error instanceof SyntaxError) {
+                this.sendError(res, 400, 'Invalid JSON');
+            } else {
+                this.sendError(res, 500, 'Failed to create account');
+            }
+        }
+    }
+
+    async handleSignin(req, res) {
+        try {
+            const body = await this.getRequestBody(req);
+            const { email, password } = JSON.parse(body);
+
+            if (!email || !password) {
+                return this.sendError(res, 400, 'Email and password are required');
+            }
+
+            // Find user
+            const users = this.loadUsers();
+            const user = users.find(u => u.email === email);
+
+            if (!user || !this.verifyPassword(password, user.password)) {
+                return this.sendError(res, 401, 'Invalid email or password');
+            }
+
+            // Create session token
+            const sessionToken = this.generateSessionToken();
+            const userSession = {
+                userId: user.id,
+                token: sessionToken,
+                createdAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            };
+
+            const sessions = this.loadSessions();
+            sessions.push(userSession);
+            this.saveSessions(sessions);
+
+            // Return user data without password
+            const { password: _, ...userResponse } = user;
+
+            this.sendJSON(res, 200, {
+                success: true,
+                user: userResponse,
+                token: sessionToken,
+                message: 'Signed in successfully'
+            });
+
+        } catch (error) {
+            console.error('Error signing in:', error);
+            this.sendError(res, 500, 'Sign in failed');
+        }
+    }
+
+    async handleSignout(req, res) {
+        try {
+            const authToken = this.getAuthToken(req);
+            
+            if (authToken) {
+                // Remove session
+                const sessions = this.loadSessions();
+                const updatedSessions = sessions.filter(s => s.token !== authToken);
+                this.saveSessions(updatedSessions);
+            }
+
+            this.sendJSON(res, 200, {
+                success: true,
+                message: 'Signed out successfully'
+            });
+
+        } catch (error) {
+            console.error('Error signing out:', error);
+            this.sendError(res, 500, 'Sign out failed');
+        }
+    }
+
+    async handleGetCurrentUser(req, res) {
+        try {
+            const user = await this.authenticateRequest(req);
+            
+            if (!user) {
+                return this.sendError(res, 401, 'Not authenticated');
+            }
+
+            const { password, ...userResponse } = user;
+            
+            this.sendJSON(res, 200, {
+                success: true,
+                user: userResponse
+            });
+
+        } catch (error) {
+            console.error('Error getting current user:', error);
+            this.sendError(res, 500, 'Failed to get user information');
+        }
+    }
+
+    async authenticateRequest(req) {
+        const authToken = this.getAuthToken(req);
+        
+        if (!authToken) {
+            return null;
+        }
+
+        // Find valid session
+        const sessions = this.loadSessions();
+        const session = sessions.find(s => 
+            s.token === authToken && 
+            new Date(s.expiresAt) > new Date()
+        );
+
+        if (!session) {
+            return null;
+        }
+
+        // Find user
+        const users = this.loadUsers();
+        const user = users.find(u => u.id === session.userId);
+
+        return user || null;
+    }
+
+    getAuthToken(req) {
+        const authHeader = req.headers['authorization'];
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            return authHeader.substring(7);
+        }
+        return null;
+    }
+
     async handleGetSites(req, res) {
-        const sites = this.monitor.getSites();
-        this.sendJSON(res, 200, { sites });
+        try {
+            const user = await this.authenticateRequest(req);
+            
+            if (!user) {
+                return this.sendError(res, 401, 'Authentication required');
+            }
+
+            // Get user's sites from monitor service
+            const allSites = this.monitor.getSites();
+            const userSites = allSites.filter(site => site.userId === user.id);
+            
+            this.sendJSON(res, 200, { sites: userSites });
+
+        } catch (error) {
+            console.error('Error getting sites:', error);
+            this.sendError(res, 500, 'Failed to get sites');
+        }
     }
 
     async handleAddSite(req, res) {
         try {
+            const user = await this.authenticateRequest(req);
+            
+            if (!user) {
+                return this.sendError(res, 401, 'Authentication required');
+            }
+
             const body = await this.getRequestBody(req);
             const siteData = JSON.parse(body);
 
             // Validate required fields
-            if (!siteData.url || !siteData.email) {
-                return this.sendError(res, 400, 'URL and email are required');
+            if (!siteData.url) {
+                return this.sendError(res, 400, 'URL is required');
             }
 
             // Validate URL format
@@ -83,19 +307,17 @@ class WebMonitorAPI {
                 return this.sendError(res, 400, 'Invalid URL format');
             }
 
-            // Validate email format (basic)
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(siteData.email)) {
-                return this.sendError(res, 400, 'Invalid email format');
-            }
-
-            const site = await this.monitor.addSite({
-                url: siteData.url,
-                email: siteData.email,
+            // Add user information to site data
+            const siteToAdd = {
+                ...siteData,
+                userId: user.id,
+                userEmail: user.email,
                 frequency: parseInt(siteData.frequency) || 30,
                 webhookUrl: siteData.webhookUrl || null,
                 notes: siteData.notes || null
-            });
+            };
+
+            const site = await this.monitor.addSite(siteToAdd);
 
             this.sendJSON(res, 201, { 
                 success: true, 
@@ -114,17 +336,107 @@ class WebMonitorAPI {
     }
 
     async handleRemoveSite(req, res) {
-        const siteId = req.url.split('/').pop();
-        const removed = this.monitor.removeSite(siteId);
-        
-        if (removed) {
-            this.sendJSON(res, 200, { 
-                success: true, 
-                message: 'Site removed successfully' 
-            });
-        } else {
-            this.sendError(res, 404, 'Site not found');
+        try {
+            const user = await this.authenticateRequest(req);
+            
+            if (!user) {
+                return this.sendError(res, 401, 'Authentication required');
+            }
+
+            const siteId = req.url.split('/').pop();
+            
+            // Verify user owns the site
+            const allSites = this.monitor.getSites();
+            const site = allSites.find(s => s.id === siteId);
+            
+            if (!site) {
+                return this.sendError(res, 404, 'Site not found');
+            }
+            
+            if (site.userId !== user.id) {
+                return this.sendError(res, 403, 'Access denied');
+            }
+
+            const removed = this.monitor.removeSite(siteId);
+            
+            if (removed) {
+                this.sendJSON(res, 200, { 
+                    success: true, 
+                    message: 'Site removed successfully' 
+                });
+            } else {
+                this.sendError(res, 404, 'Site not found');
+            }
+
+        } catch (error) {
+            console.error('Error removing site:', error);
+            this.sendError(res, 500, 'Failed to remove site');
         }
+    }
+
+    // Helper methods for user and session management
+    loadUsers() {
+        try {
+            const data = require('fs').readFileSync(
+                require('path').join(__dirname, 'users.json'), 
+                'utf8'
+            );
+            return JSON.parse(data);
+        } catch {
+            return [];
+        }
+    }
+
+    saveUsers(users) {
+        try {
+            require('fs').writeFileSync(
+                require('path').join(__dirname, 'users.json'),
+                JSON.stringify(users, null, 2)
+            );
+        } catch (error) {
+            console.error('Failed to save users:', error);
+        }
+    }
+
+    loadSessions() {
+        try {
+            const data = require('fs').readFileSync(
+                require('path').join(__dirname, 'sessions.json'), 
+                'utf8'
+            );
+            return JSON.parse(data);
+        } catch {
+            return [];
+        }
+    }
+
+    saveSessions(sessions) {
+        try {
+            require('fs').writeFileSync(
+                require('path').join(__dirname, 'sessions.json'),
+                JSON.stringify(sessions, null, 2)
+            );
+        } catch (error) {
+            console.error('Failed to save sessions:', error);
+        }
+    }
+
+    generateUserId() {
+        return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    }
+
+    generateSessionToken() {
+        return require('crypto').randomBytes(32).toString('hex');
+    }
+
+    hashPassword(password) {
+        // In production, use proper password hashing like bcrypt
+        // This is just for demo purposes
+        return require('crypto').createHash('sha256').update(password).digest('hex');
+    }
+
+    verifyPassword(password, hashedPassword) {
+        return this.hashPassword(password) === hashedPassword;
     }
 
     async handleHealth(req, res) {

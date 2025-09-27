@@ -524,6 +524,299 @@
             opacity: 0.5;
         }
 
+        /* Authentication Modal Styles */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: var(--blur-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .auth-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .auth-modal {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-xl);
+            padding: 3rem;
+            max-width: 450px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-large);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .auth-overlay.active .auth-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-md);
+            padding: 0.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .auth-tab.active {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-form .form-group:last-child {
+            margin-bottom: 2rem;
+        }
+
+        .auth-form .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .auth-form .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-md);
+            font-size: 1rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .auth-form .form-group input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-form .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .auth-footer a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* User Header */
+        .user-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: var(--blur-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem 2rem;
+            z-index: 100;
+            display: none;
+        }
+
+        .user-header.active {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-header .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .user-email {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        /* Authentication Required State */
+        .auth-required {
+            text-align: center;
+            padding: 3rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur-sm);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-lg);
+            margin: 2rem 0;
+        }
+
+        .auth-required h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .auth-required p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .auth-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .auth-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Adjust container for header */
+        body.authenticated .container {
+            padding-top: 6rem;
+        }
+
         .footer {
             margin-top: 4rem;
             text-align: center;
@@ -606,6 +899,84 @@
     </style>
 </head>
 <body>
+    <!-- User Header (shown when authenticated) -->
+    <div class="user-header" id="userHeader">
+        <div class="logo">WebMonitor</div>
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar"></div>
+            <div>
+                <div class="user-name" id="userName"></div>
+                <div class="user-email" id="userEmail"></div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-modal">
+            <button class="close-modal" id="closeAuthModal">×</button>
+            
+            <div class="auth-header">
+                <h2 class="auth-title" id="authTitle">Welcome to WebMonitor</h2>
+                <p class="auth-subtitle" id="authSubtitle">Create an account or sign in to start monitoring your websites</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="signin">Sign In</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form class="auth-form active" id="signinForm">
+                <div class="form-group">
+                    <label for="signin-email">Email Address</label>
+                    <input type="email" id="signin-email" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signin-password">Password</label>
+                    <input type="password" id="signin-password" name="password" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%;">
+                    <span>Sign In</span>
+                </button>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form class="auth-form" id="signupForm">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" name="name" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" name="password" placeholder="Create a password (min 8 characters)" required minlength="8">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signup-confirm-password">Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%;">
+                    <span>Create Account</span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="hero-section">
             <div class="hero-badge">
@@ -635,18 +1006,22 @@
             </div>
         </div>
 
-        <div class="monitor-form">
+        <!-- Authentication Required State (shown when not logged in) -->
+        <div class="auth-required" id="authRequired" style="display: none;">
+            <h3>🔐 Account Required</h3>
+            <p>Create an account or sign in to start monitoring your websites and manage your monitoring dashboard.</p>
+            <button class="auth-btn" onclick="showAuthModal('signup')">Create Account</button>
+            <button class="auth-btn secondary" onclick="showAuthModal('signin')">Sign In</button>
+        </div>
+
+        <!-- Monitoring Form (shown when authenticated) -->
+        <div class="monitor-form" id="monitorForm">
             <h2 class="form-title">Start Monitoring a Website</h2>
-            <form id="monitorForm">
+            <form id="monitorFormEl">
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="website-url">Website URL to Monitor</label>
                         <input type="url" id="website-url" name="websiteUrl" placeholder="https://example.com" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="customer-email">Your Email Address</label>
-                        <input type="email" id="customer-email" name="customerEmail" placeholder="your@email.com" required>
                     </div>
                     
                     <div class="form-group">
@@ -698,30 +1073,365 @@
     </div>
 
     <script>
-        // Website monitoring functionality
-        class WebsiteMonitor {
+        // Authentication and User Management System
+        class AuthManager {
             constructor() {
-                this.monitoredSites = this.loadMonitoredSites();
+                this.currentUser = this.loadCurrentUser();
+                this.initializeAuthListeners();
+                this.updateUIState();
+            }
+
+            initializeAuthListeners() {
+                // Auth modal controls
+                document.getElementById('closeAuthModal').addEventListener('click', () => this.hideAuthModal());
+                document.getElementById('authOverlay').addEventListener('click', (e) => {
+                    if (e.target === document.getElementById('authOverlay')) {
+                        this.hideAuthModal();
+                    }
+                });
+
+                // Auth tab switching
+                document.querySelectorAll('.auth-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => this.switchAuthTab(e.target.dataset.tab));
+                });
+
+                // Auth form submissions
+                document.getElementById('signinForm').addEventListener('submit', (e) => this.handleSignIn(e));
+                document.getElementById('signupForm').addEventListener('submit', (e) => this.handleSignUp(e));
+                
+                // Logout
+                document.getElementById('logoutBtn').addEventListener('click', () => this.signOut());
+
+                // ESC key to close modal
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.hideAuthModal();
+                });
+            }
+
+            showAuthModal(tab = 'signin') {
+                const overlay = document.getElementById('authOverlay');
+                overlay.classList.add('active');
+                this.switchAuthTab(tab);
+                
+                // Focus first input
+                setTimeout(() => {
+                    const firstInput = document.querySelector(`.auth-form.active input`);
+                    if (firstInput) firstInput.focus();
+                }, 300);
+            }
+
+            hideAuthModal() {
+                document.getElementById('authOverlay').classList.remove('active');
+                // Clear forms
+                document.getElementById('signinForm').reset();
+                document.getElementById('signupForm').reset();
+            }
+
+            switchAuthTab(tab) {
+                // Update tabs
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+                
+                // Update forms
+                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+                document.getElementById(`${tab}Form`).classList.add('active');
+
+                // Update modal content
+                if (tab === 'signin') {
+                    document.getElementById('authTitle').textContent = 'Welcome Back';
+                    document.getElementById('authSubtitle').textContent = 'Sign in to your WebMonitor account';
+                } else {
+                    document.getElementById('authTitle').textContent = 'Create Account';
+                    document.getElementById('authSubtitle').textContent = 'Join WebMonitor to start monitoring your websites';
+                }
+            }
+
+            async handleSignIn(e) {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                
+                const email = formData.get('email');
+                const password = formData.get('password');
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                try {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>Signing In...</span>';
+
+                    // Simulate API call
+                    await this.simulateAuth('signin', { email, password });
+                    
+                    // Create user session
+                    const user = {
+                        id: this.generateUserId(),
+                        name: email.split('@')[0], // Use email prefix as name for demo
+                        email: email,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    this.setCurrentUser(user);
+                    this.hideAuthModal();
+                    this.showStatus('✅ Successfully signed in!', 'success');
+
+                } catch (error) {
+                    this.showStatus('❌ Invalid email or password', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            }
+
+            async handleSignUp(e) {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                
+                const name = formData.get('name');
+                const email = formData.get('email');
+                const password = formData.get('password');
+                const confirmPassword = formData.get('confirmPassword');
+
+                // Validate passwords match
+                if (password !== confirmPassword) {
+                    this.showStatus('❌ Passwords do not match', 'error');
+                    return;
+                }
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                try {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>Creating Account...</span>';
+
+                    // Simulate API call
+                    await this.simulateAuth('signup', { name, email, password });
+                    
+                    // Create user session
+                    const user = {
+                        id: this.generateUserId(),
+                        name: name,
+                        email: email,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    this.setCurrentUser(user);
+                    this.hideAuthModal();
+                    this.showStatus('🎉 Account created successfully! Welcome to WebMonitor!', 'success');
+
+                } catch (error) {
+                    this.showStatus('❌ Failed to create account. Email may already be in use.', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            }
+
+            async simulateAuth(type, userData) {
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Simulate occasional failures for realism
+                if (Math.random() < 0.1) {
+                    throw new Error('Auth failed');
+                }
+
+                // For demo purposes, check if user exists for signin
+                if (type === 'signin') {
+                    const existingUsers = this.loadAllUsers();
+                    const user = existingUsers.find(u => u.email === userData.email);
+                    if (!user) {
+                        throw new Error('User not found');
+                    }
+                }
+
+                // For signup, save user to demo storage
+                if (type === 'signup') {
+                    const existingUsers = this.loadAllUsers();
+                    const userExists = existingUsers.find(u => u.email === userData.email);
+                    if (userExists) {
+                        throw new Error('User already exists');
+                    }
+                    
+                    const newUser = {
+                        id: this.generateUserId(),
+                        name: userData.name,
+                        email: userData.email,
+                        password: userData.password, // In real app, this would be hashed
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    existingUsers.push(newUser);
+                    localStorage.setItem('webmonitor-users', JSON.stringify(existingUsers));
+                }
+            }
+
+            signOut() {
+                this.setCurrentUser(null);
+                this.showStatus('👋 You have been signed out', 'info');
+            }
+
+            setCurrentUser(user) {
+                this.currentUser = user;
+                if (user) {
+                    localStorage.setItem('webmonitor-current-user', JSON.stringify(user));
+                } else {
+                    localStorage.removeItem('webmonitor-current-user');
+                }
+                this.updateUIState();
+                
+                // Reinitialize the monitor if user is authenticated
+                if (user && window.websiteMonitor) {
+                    window.websiteMonitor.loadUserSites();
+                }
+            }
+
+            loadCurrentUser() {
+                try {
+                    const saved = localStorage.getItem('webmonitor-current-user');
+                    return saved ? JSON.parse(saved) : null;
+                } catch {
+                    return null;
+                }
+            }
+
+            loadAllUsers() {
+                try {
+                    const saved = localStorage.getItem('webmonitor-users');
+                    return saved ? JSON.parse(saved) : [];
+                } catch {
+                    return [];
+                }
+            }
+
+            updateUIState() {
+                const isAuthenticated = !!this.currentUser;
+                
+                // Update body class
+                document.body.classList.toggle('authenticated', isAuthenticated);
+                
+                // Show/hide UI elements
+                document.getElementById('userHeader').classList.toggle('active', isAuthenticated);
+                document.getElementById('authRequired').style.display = isAuthenticated ? 'none' : 'block';
+                document.getElementById('monitorForm').style.display = isAuthenticated ? 'block' : 'none';
+
+                if (isAuthenticated) {
+                    // Update user info in header
+                    const user = this.currentUser;
+                    document.getElementById('userName').textContent = user.name;
+                    document.getElementById('userEmail').textContent = user.email;
+                    document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+                }
+            }
+
+            generateUserId() {
+                return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+            }
+
+            showStatus(message, type) {
+                // Create or update status element
+                let statusEl = document.getElementById('globalStatus');
+                if (!statusEl) {
+                    statusEl = document.createElement('div');
+                    statusEl.id = 'globalStatus';
+                    statusEl.className = 'status-message';
+                    statusEl.style.position = 'fixed';
+                    statusEl.style.top = '2rem';
+                    statusEl.style.right = '2rem';
+                    statusEl.style.zIndex = '9999';
+                    statusEl.style.maxWidth = '400px';
+                    document.body.appendChild(statusEl);
+                }
+                
+                statusEl.textContent = message;
+                statusEl.className = `status-message status-${type}`;
+                statusEl.style.display = 'block';
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 5000);
+            }
+
+            isAuthenticated() {
+                return !!this.currentUser;
+            }
+
+            getCurrentUser() {
+                return this.currentUser;
+            }
+        }
+
+        // Website monitoring functionality with user authentication
+        class WebsiteMonitor {
+            constructor(authManager) {
+                this.authManager = authManager;
+                this.monitoredSites = [];
                 this.initializeEventListeners();
-                this.updateSiteList();
+                this.loadUserSites();
             }
 
             initializeEventListeners() {
-                const form = document.getElementById('monitorForm');
-                form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+                const form = document.getElementById('monitorFormEl');
+                if (form) {
+                    form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+                }
+            }
+
+            loadUserSites() {
+                if (!this.authManager.isAuthenticated()) {
+                    this.monitoredSites = [];
+                    this.updateSiteList();
+                    return;
+                }
+
+                const user = this.authManager.getCurrentUser();
+                const userKey = `webmonitor-sites-${user.id}`;
+                
+                try {
+                    const saved = localStorage.getItem(userKey);
+                    this.monitoredSites = saved ? JSON.parse(saved) : [];
+                } catch {
+                    this.monitoredSites = [];
+                }
+                
+                this.updateSiteList();
+            }
+
+            saveUserSites() {
+                if (!this.authManager.isAuthenticated()) return;
+                
+                const user = this.authManager.getCurrentUser();
+                const userKey = `webmonitor-sites-${user.id}`;
+                
+                try {
+                    localStorage.setItem(userKey, JSON.stringify(this.monitoredSites));
+                } catch (error) {
+                    console.error('Failed to save monitored sites:', error);
+                }
             }
 
             async handleFormSubmit(e) {
                 e.preventDefault();
                 
+                if (!this.authManager.isAuthenticated()) {
+                    this.authManager.showAuthModal('signin');
+                    return;
+                }
+                
                 const submitBtn = document.getElementById('submitBtn');
                 const statusMessage = document.getElementById('statusMessage');
+                const user = this.authManager.getCurrentUser();
                 
                 // Get form data
                 const formData = new FormData(e.target);
                 const websiteData = {
                     url: formData.get('websiteUrl'),
-                    email: formData.get('customerEmail'),
+                    userId: user.id,
+                    userEmail: user.email,
                     frequency: parseInt(formData.get('monitorFrequency')),
                     webhookUrl: formData.get('webhookUrl'),
                     notes: formData.get('notes'),
@@ -748,14 +1458,14 @@
                     
                     // Add to monitored sites
                     this.monitoredSites.push(websiteData);
-                    this.saveMonitoredSites();
+                    this.saveUserSites();
                     this.updateSiteList();
                     
                     // Reset form
                     e.target.reset();
                     
                     // Show success message
-                    this.showStatus(`✅ Successfully started monitoring ${websiteData.url}! You'll receive notifications at ${websiteData.email}`, 'success');
+                    this.showStatus(`✅ Successfully started monitoring ${websiteData.url}!`, 'success');
                     
                     // Start monitoring this website
                     this.startMonitoring(websiteData);
@@ -784,7 +1494,7 @@
                     const initialContent = await this.fetchWebsiteContent(websiteData.url);
                     websiteData.contentHash = await this.hashContent(initialContent);
                     websiteData.lastChecked = new Date().toISOString();
-                    this.saveMonitoredSites();
+                    this.saveUserSites();
                 } catch (error) {
                     console.warn('Could not fetch initial content:', error);
                 }
@@ -794,8 +1504,6 @@
             }
 
             scheduleCheck(websiteData) {
-                // In a real implementation, this would be handled by a backend service
-                // For demo purposes, we'll simulate periodic checks
                 const intervalMs = websiteData.frequency * 60 * 1000;
                 
                 setTimeout(() => {
@@ -809,36 +1517,28 @@
                     const currentHash = await this.hashContent(currentContent);
                     
                     if (websiteData.contentHash && currentHash !== websiteData.contentHash) {
-                        // Content changed!
                         websiteData.changesDetected++;
                         websiteData.contentHash = currentHash;
                         websiteData.lastChecked = new Date().toISOString();
                         
-                        // Send notification
                         await this.sendChangeNotification(websiteData);
                         
-                        this.saveMonitoredSites();
+                        this.saveUserSites();
                         this.updateSiteList();
                     }
                     
                     websiteData.lastChecked = new Date().toISOString();
-                    this.saveMonitoredSites();
-                    
-                    // Schedule next check
+                    this.saveUserSites();
                     this.scheduleCheck(websiteData);
                     
                 } catch (error) {
                     console.error('Error checking website:', error);
-                    // Schedule retry
-                    setTimeout(() => this.checkForChanges(websiteData), 60000); // Retry in 1 minute
+                    setTimeout(() => this.checkForChanges(websiteData), 60000);
                 }
             }
 
             async fetchWebsiteContent(url) {
-                // In a real implementation, this would use a backend proxy to avoid CORS
-                // For demo purposes, we'll simulate content fetching
                 return new Promise((resolve, reject) => {
-                    // Simulate network delay
                     setTimeout(() => {
                         if (Math.random() < 0.9) {
                             resolve(`Simulated content for ${url} at ${new Date().toISOString()}`);
@@ -850,21 +1550,18 @@
             }
 
             async hashContent(content) {
-                // Simple hash function for demo
                 let hash = 0;
                 for (let i = 0; i < content.length; i++) {
                     const char = content.charCodeAt(i);
                     hash = ((hash << 5) - hash) + char;
-                    hash = hash & hash; // Convert to 32-bit integer
+                    hash = hash & hash;
                 }
                 return hash.toString();
             }
 
             async sendChangeNotification(websiteData) {
-                console.log(`🔔 Change detected on ${websiteData.url}! Sending notification to ${websiteData.email}`);
+                console.log(`🔔 Change detected on ${websiteData.url}! Sending notification to ${websiteData.userEmail}`);
                 
-                // In a real implementation, this would call a backend API
-                // For demo purposes, we'll show a browser notification if supported
                 if ('Notification' in window && Notification.permission === 'granted') {
                     new Notification('Website Change Detected!', {
                         body: `Changes detected on ${websiteData.url}`,
@@ -872,7 +1569,6 @@
                     });
                 }
 
-                // Simulate webhook call
                 if (websiteData.webhookUrl) {
                     console.log(`📡 Calling webhook: ${websiteData.webhookUrl}`);
                 }
@@ -881,6 +1577,16 @@
             updateSiteList() {
                 const siteList = document.getElementById('siteList');
                 
+                if (!this.authManager.isAuthenticated()) {
+                    siteList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">🔐</div>
+                            <p>Sign in to view your monitored websites</p>
+                        </div>
+                    `;
+                    return;
+                }
+
                 if (this.monitoredSites.length === 0) {
                     siteList.innerHTML = `
                         <div class="empty-state">
@@ -924,33 +1630,24 @@
                 statusMessage.className = `status-message status-${type}`;
                 statusMessage.style.display = 'block';
                 
-                // Auto-hide after 5 seconds
                 setTimeout(() => {
                     statusMessage.style.display = 'none';
                 }, 5000);
             }
-
-            loadMonitoredSites() {
-                try {
-                    const saved = localStorage.getItem('webmonitor-sites');
-                    return saved ? JSON.parse(saved) : [];
-                } catch {
-                    return [];
-                }
-            }
-
-            saveMonitoredSites() {
-                try {
-                    localStorage.setItem('webmonitor-sites', JSON.stringify(this.monitoredSites));
-                } catch (error) {
-                    console.error('Failed to save monitored sites:', error);
-                }
-            }
         }
 
-        // Initialize the website monitor when page loads
+        // Global functions for UI interactions
+        function showAuthModal(tab = 'signin') {
+            window.authManager.showAuthModal(tab);
+        }
+
+        // Initialize the application when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new WebsiteMonitor();
+            // Initialize authentication system
+            window.authManager = new AuthManager();
+            
+            // Initialize website monitor
+            window.websiteMonitor = new WebsiteMonitor(window.authManager);
 
             // Request notification permission
             if ('Notification' in window && Notification.permission === 'default') {

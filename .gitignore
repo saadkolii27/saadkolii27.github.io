@@ -30,3 +30,5 @@ Thumbs.db
 
 # WebMonitor data files
 monitored-sites.json
+users.json
+sessions.json

@@ -51,7 +51,9 @@ class WebsiteMonitor {
             status: 'active',
             lastChecked: null,
             changesDetected: 0,
-            contentHash: null
+            contentHash: null,
+            userId: siteData.userId || null, // Support for user-specific sites
+            userEmail: siteData.userEmail || siteData.email || null
         };
 
         this.monitoredSites.set(site.id, site);
@@ -63,7 +65,7 @@ class WebsiteMonitor {
             site.contentHash = this.hashContent(content);
             site.lastChecked = new Date().toISOString();
             await this.saveData();
-            console.log(`✅ Added monitoring for ${site.url}`);
+            console.log(`✅ Added monitoring for ${site.url} (User: ${site.userEmail || 'anonymous'})`);
         } catch (error) {
             console.error(`❌ Failed to get initial content for ${site.url}:`, error.message);
         }
