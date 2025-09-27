@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PGZ4LM38XS"></script>
@@ -12,122 +12,160 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <meta name="robots" content="noindex, nofollow" />
-    <title>Billetterie Officielle - OverFlow</title>
-    <link rel='stylesheet' type='text/css' media='screen' href='https://tickets.cafonline.com/cf_error_pages/assets/style.css'>
-</head>
-<body>
-    <header>
-        <div class="header-left">
-            <img src="https://tickets.cafonline.com/cf_error_pages/assets/img/logo.svg" alt="Logo" class="logo" height="100px">
-        </div>
-    </header>
-    <div class="separator"></div>
-
-    <main>
-        <h1>INFORMATION</h1>
-        <p>The Confederation Africaine de Football (“CAF”) has delayed the opening of the first phase of the ticket sales for the TotalEnergies CAF Africa Cup of Nations Morocco 2025 to finalize important details that will ensure the best possible experience for fans.</p>
-        <p>CAF is working with the Local Organizing Committee (“LOC”) and various stakeholders and will announce a new date for the first phase of the ticket sales in due course. </p>
-        <p>CAF apologizes for any inconvenience caused.</p>
- 
-    </main>
+    <meta name="description" content="Official CAF Ticketing Platform - Buy tickets for TotalEnergies CAF Africa Cup of Nations Morocco 2025">
+    <title>CAF Official Ticketing Platform</title>
+    
+    <!-- Tailwind CSS -->
+    <link href="./style/app.css" rel="stylesheet">
+    
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom styles -->
     <style>
-      /* Font - Gothams */
+        /* Font - Gothams */
+        @font-face {
+            font-family: 'Gotham';
+            src: url('https://tickets.cafonline.com/cf_error_pages/assets/font/Gotham-Book.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
 
-/* regular */
-@font-face {
-    font-family: 'Gotham';
-    src:
-      url('https://tickets.cafonline.com/cf_error_pages/assets/font/Gotham-Book.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
+        @font-face {
+            font-family: 'Gotham';
+            src: url('https://tickets.cafonline.com/cf_error_pages/assets/font/Gotham-Bold.woff') format('woff');
+            font-weight: bold;
+            font-style: normal;
+        }
 
-/* bold */
-@font-face {
-    font-family: 'Gotham';
-    src:
-      url('https://tickets.cafonline.com/cf_error_pages/assets/font/Gotham-Bold.woff') format('woff');
-    font-weight: bold;
-    font-style: normal;
-}
+        body {
+            font-family: 'Gotham', sans-serif;
+            background: linear-gradient(135deg, #800000 0%, #600000 100%);
+            min-height: 100vh;
+        }
 
-body {
-    margin: 0;
-    font-family: 'Gotham', sans-serif;
-    background-color: #800000;
-    color: #ffffff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-image: url('https://tickets.cafonline.com/cf_error_pages/assets/img/BG.png');
-    background-repeat: no-repeat;
-    background-position: right top;
-    background-size: auto 80%;
-}
+        header {
+            background-color: rgba(128, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            height: 80px;
+        }
 
-header {
-    height: 80px;
-    display: flex;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 5%);
-    background-color: maroon;
-}
+        .modal {
+            animation: fadeIn 0.3s ease-out;
+        }
 
-header img {
-    max-height: 80%;
-    margin-left: 2rem;
-    display: flex;
-    align-items: center;
-}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-.header-text span {
-    font-size: 0.9em;
-    opacity: 0.9;
-}
+        .event-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-.separator {
-    height: 2px;
-    background-color: rgba(0, 0, 0, 0.2);
-    width: 100%;
-}
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
 
-main {
-    text-align: center;
-    margin: auto;
-    max-width: 800px;
-    padding: 20px;
-}
+        #loading-screen {
+            background: linear-gradient(135deg, #800000 0%, #600000 100%);
+        }
 
-h1 {
-    color: #00a651;
-    font-size: 2.5em;
-    margin-bottom: 10px;
-}
+        .spinner {
+            border-top: 3px solid #00a651;
+            animation: spin 1s linear infinite;
+        }
 
-p {
-    font-size: 1.2em;
-    line-height: 1.6;
-}
-
-/* Mobile optimisation */
-@media (max-width: 768px) {
-    body {
-        background-position: right 80px;
-        background-size: contain;
-    }
-
-    h1 {
-        font-size: 1.8em; /* réduit le titre */
-    }
-
-    p {
-        font-size: 1em; /* réduit le texte */
-    }
-
-    .header-text span {
-        font-size: 0.8em; /* plus discret sur mobile */
-    }
-}
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="spinner w-16 h-16 border-4 border-gray-200 rounded-full mx-auto mb-4"></div>
+            <img src="https://tickets.cafonline.com/cf_error_pages/assets/img/logo.svg" alt="CAF Logo" class="h-20 mx-auto mb-4">
+            <p class="text-white text-xl">Loading CAF Ticketing Platform...</p>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="hidden">
+        <header class="fixed w-full top-0 z-40">
+            <!-- Navigation will be populated by UIManager -->
+        </header>
+
+        <main class="pt-20 min-h-screen">
+            <!-- Main content will be populated by the application -->
+        </main>
+
+        <footer class="bg-gray-800 text-white py-8 mt-16">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <img src="https://tickets.cafonline.com/cf_error_pages/assets/img/logo.svg" alt="CAF Logo" class="h-16 mb-4">
+                        <p class="text-gray-300">Official ticketing platform for CAF competitions</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#events" class="text-gray-300 hover:text-green-400 transition-colors">Events</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-green-400 transition-colors">Help & Support</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-green-400 transition-colors">Terms & Conditions</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Contact</h3>
+                        <p class="text-gray-300">Email: tickets@cafonline.com</p>
+                        <p class="text-gray-300">Phone: +212 537 77 51 51</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                    <p>&copy; 2025 Confederation Africaine de Football. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { TicketPlatform } from './src/TicketPlatform.js';
+        
+        // Make UIManager globally accessible for onclick handlers
+        window.uiManager = null;
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const app = new TicketPlatform();
+                window.uiManager = app.uiManager;
+                
+                // Initialize app
+                await app.init();
+                
+                // Hide loading screen and show main app
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                
+                console.log('CAF Ticketing Platform loaded successfully');
+            } catch (error) {
+                console.error('Failed to initialize platform:', error);
+                document.getElementById('loading-screen').innerHTML = `
+                    <div class="text-center text-white">
+                        <h2 class="text-2xl font-bold mb-4">Error Loading Platform</h2>
+                        <p class="mb-4">${error.message}</p>
+                        <button onclick="location.reload()" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+        });
+    </script>
 </body>
 </html>
