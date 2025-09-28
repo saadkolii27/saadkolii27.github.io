@@ -3,67 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Site Closed</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/style/app.css">
   <style>
-    body {
-      min-height: 100vh;
-      margin: 0;
-      background: #fafafb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Inter', Arial, sans-serif;
-      color: #2d2d31;
-    }
-    .closed-container {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.07), 0 1.5px 6px rgba(0,0,0,0.03);
-      padding: 3rem 2.5rem;
-      max-width: 380px;
-      width: 100%;
+    /* Custom component styles */
+    .auth-tab {
+      flex: 1;
+      padding: 0.5rem 1rem;
       text-align: center;
-      border: 1px solid #ededf0;
+      background: transparent;
+      border: none;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .closed-icon {
-      font-size: 54px;
-      color: #fd366e;
-      margin-bottom: 1rem;
-      display: inline-block;
-      line-height: 1;
+    
+    .auth-tab.active {
+      background: white;
+      color: #1f2937;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
-    h1 {
-      font-weight: 600;
-      font-size: 2rem;
-      margin: 0 0 0.5rem 0;
+    
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    p {
-      color: #56565c;
-      margin: 0 0 1.2rem 0;
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
-    .note {
-      color: #a3a3a9;
-      font-size: 1rem;
-      margin-top: 0.5rem;
+    
+    .form-input:disabled {
+      background-color: #f9fafb;
+      color: #6b7280;
+      cursor: not-allowed;
     }
-    @media (max-width: 500px) {
-      .closed-container {
-        padding: 2rem 1rem;
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-secondary:hover {
+      background: #e5e7eb;
+      border-color: #9ca3af;
+    }
+    
+    /* Loading animation */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .loading {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: 1fr;
       }
-      h1 {
-        font-size: 1.4rem;
+      
+      .col-span-2 {
+        grid-column: span 1;
       }
     }
   </style>
 </head>
-<body>
-  <div class="closed-container">
-    <div class="closed-icon">🔒</div>
-    <h1>Website Closed</h1>
-    <p>This website is currently closed.<br>
-      Please check back later.</p>
-    <div class="note">jiji galt liya nsdo hihihi</div>
+<body class="bg-gray-50 font-sans antialiased">
+  <div id="app">
+    <!-- Loading state -->
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+        <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 loading">
+          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </div>
+        <p class="text-gray-600">Loading...</p>
+      </div>
+    </div>
   </div>
+  
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
