@@ -3,67 +3,177 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Site Closed</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/style/app.css">
   <style>
-    body {
-      min-height: 100vh;
-      margin: 0;
-      background: #fafafb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Inter', Arial, sans-serif;
-      color: #2d2d31;
-    }
-    .closed-container {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.07), 0 1.5px 6px rgba(0,0,0,0.03);
-      padding: 3rem 2.5rem;
-      max-width: 380px;
-      width: 100%;
+    /* Custom component styles */
+    .auth-tab {
+      flex: 1;
+      padding: 0.5rem 1rem;
       text-align: center;
-      border: 1px solid #ededf0;
+      background: transparent;
+      border: none;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .closed-icon {
-      font-size: 54px;
-      color: #fd366e;
-      margin-bottom: 1rem;
-      display: inline-block;
-      line-height: 1;
+    
+    .auth-tab.active {
+      background: white;
+      color: #1f2937;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
-    h1 {
-      font-weight: 600;
-      font-size: 2rem;
-      margin: 0 0 0.5rem 0;
+    
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    p {
-      color: #56565c;
-      margin: 0 0 1.2rem 0;
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
-    .note {
-      color: #a3a3a9;
-      font-size: 1rem;
-      margin-top: 0.5rem;
+    
+    .form-input:disabled {
+      background-color: #f9fafb;
+      color: #6b7280;
+      cursor: not-allowed;
     }
-    @media (max-width: 500px) {
-      .closed-container {
-        padding: 2rem 1rem;
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-secondary:hover {
+      background: #e5e7eb;
+      border-color: #9ca3af;
+    }
+    
+    /* Loading animation */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .loading {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: 1fr;
       }
-      h1 {
-        font-size: 1.4rem;
+      
+      .col-span-2 {
+        grid-column: span 1;
       }
+    }
+
+    /* Fallback styles for when JavaScript fails */
+    .js-disabled {
+      display: none;
+    }
+
+    .no-js .js-disabled {
+      display: block;
+    }
+
+    .no-js .loading {
+      display: none;
     }
   </style>
 </head>
-<body>
-  <div class="closed-container">
-    <div class="closed-icon">🔒</div>
-    <h1>Website Closed</h1>
-    <p>This website is currently closed.<br>
-      Please check back later.</p>
-    <div class="note">jiji galt liya nsdo hihihi</div>
+<body class="bg-gray-50 font-sans antialiased">
+  <script>
+    // Remove no-js class if JavaScript is enabled
+    document.documentElement.classList.remove('no-js');
+    
+    // Add error handler for script loading
+    window.addEventListener('error', function(e) {
+      console.error('Script error:', e);
+      if (e.filename && e.filename.includes('main.js')) {
+        // If main.js fails to load, show fallback
+        document.getElementById('fallback').style.display = 'block';
+        document.getElementById('app').style.display = 'none';
+      }
+    });
+  </script>
+  
+  <div id="app">
+    <!-- Loading state -->
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+        <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 loading">
+          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </div>
+        <p class="text-gray-600">Loading...</p>
+      </div>
+    </div>
   </div>
+
+  <!-- Fallback content for when JavaScript fails -->
+  <div id="fallback" style="display: none;" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center">
+      <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.348 18.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-gray-900 mb-4">Authentication System</h1>
+      <p class="text-gray-600 mb-6">The interactive authentication system requires JavaScript to function properly.</p>
+      <div class="bg-gray-50 rounded-lg p-4 text-sm">
+        <p class="font-medium text-gray-900 mb-2">To access the dashboard:</p>
+        <ol class="text-left text-gray-600 space-y-1">
+          <li>1. Ensure JavaScript is enabled in your browser</li>
+          <li>2. Check your internet connection</li>
+          <li>3. Try refreshing the page</li>
+          <li>4. For demo mode, visit: <code class="bg-gray-200 px-1 rounded">?demo=true</code></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  
+  <script type="module" src="/src/main.js" onerror="document.getElementById('fallback').style.display='block'; document.getElementById('app').style.display='none';"></script>
 </body>
 </html>
