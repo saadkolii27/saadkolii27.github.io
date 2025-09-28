@@ -107,9 +107,37 @@
         grid-column: span 1;
       }
     }
+
+    /* Fallback styles for when JavaScript fails */
+    .js-disabled {
+      display: none;
+    }
+
+    .no-js .js-disabled {
+      display: block;
+    }
+
+    .no-js .loading {
+      display: none;
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
+  <script>
+    // Remove no-js class if JavaScript is enabled
+    document.documentElement.classList.remove('no-js');
+    
+    // Add error handler for script loading
+    window.addEventListener('error', function(e) {
+      console.error('Script error:', e);
+      if (e.filename && e.filename.includes('main.js')) {
+        // If main.js fails to load, show fallback
+        document.getElementById('fallback').style.display = 'block';
+        document.getElementById('app').style.display = 'none';
+      }
+    });
+  </script>
+  
   <div id="app">
     <!-- Loading state -->
     <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -123,7 +151,29 @@
       </div>
     </div>
   </div>
+
+  <!-- Fallback content for when JavaScript fails -->
+  <div id="fallback" style="display: none;" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center">
+      <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.348 18.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-gray-900 mb-4">Authentication System</h1>
+      <p class="text-gray-600 mb-6">The interactive authentication system requires JavaScript to function properly.</p>
+      <div class="bg-gray-50 rounded-lg p-4 text-sm">
+        <p class="font-medium text-gray-900 mb-2">To access the dashboard:</p>
+        <ol class="text-left text-gray-600 space-y-1">
+          <li>1. Ensure JavaScript is enabled in your browser</li>
+          <li>2. Check your internet connection</li>
+          <li>3. Try refreshing the page</li>
+          <li>4. For demo mode, visit: <code class="bg-gray-200 px-1 rounded">?demo=true</code></li>
+        </ol>
+      </div>
+    </div>
+  </div>
   
-  <script type="module" src="/src/main.js"></script>
+  <script type="module" src="/src/main.js" onerror="document.getElementById('fallback').style.display='block'; document.getElementById('app').style.display='none';"></script>
 </body>
 </html>

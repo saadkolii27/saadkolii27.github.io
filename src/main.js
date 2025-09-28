@@ -297,27 +297,48 @@ const app = new AppState();
 
 // Check if user is already logged in
 document.addEventListener('DOMContentLoaded', async () => {
-    // Check for demo mode in URL
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('demo') === 'true') {
-        // Show demo dashboard
-        const mockUser = {
-            $id: 'demo-user-12345',
-            name: 'John Doe',
-            email: 'john.doe@example.com',
-            emailVerification: true,
-            $createdAt: '2024-01-15T10:30:00.000Z',
-            $updatedAt: '2024-01-20T14:45:00.000Z'
-        };
-        app.setUser(mockUser);
-        return;
-    }
-
+    console.log('DOM Content Loaded - Starting app initialization');
+    
     try {
-        const user = await account.get();
-        app.setUser(user);
-    } catch (error) {
-        // User not logged in, show auth view
+        // Check for demo mode in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('demo') === 'true') {
+            console.log('Demo mode detected');
+            // Show demo dashboard
+            const mockUser = {
+                $id: 'demo-user-12345',
+                name: 'John Doe',
+                email: 'john.doe@example.com',
+                emailVerification: true,
+                $createdAt: '2024-01-15T10:30:00.000Z',
+                $updatedAt: '2024-01-20T14:45:00.000Z'
+            };
+            app.setUser(mockUser);
+            return;
+        }
+
+        console.log('Checking for existing user session');
+        try {
+            const user = await account.get();
+            console.log('User session found:', user);
+            app.setUser(user);
+        } catch (error) {
+            console.log('No existing user session, showing auth view:', error.message);
+            // User not logged in, show auth view
+            app.setUser(null);
+        }
+    } catch (globalError) {
+        console.error('Global error in app initialization:', globalError);
+        // Fallback: ensure the auth view is shown even if something goes wrong
         app.setUser(null);
     }
 });
+
+// Add a fallback timeout to ensure the app loads even if something goes wrong
+setTimeout(() => {
+    const appElement = document.getElementById('app');
+    if (appElement && appElement.innerHTML.includes('Loading...')) {
+        console.warn('App still showing loading state after 3 seconds, forcing auth view');
+        app.setUser(null);
+    }
+}, 3000);
