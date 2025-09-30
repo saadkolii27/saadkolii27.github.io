@@ -9,14 +9,135 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link.sign-up {
+            background: var(--gradient);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+        }
+
+        .nav-link.sign-up:hover {
+            box-shadow: 0 5px 15px rgba(74, 110, 208, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .welcome-container {
+            margin-top: 10rem; /* Pour tenir compte de la hauteur du header */
+        }
+
+        @media screen and (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-link.sign-up {
+                padding: 0.5rem 1rem;
+            }
+
+            .welcome-container {
+                margin-top: 8rem;
+            }
+        }
+
+        #profile-link {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <header class="header">
+        <a href="index.html" class="logo">Saad Kolii</a>
+        <nav class="nav-links">
+            <a href="#" class="nav-link">À propos</a>
+            <a href="#" class="nav-link">Projets</a>
+            <a href="#" class="nav-link">Contact</a>
+            <a href="login.html" class="nav-link" id="login-link">Se connecter</a>
+            <a href="signup.html" class="nav-link sign-up" id="signup-link">S'inscrire</a>
+            <a href="profile.html" class="nav-link sign-up" id="profile-link">Mon profil</a>
+        </nav>
+    </header>
+
     <div class="welcome-container">
         <h1>Bienvenue !</h1>
         <p>Nous sommes ravis de vous accueillir sur le site personnel de Saad.</p>
         <p>Découvrez mon portfolio, mes projets et mes compétences.</p>
         <a href="#" class="explore-btn">Explorer</a>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    <script src="auth.js"></script>
+    <script>
+        // Vérifier si l'utilisateur est connecté pour adapter le menu
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const isLoggedIn = await auth.isLoggedIn();
+                const loginLink = document.getElementById('login-link');
+                const signupLink = document.getElementById('signup-link');
+                const profileLink = document.getElementById('profile-link');
+                
+                if (isLoggedIn) {
+                    // Si connecté, masquer login/signup et afficher profil
+                    loginLink.style.display = 'none';
+                    signupLink.style.display = 'none';
+                    profileLink.style.display = 'block';
+                } else {
+                    // Si non connecté, afficher login/signup et masquer profil
+                    loginLink.style.display = 'block';
+                    signupLink.style.display = 'block';
+                    profileLink.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification de connexion:', error);
+            }
+        });
+    </script>
     <script src="main.js"></script>
 </body>
 </html>
