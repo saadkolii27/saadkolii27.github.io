@@ -1,217 +1,163 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription - Saad Kolii</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        .auth-container {
-            max-width: 500px;
-            margin: 8rem auto;
-            padding: 2.5rem;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Inscription · Université Centrale</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    </head>
+    <body class="auth-page">
+        <div class="auth-container fade-up">
+            <div class="auth-header">
+                <span class="badge">Espace étudiant</span>
+                <h1>Créer un compte</h1>
+                <p>Rejoignez la communauté universitaire en quelques secondes</p>
+            </div>
 
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+            <form id="signup-form" class="auth-form">
+                <div class="form-group">
+                    <label for="name" class="form-label">Nom complet</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-input"
+                        required
+                        placeholder="Votre nom complet"
+                        autocomplete="name"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">Adresse e-mail</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-input"
+                        required
+                        placeholder="votre@email.com"
+                        autocomplete="email"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-input"
+                        required
+                        minlength="8"
+                        placeholder="Au moins 8 caractères"
+                        autocomplete="new-password"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password" class="form-label"
+                        >Confirmez le mot de passe</label
+                    >
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        name="confirm-password"
+                        class="form-input"
+                        required
+                        minlength="8"
+                        placeholder="Confirmez votre mot de passe"
+                        autocomplete="new-password"
+                    />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    Créer mon compte
+                </button>
+            </form>
 
-        .auth-header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
-        }
+            <div class="form-alert error" id="error-message"></div>
+            <div class="form-alert success" id="success-message"></div>
 
-        .auth-header p {
-            color: #666;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--primary-color);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(74, 110, 208, 0.2);
-        }
-
-        .auth-btn {
-            display: block;
-            width: 100%;
-            padding: 1rem;
-            background: var(--gradient);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 2rem;
-        }
-
-        .auth-btn:hover {
-            box-shadow: 0 5px 15px rgba(74, 110, 208, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .auth-footer {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 0.95rem;
-        }
-
-        .auth-footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .auth-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .error-message {
-            color: #e74c3c;
-            background-color: rgba(231, 76, 60, 0.1);
-            padding: 0.8rem;
-            border-radius: 5px;
-            margin-top: 1rem;
-            display: none;
-        }
-
-        .success-message {
-            color: #2ecc71;
-            background-color: rgba(46, 204, 113, 0.1);
-            padding: 0.8rem;
-            border-radius: 5px;
-            margin-top: 1rem;
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="auth-container">
-        <div class="auth-header">
-            <h1>Créer un compte</h1>
-            <p>Inscrivez-vous pour accéder à votre espace personnel</p>
+            <div class="auth-footer">
+                <span>Déjà inscrit&nbsp;?</span>
+                <a href="login.html">Se connecter</a>
+            </div>
         </div>
-        
-        <form id="signup-form">
-            <div class="form-group">
-                <label for="name">Nom complet</label>
-                <input type="text" id="name" name="name" required placeholder="Votre nom complet">
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Adresse e-mail</label>
-                <input type="email" id="email" name="email" required placeholder="votre@email.com">
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required placeholder="Mot de passe (8 caractères minimum)" minlength="8">
-            </div>
-            
-            <div class="form-group">
-                <label for="confirm-password">Confirmez le mot de passe</label>
-                <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirmez votre mot de passe" minlength="8">
-            </div>
-            
-            <button type="submit" class="auth-btn">S'inscrire</button>
-        </form>
-        
-        <div class="error-message" id="error-message"></div>
-        <div class="success-message" id="success-message"></div>
-        
-        <div class="auth-footer">
-            Vous avez déjà un compte? <a href="login.html">Se connecter</a>
-        </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
-    <script src="auth.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Rediriger si déjà connecté
-            auth.redirectIfNeeded('signup.html', 'profile.html');
-            
-            const signupForm = document.getElementById('signup-form');
-            const errorMessage = document.getElementById('error-message');
-            const successMessage = document.getElementById('success-message');
-            
-            signupForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                // Masquer les messages précédents
-                errorMessage.style.display = 'none';
-                successMessage.style.display = 'none';
-                
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirm-password').value;
-                
-                // Vérifier que les mots de passe correspondent
-                if (password !== confirmPassword) {
-                    errorMessage.textContent = 'Les mots de passe ne correspondent pas.';
-                    errorMessage.style.display = 'block';
-                    return;
-                }
-                
-                // Désactiver le bouton pendant le traitement
-                const submitButton = signupForm.querySelector('button[type="submit"]');
-                const originalButtonText = submitButton.textContent;
-                submitButton.disabled = true;
-                submitButton.textContent = 'Création en cours...';
-                
-                try {
-                    // Créer le compte
-                    await auth.createAccount(email, password, name);
-                    
-                    // Afficher le message de succès
-                    successMessage.textContent = 'Compte créé avec succès! Redirection...';
-                    successMessage.style.display = 'block';
-                    
-                    // Rediriger vers la page de profil
-                    setTimeout(() => {
-                        window.location.href = 'profile.html';
-                    }, 1500);
-                    
-                } catch (error) {
-                    errorMessage.textContent = error.message;
-                    errorMessage.style.display = 'block';
-                    
-                    // Réactiver le bouton
-                    submitButton.disabled = false;
-                    submitButton.textContent = originalButtonText;
-                }
+        <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+        <script src="auth.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                auth.redirectIfNeeded("signup.html", "profile.html");
+
+                const signupForm = document.getElementById("signup-form");
+                const errorMessage = document.getElementById("error-message");
+                const successMessage = document.getElementById("success-message");
+
+                const showAlert = (element, message) => {
+                    if (!element) return;
+                    element.textContent = message;
+                    element.classList.add("is-visible");
+                };
+
+                const hideAlert = (element) => {
+                    if (!element) return;
+                    element.classList.remove("is-visible");
+                    element.textContent = "";
+                };
+
+                signupForm.addEventListener("submit", async (event) => {
+                    event.preventDefault();
+
+                    hideAlert(errorMessage);
+                    hideAlert(successMessage);
+
+                    const name = document.getElementById("name").value.trim();
+                    const email = document.getElementById("email").value.trim();
+                    const password = document.getElementById("password").value;
+                    const confirmPassword = document
+                        .getElementById("confirm-password")
+                        .value;
+
+                    if (password !== confirmPassword) {
+                        showAlert(errorMessage, "Les mots de passe ne correspondent pas.");
+                        return;
+                    }
+
+                    if (!name) {
+                        showAlert(errorMessage, "Merci d'indiquer votre nom complet.");
+                        return;
+                    }
+
+                    const submitButton = signupForm.querySelector(
+                        'button[type="submit"]',
+                    );
+                    const originalButtonText = submitButton.textContent;
+
+                    submitButton.disabled = true;
+                    submitButton.textContent = "Création en cours...";
+
+                    try {
+                        await auth.createAccount(email, password, name);
+                        showAlert(
+                            successMessage,
+                            "Compte créé avec succès ! Redirection...",
+                        );
+
+                        setTimeout(() => {
+                            window.location.href = "profile.html";
+                        }, 1200);
+                    } catch (error) {
+                        showAlert(
+                            errorMessage,
+                            error?.message ||
+                                "Impossible de créer le compte. Veuillez réessayer.",
+                        );
+                    } finally {
+                        submitButton.disabled = false;
+                        submitButton.textContent = originalButtonText;
+                    }
+                });
             });
-        });
-    </script>
-</body>
+        </script>
+    </body>
 </html>
