@@ -17,19 +17,31 @@
     <button class="btn-primary" id="run-tests">Lancer les tests</button>
   </div>
   <script type="module">
-    import { account } from './appwrite.js';
+    let account;
+    try {
+      // Import dynamique compatible Vite
+      const appwrite = await import('./appwrite.js');
+      account = appwrite.account;
+    } catch (e) {
+      document.getElementById('test-results').innerHTML = '<div style="color:#b91c1c">❌ Erreur import appwrite.js : ' + e.message + '</div>';
+    }
     const results = document.getElementById('test-results');
     const btn = document.getElementById('run-tests');
     async function runTests() {
       results.innerHTML = '<b>Test en cours...</b>';
       let output = '';
       // Test 1: Appwrite config
+      if (!account) {
+        output += '<div>❌ appwrite.js non importé</div>';
+        results.innerHTML = output;
+        return;
+      }
       try {
         output += '<div>✅ appwrite.js importé</div>';
         output += `<div>Endpoint: ${account.client.config.endpoint}</div>`;
         output += `<div>Project: ${account.client.config.project}</div>`;
       } catch (e) {
-        output += '<div>❌ Erreur import appwrite.js : ' + e.message + '</div>';
+        output += '<div>❌ Erreur config appwrite.js : ' + e.message + '</div>';
       }
       // Test 2: Authentification
       try {
