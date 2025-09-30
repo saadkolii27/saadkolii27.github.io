@@ -83,3 +83,20 @@ document.addEventListener('DOMContentLoaded', () => {
     signupForm.addEventListener('submit', handleSignup);
   }
 });
+// Add this to your auth.js file for testing
+async function testAppwrite() {
+  try {
+    // Just check if we can connect to Appwrite
+    const result = await account.listSessions();
+    console.log('Appwrite connection successful!', result);
+  } catch (error) {
+    console.error('Appwrite connection error:', error);
+  }
+}
+
+// Call this in your DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', () => {
+  testAppwrite(); // Add this line to test connection
+  checkAuth();
+  // rest of your code...
+});
