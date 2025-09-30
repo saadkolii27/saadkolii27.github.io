@@ -4,11 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test Appwrite Auth</title>
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="/appwrite.js"></script>
-  <script type="module" src="/main.js"></script>
-  <script type="module" src="/auth.js"></script>
-  <script type="module" src="/dashboard.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50">
   <div class="min-h-screen flex flex-col items-center justify-center">
@@ -17,31 +13,23 @@
     <button class="btn-primary" id="run-tests">Lancer les tests</button>
   </div>
   <script type="module">
-    let account;
-    try {
-      // Import dynamique compatible Vite
-      const appwrite = await import('./appwrite.js');
-      account = appwrite.account;
-    } catch (e) {
-      document.getElementById('test-results').innerHTML = '<div style="color:#b91c1c">❌ Erreur import appwrite.js : ' + e.message + '</div>';
-    }
+    import { Client, Account } from "appwrite";
     const results = document.getElementById('test-results');
     const btn = document.getElementById('run-tests');
+    const client = new Client()
+      .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1")
+      .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID || "68d6cf15003d05dbd780");
+    const account = new Account(client);
     async function runTests() {
       results.innerHTML = '<b>Test en cours...</b>';
       let output = '';
       // Test 1: Appwrite config
-      if (!account) {
-        output += '<div>❌ appwrite.js non importé</div>';
-        results.innerHTML = output;
-        return;
-      }
       try {
-        output += '<div>✅ appwrite.js importé</div>';
-        output += `<div>Endpoint: ${account.client.config.endpoint}</div>`;
-        output += `<div>Project: ${account.client.config.project}</div>`;
+        output += '<div>✅ Appwrite importé</div>';
+        output += `<div>Endpoint: ${client.config.endpoint}</div>`;
+        output += `<div>Project: ${client.config.project}</div>`;
       } catch (e) {
-        output += '<div>❌ Erreur config appwrite.js : ' + e.message + '</div>';
+        output += '<div>❌ Erreur config Appwrite : ' + e.message + '</div>';
       }
       // Test 2: Authentification
       try {
