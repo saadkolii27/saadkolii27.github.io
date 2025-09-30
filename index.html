@@ -1,435 +1,546 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Portfolio personnel et professionnel de Saad Kolii">
-    <meta name="keywords" content="portfolio, développeur, web, design, créatif">
-    <meta name="author" content="Saad Kolii">
-    <title>Saad Kolii | Portfolio Créatif</title>
-    
-    <!-- Styles et polices -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome pour icônes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <!-- Navigation avec effet glassmorphisme -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Université Centrale - Excellence académique et innovation pédagogique"
+    />
+    <meta
+      name="keywords"
+      content="université, campus, formations, recherche, étudiants"
+    />
+    <meta name="author" content="Université Centrale" />
+    <title>Université Centrale | Excellence académique</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
     <header class="header">
-        <div class="container">
-            <nav class="navbar">
-                <a href="index.html" class="logo">
-                    <span class="text-clip">Saad Kolii</span>
-                </a>
-                
-                <button class="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
-                
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="#about" class="nav-link">À propos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#projects" class="nav-link">Projets</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a href="#services" class="nav-link">Services</a>
-                        <div class="dropdown-menu">
-                            <a href="#web-dev" class="dropdown-item">Développement Web</a>
-                            <a href="#design" class="dropdown-item">Design UI/UX</a>
-                            <a href="#consulting" class="dropdown-item">Consulting</a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#contact" class="nav-link">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="login.html" class="nav-link" id="login-link">Se connecter</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="signup.html" class="btn btn-primary" id="signup-link">S'inscrire</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="profile.html" class="btn btn-accent" id="profile-link" style="display: none;">Mon profil</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+      <div class="container">
+        <nav class="navbar">
+          <a href="#accueil" class="logo">Université Centrale</a>
+          <button
+            class="mobile-menu-btn"
+            aria-expanded="false"
+            aria-controls="navigation"
+          >
+            <span class="sr-only">Ouvrir le menu</span>
+            <i class="fas fa-bars"></i>
+          </button>
+          <ul class="nav-menu" id="navigation">
+            <li class="nav-item">
+              <a href="#about" class="nav-link">L'université</a>
+            </li>
+            <li class="nav-item">
+              <a href="#programmes" class="nav-link">Formations</a>
+            </li>
+            <li class="nav-item">
+              <a href="#vie-etudiante" class="nav-link">Vie étudiante</a>
+            </li>
+            <li class="nav-item">
+              <a href="#actualites" class="nav-link">Actualités</a>
+            </li>
+            <li class="nav-item">
+              <a href="#contact" class="nav-link">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a href="login.html" class="nav-link" id="login-link"
+                >Se connecter</a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="signup.html" class="btn btn-primary" id="signup-link"
+                >S'inscrire</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                href="profile.html"
+                class="btn btn-accent"
+                id="profile-link"
+                style="display: none"
+                >Mon espace</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
-    <!-- Section héros avec effets avancés -->
-    <section class="welcome-container">
-        <!-- Éléments avec effet de profondeur pour parallaxe -->
-        <div class="depth-layer depth-layer-1">
-            <span class="badge badge-primary">Portfolio créatif</span>
+    <main>
+      <section class="hero" id="accueil">
+        <div class="container hero-content">
+          <span class="hero-badge">Université Centrale</span>
+          <h1>Former les leaders de demain</h1>
+          <p>
+            Depuis plus de 80 ans, nous accompagnons les talents dans leur
+            parcours académique avec des formations d'excellence, une recherche
+            d'avant-garde et un réseau international solide.
+          </p>
+          <div class="hero-actions">
+            <a href="#programmes" class="btn btn-primary"
+              >Découvrir nos formations</a
+            >
+            <a href="#contact" class="btn btn-outline">Planifier une visite</a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat fade-up">
+              <strong class="counter" data-target="18000">0</strong>
+              <span>Étudiants</span>
+            </div>
+            <div class="hero-stat fade-up">
+              <strong class="counter" data-target="320">0</strong>
+              <span>Partenariats</span>
+            </div>
+            <div class="hero-stat fade-up">
+              <strong class="counter" data-target="96">0</strong>
+              <span>% d'insertion</span>
+            </div>
+          </div>
         </div>
-        
-        <h1 class="welcome-title text-3d">Bienvenue dans mon univers créatif</h1>
-        
-        <div class="depth-layer depth-layer-2">
-            <p class="welcome-subtitle">Je conçois et développe des expériences digitales <span class="highlight">innovantes</span> et <span class="highlight">immersives</span>.</p>
-        </div>
-        
-        <div class="welcome-buttons">
-            <a href="#projects" class="btn btn-primary explore-btn">
-                <i class="fas fa-rocket btn-icon"></i>
-                <span class="btn-text">Explorer</span>
-            </a>
-            <a href="#contact" class="btn btn-outline">Me contacter</a>
-        </div>
-        
-        <!-- Les cercles décoratifs sont générés par JS -->
-    </section>
-    
-    <!-- Divider avec forme ondulée -->
-    <div class="section-divider wave-section"></div>
-    
-    <!-- Section À Propos avec effet fade-in -->
-    <section id="about" class="section">
+      </section>
+
+      <section id="about" class="section section-light">
         <div class="container">
-            <h2 class="fade-in once">À propos de moi</h2>
-            
-            <div class="grid grid-2">
-                <div class="card card-glass fade-in once">
-                    <div class="card-body">
-                        <h3>Qui suis-je ?</h3>
-                        <p>Je suis un développeur web et designer UI/UX passionné par la création d'expériences digitales innovantes et fonctionnelles.</p>
-                        <p>Je m'efforce de combiner la créativité et les technologies modernes pour réaliser des projets qui se démarquent.</p>
-                        
-                        <div class="mt-3">
-                            <div class="tag">HTML5</div>
-                            <div class="tag">CSS3</div>
-                            <div class="tag">JavaScript</div>
-                            <div class="tag">React</div>
-                            <div class="tag">Node.js</div>
-                            <div class="tag">UX/UI</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="fade-in once" style="perspective: 1000px;">
-                    <div class="card-3d">
-                        <div class="card-3d-inner">
-                            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Espace de travail" class="card-img">
-                        </div>
-                    </div>
-                </div>
+          <div class="section-header">
+            <span class="badge">Notre mission</span>
+            <h2>Accompagner chaque étudiant vers l'excellence</h2>
+            <p>
+              Notre communauté universitaire associe excellence académique,
+              innovation pédagogique et engagement sociétal pour préparer les
+              talents aux défis de demain.
+            </p>
+          </div>
+          <div class="intro">
+            <div class="intro-content fade-up">
+              <h2>Une université au service de l'innovation</h2>
+              <p>
+                Nos équipes pédagogiques, nos laboratoires de recherche et nos
+                partenaires internationaux construisent ensemble un
+                environnement propice à la réussite et à l'épanouissement de
+                chaque étudiant.
+              </p>
+              <p>
+                Grâce à des campus modernes, des outils numériques de pointe et
+                un réseau d'alumni mobilisé, nous offrons une expérience
+                académique unique.
+              </p>
+              <p class="signature">
+                Pr. Élodie Martin – Présidente de l'Université
+              </p>
             </div>
-            
-            <!-- Statistiques avec compteurs animés -->
-            <div class="grid grid-4 mt-4">
-                <div class="counter-container fade-in once">
-                    <div class="counter" data-target="125">0</div>
-                    <div>Projets réalisés</div>
-                </div>
-                
-                <div class="counter-container fade-in once">
-                    <div class="counter" data-target="83">0</div>
-                    <div>Clients satisfaits</div>
-                </div>
-                
-                <div class="counter-container fade-in once">
-                    <div class="counter" data-target="5">0</div>
-                    <div>Années d'expérience</div>
-                </div>
-                
-                <div class="counter-container fade-in once">
-                    <div class="counter" data-target="12">0</div>
-                    <div>Récompenses</div>
-                </div>
-            </div>
+            <aside class="highlight-card fade-up">
+              <p><strong>Nos engagements :</strong></p>
+              <ul>
+                <li>✔️ Pédagogies actives et accompagnement personnalisé</li>
+                <li>✔️ Double diplomation et ouverture à l'international</li>
+                <li>✔️ Recherche pluridisciplinaire tournée vers la société</li>
+                <li>✔️ Campus durables, inclusifs et solidaires</li>
+              </ul>
+            </aside>
+          </div>
         </div>
-    </section>
-    
-    <!-- Section Projets avec cartes interactives -->
-    <section id="projects" class="section" style="background-color: var(--background-alt);">
+      </section>
+
+      <section id="programmes" class="section section-muted">
         <div class="container">
-            <h2 class="fade-in once">Projets Récents</h2>
-            
-            <div class="grid grid-3">
-                <!-- Carte de projet 1 avec effet glassmorphism -->
-                <div class="card card-glass reflection fade-in once">
-                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Projet de site e-commerce" class="card-img">
-                    <div class="card-body">
-                        <h3>E-commerce Moderne</h3>
-                        <p>Conception et développement d'une plateforme e-commerce avec React et Node.js.</p>
-                        <div class="mt-2">
-                            <div class="tag">React</div>
-                            <div class="tag">Node.js</div>
-                            <div class="tag">MongoDB</div>
-                        </div>
-                        <a href="#" class="btn btn-primary mt-2">Voir le projet</a>
-                    </div>
-                </div>
-                
-                <!-- Carte de projet 2 avec effet neumorphism -->
-                <div class="card card-neumorphic fade-in once">
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Application mobile" class="card-img">
-                    <div class="card-body">
-                        <h3>Application Mobile</h3>
-                        <p>Application de suivi fitness développée avec React Native et Firebase.</p>
-                        <div class="mt-2">
-                            <div class="tag">React Native</div>
-                            <div class="tag">Firebase</div>
-                            <div class="tag">UX Design</div>
-                        </div>
-                        <a href="#" class="btn btn-outline mt-2">Voir le projet</a>
-                    </div>
-                </div>
-                
-                <!-- Carte de projet 3 avec effet shadow -->
-                <div class="card card-shadow fade-in once">
-                    <img src="https://images.unsplash.com/photo-1618788372246-79faff0c3742?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Dashboard" class="card-img">
-                    <div class="card-body">
-                        <h3>Dashboard Analytics</h3>
-                        <p>Interface d'administration avec visualisation de données avancée.</p>
-                        <div class="mt-2">
-                            <div class="tag">Vue.js</div>
-                            <div class="tag">D3.js</div>
-                            <div class="tag">API REST</div>
-                        </div>
-                        <a href="#" class="btn btn-accent mt-2">Voir le projet</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flex justify-center mt-4">
-                <a href="#" class="btn btn-primary">Voir tous les projets</a>
-            </div>
+          <div class="section-header">
+            <span class="badge">Formations</span>
+            <h2>Des cursus adaptés à chaque ambition</h2>
+            <p>
+              Du premier cycle au doctorat, nos 12 facultés proposent des
+              parcours académiques reconnus, construits en lien étroit avec les
+              secteurs professionnels.
+            </p>
+          </div>
+          <div class="program-grid">
+            <article class="program-card fade-up">
+              <h3>Licences & BUT</h3>
+              <p>
+                Des formations professionnalisantes pour maîtriser les
+                fondamentaux, avec des stages dès la première année.
+              </p>
+              <div class="program-meta">
+                <i class="fas fa-clock"></i>
+                <span>3 ans · Parcours personnalisés</span>
+              </div>
+            </article>
+            <article class="program-card fade-up">
+              <h3>Masters spécialisés</h3>
+              <p>
+                Des cursus exigeants pour développer une expertise sectorielle
+                recherchée par les entreprises.
+              </p>
+              <div class="program-meta">
+                <i class="fas fa-briefcase"></i>
+                <span>Alternance et international</span>
+              </div>
+            </article>
+            <article class="program-card fade-up">
+              <h3>Programmes Grande École</h3>
+              <p>
+                Double diplomation, incubateur de start-up, séminaires
+                internationaux et coaching carrière dédiés.
+              </p>
+              <div class="program-meta">
+                <i class="fas fa-globe"></i>
+                <span>Partenariats mondiaux</span>
+              </div>
+            </article>
+            <article class="program-card fade-up">
+              <h3>Doctorats & Recherche</h3>
+              <p>
+                17 laboratoires labellisés, encadrement scientifique
+                d'excellence et financements dédiés à la recherche.
+              </p>
+              <div class="program-meta">
+                <i class="fas fa-flask"></i>
+                <span>+250 thèses en cours</span>
+              </div>
+            </article>
+          </div>
         </div>
-    </section>
-    
-    <!-- Section de contact avec formulaire glassmorphism -->
-    <section id="contact" class="section">
+      </section>
+
+      <section id="vie-etudiante" class="section section-light">
         <div class="container">
-            <h2 class="fade-in once">Me contacter</h2>
-            
-            <div class="grid grid-2">
-                <div class="fade-in once">
-                    <div class="card glassmorphism-complex">
-                        <div class="card-body">
-                            <h3>Discutons de votre projet</h3>
-                            <p>Vous avez un projet en tête ou une question ? N'hésitez pas à me contacter !</p>
-                            
-                            <form class="mt-3">
-                                <div class="form-group">
-                                    <label for="name" class="form-label">Nom</label>
-                                    <input type="text" id="name" class="form-input" placeholder="Votre nom">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" id="email" class="form-input" placeholder="votre@email.com">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="message" class="form-label">Message</label>
-                                    <textarea id="message" class="form-textarea" rows="4" placeholder="Votre message"></textarea>
-                                </div>
-                                
-                                <button type="submit" class="btn btn-primary">Envoyer le message</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="fade-in once">
-                    <div class="neumorphism-convex">
-                        <h3>Informations de contact</h3>
-                        
-                        <div class="flex items-center gap-2 mt-3">
-                            <i class="fas fa-envelope"></i>
-                            <span>contact@saadkolii.com</span>
-                        </div>
-                        
-                        <div class="flex items-center gap-2 mt-2">
-                            <i class="fas fa-phone"></i>
-                            <span>+33 6 XX XX XX XX</span>
-                        </div>
-                        
-                        <div class="flex items-center gap-2 mt-2">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Paris, France</span>
-                        </div>
-                        
-                        <h4 class="mt-4">Retrouvez-moi sur</h4>
-                        
-                        <div class="flex gap-2 mt-2">
-                            <a href="#" class="btn btn-glass" title="LinkedIn">
-                                <i class="fab fa-linkedin"></i>
-                            </a>
-                            <a href="#" class="btn btn-glass" title="GitHub">
-                                <i class="fab fa-github"></i>
-                            </a>
-                            <a href="#" class="btn btn-glass" title="Twitter">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="#" class="btn btn-glass" title="Instagram">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                        </div>
-                        
-                        <!-- Timeline d'expérience -->
-                        <h4 class="mt-4">Mon parcours</h4>
-                        <div class="timeline mt-3">
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <div class="timeline-content card-shadow">
-                                    <h5>2023 - Présent</h5>
-                                    <p>Développeur Full Stack Senior</p>
-                                </div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <div class="timeline-content card-shadow">
-                                    <h5>2020 - 2023</h5>
-                                    <p>UX/UI Designer & Front-end</p>
-                                </div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <div class="timeline-content card-shadow">
-                                    <h5>2018 - 2020</h5>
-                                    <p>Formation Développement Web</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          <div class="campus-life">
+            <h3>Une vie de campus dynamique et inclusive</h3>
+            <p>
+              Plus de 80 associations culturelles, sportives et humanitaires,
+              des résidences étudiantes rénovées et des espaces de co-working
+              favorisent l'engagement et le bien-être.
+            </p>
+            <div class="campus-pillars">
+              <div class="pillar fade-up">
+                <strong>Accompagnement</strong>
+                <p>
+                  Tutorat, mentoring et cellule santé pour suivre chaque
+                  étudiant tout au long de l'année.
+                </p>
+              </div>
+              <div class="pillar fade-up">
+                <strong>International</strong>
+                <p>
+                  Programmes d'échanges dans 45 pays, modules enseignés en
+                  anglais et summer schools.
+                </p>
+              </div>
+              <div class="pillar fade-up">
+                <strong>Innovation</strong>
+                <p>
+                  Fablabs, studios médias et laboratoires de réalité virtuelle
+                  ouverts à tous les cursus.
+                </p>
+              </div>
             </div>
+          </div>
         </div>
-    </section>
-    
-    <!-- Footer avec glassmorphism -->
-    <footer class="section" style="background-color: var(--background-alt); padding-top: var(--space-5); padding-bottom: var(--space-3);">
+      </section>
+
+      <section class="section section-muted">
         <div class="container">
-            <div class="grid grid-3">
+          <div class="section-header">
+            <span class="badge">Chiffres clés</span>
+            <h2>Une université reconnue en France et à l'international</h2>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card fade-up">
+              <strong class="counter" data-target="12">0</strong>
+              <span>Facultés et écoles</span>
+            </div>
+            <div class="stat-card fade-up">
+              <strong class="counter" data-target="86">0</strong>
+              <span>Thèses soutenues / an</span>
+            </div>
+            <div class="stat-card fade-up">
+              <strong class="counter" data-target="1500">0</strong>
+              <span>Entreprises partenaires</span>
+            </div>
+            <div class="stat-card fade-up">
+              <strong class="counter" data-target="98">0</strong>
+              <span>% de satisfaction alumni</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="actualites" class="section section-light">
+        <div class="container">
+          <div class="section-header">
+            <span class="badge">Actualités</span>
+            <h2>Innovation, recherche et événements du campus</h2>
+          </div>
+          <div class="news-grid">
+            <article class="news-card fade-up">
+              <img
+                src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=800&q=80"
+                alt="Conférence internationale"
+              />
+              <div class="news-card-body">
+                <div class="news-meta">
+                  <i class="far fa-calendar"></i><span>12 septembre 2025</span>
+                </div>
+                <h3>
+                  Conférence internationale sur l'intelligence artificielle
+                  durable
+                </h3>
+                <p>
+                  Nos chercheurs ont présenté leurs travaux sur l'IA responsable
+                  devant plus de 400 participants internationaux.
+                </p>
+                <a href="#">Lire l'article</a>
+              </div>
+            </article>
+            <article class="news-card fade-up">
+              <img
+                src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80"
+                alt="Vie associative sur le campus"
+              />
+              <div class="news-card-body">
+                <div class="news-meta">
+                  <i class="far fa-calendar"></i><span>3 septembre 2025</span>
+                </div>
+                <h3>Journée d'intégration : 80 associations mobilisées</h3>
+                <p>
+                  Les nouveaux étudiants ont découvert les clubs et les services
+                  de l'université lors d'un village associatif en plein air.
+                </p>
+                <a href="#">Découvrir</a>
+              </div>
+            </article>
+            <article class="news-card fade-up">
+              <img
+                src="https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=800&q=80"
+                alt="Innovation pédagogique"
+              />
+              <div class="news-card-body">
+                <div class="news-meta">
+                  <i class="far fa-calendar"></i><span>24 août 2025</span>
+                </div>
+                <h3>Ouverture du Learning Lab et de ses studios immersifs</h3>
+                <p>
+                  Un nouvel espace de pédagogie numérique pour expérimenter la
+                  réalité virtuelle, les MOOCs et la co-création.
+                </p>
+                <a href="#">En savoir plus</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section section-muted">
+        <div class="container">
+          <div class="section-header">
+            <span class="badge">Contact</span>
+            <h2>Entrer en relation avec nos équipes</h2>
+          </div>
+          <div class="grid grid-2">
+            <form class="form-card fade-up">
+              <h3>Prendre rendez-vous</h3>
+              <div class="form-group">
+                <label for="name" class="form-label">Nom complet</label>
+                <input
+                  type="text"
+                  id="name"
+                  class="form-input"
+                  placeholder="Votre nom"
+                />
+              </div>
+              <div class="form-group">
+                <label for="email" class="form-label">Adresse e-mail</label>
+                <input
+                  type="email"
+                  id="email"
+                  class="form-input"
+                  placeholder="votre@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="program" class="form-label"
+                  >Programme d'intérêt</label
+                >
+                <input
+                  type="text"
+                  id="program"
+                  class="form-input"
+                  placeholder="Licence, Master, Doctorat..."
+                />
+              </div>
+              <div class="form-group">
+                <label for="message" class="form-label">Message</label>
+                <textarea
+                  id="message"
+                  class="form-textarea"
+                  rows="4"
+                  placeholder="Votre message"
+                ></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Envoyer</button>
+            </form>
+            <aside class="contact-info fade-up">
+              <h3>Direction des admissions</h3>
+              <div class="contact-detail">
+                <i class="fas fa-envelope"></i>
                 <div>
-                    <h3 class="logo">Saad Kolii</h3>
-                    <p>Développeur & designer passionné par la création d'expériences digitales innovantes.</p>
-                    <div class="flex gap-2 mt-2">
-                        <a href="#" class="btn btn-glass" title="LinkedIn">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="#" class="btn btn-glass" title="GitHub">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="#" class="btn btn-glass" title="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    </div>
+                  <strong>Email</strong>
+                  <p>admissions@universite-centrale.fr</p>
                 </div>
-                
+              </div>
+              <div class="contact-detail">
+                <i class="fas fa-phone"></i>
                 <div>
-                    <h4>Liens rapides</h4>
-                    <ul class="mt-2" style="list-style: none; padding: 0;">
-                        <li><a href="#about">À propos</a></li>
-                        <li class="mt-1"><a href="#projects">Projets</a></li>
-                        <li class="mt-1"><a href="#services">Services</a></li>
-                        <li class="mt-1"><a href="#contact">Contact</a></li>
-                    </ul>
+                  <strong>Standard</strong>
+                  <p>+33 1 53 00 12 12</p>
                 </div>
-                
+              </div>
+              <div class="contact-detail">
+                <i class="fas fa-map-marker-alt"></i>
                 <div>
-                    <h4>Thème</h4>
-                    <div class="flex items-center gap-2 mt-2">
-                        <span>Clair</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" class="theme-toggle">
-                            <span class="toggle-slider"></span>
-                        </label>
-                        <span>Sombre</span>
-                    </div>
-                    
-                    <div class="mt-3">
-                        <p>Inscrivez-vous à la newsletter</p>
-                        <div class="flex mt-2">
-                            <input type="email" class="form-input" placeholder="votre@email.com" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
-                            <button class="btn btn-primary" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">OK</button>
-                        </div>
-                    </div>
+                  <strong>Campus principal</strong>
+                  <p>12 avenue des Sciences, 75005 Paris</p>
                 </div>
-            </div>
-            
-            <div class="mt-4" style="text-align: center; border-top: 1px solid var(--border-color); padding-top: var(--space-3);">
-                <p>© 2023 Saad Kolii. Tous droits réservés.</p>
-            </div>
+              </div>
+              <h4>Suivez-nous</h4>
+              <div class="social-links">
+                <a href="#" title="LinkedIn"
+                  ><i class="fab fa-linkedin-in"></i
+                ></a>
+                <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#" title="Instagram"
+                  ><i class="fab fa-instagram"></i
+                ></a>
+                <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+              </div>
+              <h4>Notre calendrier</h4>
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-content">
+                    <h5>Octobre 2025</h5>
+                    <p>Salons étudiants & portes ouvertes virtuelles</p>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-content">
+                    <h5>Janvier 2026</h5>
+                    <p>Ouverture des candidatures Parcoursup</p>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-content">
+                    <h5>Mai 2026</h5>
+                    <p>Journée des admissions et tests de sélection</p>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </div>
         </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h3>Université Centrale</h3>
+            <p>
+              Institution publique d'enseignement supérieur et de recherche,
+              engagée pour une société plus juste, durable et innovante.
+            </p>
+            <p>Numéro UAI : 0751234U</p>
+          </div>
+          <div>
+            <h4>Liens utiles</h4>
+            <ul class="footer-nav">
+              <li><a href="#about">L'université</a></li>
+              <li><a href="#programmes">Formations</a></li>
+              <li><a href="#vie-etudiante">Vie étudiante</a></li>
+              <li><a href="#actualites">Actualités</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Accès rapide</h4>
+            <ul class="footer-nav">
+              <li><a href="#">Espace étudiant</a></li>
+              <li><a href="#">Inscriptions en ligne</a></li>
+              <li><a href="#">Offres d'emploi & stages</a></li>
+              <li><a href="#">Bibliothèques universitaires</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Newsletter</h4>
+            <p>
+              Recevez nos actualités et événements directement dans votre boîte
+              mail.
+            </p>
+            <form class="newsletter">
+              <input type="email" placeholder="Votre e-mail" />
+              <button class="btn btn-primary" type="submit">S'inscrire</button>
+            </form>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2025 Université Centrale. Tous droits réservés.</p>
+        </div>
+      </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
     <script src="auth.js"></script>
     <script>
-        // Vérifier si l'utilisateur est connecté pour adapter le menu
-        document.addEventListener('DOMContentLoaded', async function() {
+      document.addEventListener("DOMContentLoaded", async function () {
+        try {
+          const isLoggedIn = await auth.isLoggedIn();
+          const loginLink = document.getElementById("login-link");
+          const signupLink = document.getElementById("signup-link");
+          const profileLink = document.getElementById("profile-link");
+
+          if (isLoggedIn) {
+            if (loginLink) loginLink.style.display = "none";
+            if (signupLink) signupLink.style.display = "none";
+            if (profileLink) profileLink.style.display = "inline-flex";
+
             try {
-                const isLoggedIn = await auth.isLoggedIn();
-                const loginLink = document.getElementById('login-link');
-                const signupLink = document.getElementById('signup-link');
-                const profileLink = document.getElementById('profile-link');
-                
-                if (isLoggedIn) {
-                    // Si connecté, masquer login/signup et afficher profil
-                    if (loginLink) loginLink.style.display = 'none';
-                    if (signupLink) signupLink.style.display = 'none';
-                    if (profileLink) profileLink.style.display = 'block';
-                    
-                    // Essayer de récupérer les infos utilisateur pour personnaliser l'expérience
-                    try {
-                        const userData = await auth.getUserData();
-                        if (userData && userData.name) {
-                            // Créer une notification de bienvenue
-                            const welcomeMsg = document.createElement('div');
-                            welcomeMsg.classList.add('notification', 'notification-info');
-                            welcomeMsg.innerHTML = `
-                                <div class="notification-content">
-                                    <p>Bienvenue, ${userData.name} !</p>
-                                    <button class="notification-close">×</button>
-                                </div>
-                            `;
-                            
-                            document.body.appendChild(welcomeMsg);
-                            
-                            // Animation d'entrée et sortie
-                            setTimeout(() => {
-                                welcomeMsg.classList.add('visible');
-                                
-                                setTimeout(() => {
-                                    welcomeMsg.classList.remove('visible');
-                                    setTimeout(() => welcomeMsg.remove(), 300);
-                                }, 4000);
-                            }, 500);
-                            
-                            // Configurer le bouton de fermeture
-                            const closeBtn = welcomeMsg.querySelector('.notification-close');
-                            if (closeBtn) {
-                                closeBtn.addEventListener('click', () => {
-                                    welcomeMsg.classList.remove('visible');
-                                    setTimeout(() => welcomeMsg.remove(), 300);
-                                });
-                            }
-                        }
-                    } catch (userError) {
-                        console.error('Erreur lors de la récupération des données utilisateur:', userError);
-                    }
-                } else {
-                    // Si non connecté, afficher login/signup et masquer profil
-                    if (loginLink) loginLink.style.display = 'block';
-                    if (signupLink) signupLink.style.display = 'block';
-                    if (profileLink) profileLink.style.display = 'none';
+              const userData = await auth.getUserData();
+              if (userData && userData.name) {
+                const message = `Bienvenue, ${userData.name} !`;
+                if (
+                  window.ui &&
+                  typeof window.ui.showNotification === "function"
+                ) {
+                  window.ui.showNotification(message, "info", 4000);
                 }
-            } catch (error) {
-                console.error('Erreur lors de la vérification de connexion:', error);
+              }
+            } catch (userError) {
+              console.error(
+                "Erreur lors de la récupération des données utilisateur:",
+                userError,
+              );
             }
-        });
+          } else {
+            if (loginLink) loginLink.style.display = "inline-flex";
+            if (signupLink) signupLink.style.display = "inline-flex";
+            if (profileLink) profileLink.style.display = "none";
+          }
+        } catch (error) {
+          console.error("Erreur lors de la vérification de connexion:", error);
+        }
+      });
     </script>
     <script src="main.js"></script>
-</body>
+  </body>
 </html>
