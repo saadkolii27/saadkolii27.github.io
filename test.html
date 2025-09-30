@@ -220,6 +220,16 @@
         <div class="tab-content" id="config-tab">
             <div class="card">
                 <h2>Configuration Appwrite</h2>
+                <div class="info-box" style="background-color: #e1f5fe; padding: 15px; margin-bottom: 20px; border-radius: 5px; border-left: 4px solid #03a9f4;">
+                    <h3 style="color: #0277bd; margin-top: 0;">Paramètres requis dans Appwrite</h3>
+                    <p style="margin-bottom: 10px;">Pour que ce test fonctionne correctement, assurez-vous d'avoir configuré dans votre console Appwrite :</p>
+                    <ol style="margin-left: 20px; margin-bottom: 10px;">
+                        <li>Une base de données</li>
+                        <li>Une collection avec les attributs <code>title</code> (chaîne), <code>content</code> (chaîne) et <code>created_at</code> (chaîne)</li>
+                        <li>Des permissions pour permettre aux utilisateurs anonymes de lire/écrire dans la collection</li>
+                    </ol>
+                    <p><a href="https://cloud.appwrite.io/" target="_blank" style="color: #0277bd; font-weight: 500;">Ouvrir la console Appwrite</a></p>
+                </div>
                 <form id="config-form">
                     <div class="form-group">
                         <label for="project-id">ID du projet</label>

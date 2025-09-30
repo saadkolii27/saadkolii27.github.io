@@ -8,7 +8,7 @@ class AppwriteClient {
             endpoint: 'https://nyc.cloud.appwrite.io/v1',
             projectId: '68d6cf15003d05dbd780',
             databaseId: '68dc0e1200369423c9a5',
-            collectionId: ''
+            collectionId: '68dc0ef80001e625476f'
         };
 
         // Chargement de la configuration depuis localStorage
@@ -19,8 +19,10 @@ class AppwriteClient {
         this.client
             .setEndpoint(this.config.endpoint)
             .setProject(this.config.projectId);
-
+            
+        // Créer les instances des services
         this.databases = new Appwrite.Databases(this.client);
+        this.account = new Appwrite.Account(this.client);
     }
 
     // Chargement de la configuration depuis localStorage
@@ -54,12 +56,35 @@ class AppwriteClient {
     isConfigured() {
         return Boolean(this.config.databaseId && this.config.collectionId);
     }
+    
+    // Créer une session anonyme
+    async createAnonymousSession() {
+        try {
+            // Vérifier d'abord si nous avons déjà une session active
+            try {
+                await this.account.get();
+                console.log("Session utilisateur déjà active");
+                return true;
+            } catch (error) {
+                // Pas de session active, créons-en une anonyme
+                console.log("Création d'une nouvelle session anonyme");
+                await this.account.createAnonymousSession();
+                return true;
+            }
+        } catch (error) {
+            console.error("Erreur lors de la création de la session anonyme:", error);
+            return false;
+        }
+    }
 
     // Création d'un document
     async createDocument(data) {
         if (!this.isConfigured()) {
             throw new Error('La base de données et la collection ne sont pas configurées');
         }
+        
+        // Créer une session anonyme avant d'accéder aux données
+        await this.createAnonymousSession();
 
         return await this.databases.createDocument(
             this.config.databaseId,
@@ -74,6 +99,9 @@ class AppwriteClient {
         if (!this.isConfigured()) {
             throw new Error('La base de données et la collection ne sont pas configurées');
         }
+        
+        // Créer une session anonyme avant d'accéder aux données
+        await this.createAnonymousSession();
 
         return await this.databases.listDocuments(
             this.config.databaseId,
@@ -86,6 +114,9 @@ class AppwriteClient {
         if (!this.isConfigured()) {
             throw new Error('La base de données et la collection ne sont pas configurées');
         }
+        
+        // Créer une session anonyme avant d'accéder aux données
+        await this.createAnonymousSession();
 
         return await this.databases.getDocument(
             this.config.databaseId,
@@ -99,6 +130,9 @@ class AppwriteClient {
         if (!this.isConfigured()) {
             throw new Error('La base de données et la collection ne sont pas configurées');
         }
+        
+        // Créer une session anonyme avant d'accéder aux données
+        await this.createAnonymousSession();
 
         return await this.databases.updateDocument(
             this.config.databaseId,
@@ -113,6 +147,9 @@ class AppwriteClient {
         if (!this.isConfigured()) {
             throw new Error('La base de données et la collection ne sont pas configurées');
         }
+        
+        // Créer une session anonyme avant d'accéder aux données
+        await this.createAnonymousSession();
 
         return await this.databases.deleteDocument(
             this.config.databaseId,
