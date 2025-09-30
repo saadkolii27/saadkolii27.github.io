@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - User Dashboard</title>
   <link rel="stylesheet" href="/style.css">
+  <script src="/appwrite.js"></script>
+  <script type="module" src="/main.js"></script>
+  <script type="module" src="/auth.js"></script>
   <script type="module" src="/dashboard.js"></script>
 </head>
 <body class="bg-gray-50">
@@ -20,7 +23,7 @@
             <span id="user-name" class="text-gray-700"></span>
             <button 
               id="logout-btn" 
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              class="btn-primary"
             >
               Logout
             </button>
