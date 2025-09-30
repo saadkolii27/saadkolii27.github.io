@@ -1,22 +1,41 @@
-# Dependencies
+# Dépendances
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
 
-# Build artifacts
-dist/
-
-# Environment files
+# Environnement
+.env
 .env.local
-.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Editor directories and files
-.vscode/
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS files
+# Fichiers de build
+/dist
+/build
 .DS_Store
-Thumbs.db
+
+# Fichiers de débogage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fichiers d'éditeur
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.sublime-workspace
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Fichiers temporaires
+*.swp
+*.swo
