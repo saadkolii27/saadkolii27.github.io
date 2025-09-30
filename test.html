@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Appwrite Auth</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/appwrite.js"></script>
+  <script type="module" src="/main.js"></script>
+  <script type="module" src="/auth.js"></script>
+  <script type="module" src="/dashboard.js"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen flex flex-col items-center justify-center">
+    <h1 class="text-3xl font-bold mb-4">Test Appwrite Auth</h1>
+    <div id="test-results" class="bg-white shadow rounded p-6 w-full max-w-lg mb-6"></div>
+    <button class="btn-primary" id="run-tests">Lancer les tests</button>
+  </div>
+  <script type="module">
+    import { account } from './appwrite.js';
+    const results = document.getElementById('test-results');
+    const btn = document.getElementById('run-tests');
+    async function runTests() {
+      results.innerHTML = '<b>Test en cours...</b>';
+      let output = '';
+      // Test 1: Appwrite config
+      try {
+        output += '<div>✅ appwrite.js importé</div>';
+        output += `<div>Endpoint: ${account.client.config.endpoint}</div>`;
+        output += `<div>Project: ${account.client.config.project}</div>`;
+      } catch (e) {
+        output += '<div>❌ Erreur import appwrite.js : ' + e.message + '</div>';
+      }
+      // Test 2: Authentification
+      try {
+        await account.get();
+        output += '<div>✅ Utilisateur authentifié</div>';
+      } catch (e) {
+        output += '<div>⚠️ Utilisateur non authentifié : ' + (e.message || e.toString()) + '</div>';
+      }
+      results.innerHTML = output;
+    }
+    btn.addEventListener('click', runTests);
+  </script>
+</body>
+</html>
