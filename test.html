@@ -8,39 +8,89 @@
 </head>
 <body class="bg-gray-50">
   <div class="min-h-screen flex flex-col items-center justify-center">
-    <h1 class="text-3xl font-bold mb-4">Test Appwrite Auth</h1>
+    <h1 class="text-3xl font-bold mb-4">Test Complet Appwrite</h1>
     <div id="test-results" class="bg-white shadow rounded p-6 w-full max-w-lg mb-6"></div>
-    <button class="btn-primary" id="run-tests">Lancer les tests</button>
+    <div class="flex flex-wrap gap-2 mb-4">
+      <button class="btn-primary" id="btn-config">Vérifier config</button>
+      <button class="btn-primary" id="btn-auth">Vérifier authentification</button>
+      <button class="btn-primary" id="btn-db-write">Écrire dans la base</button>
+      <button class="btn-primary" id="btn-db-read">Lire la base</button>
+      <button class="btn-primary" id="btn-signup">Créer un utilisateur</button>
+      <button class="btn-primary" id="btn-login">Connexion utilisateur</button>
+    </div>
   </div>
   <script type="module">
-    import { Client, Account } from "appwrite";
+    import { Client, Account, Databases, ID } from "appwrite";
     const results = document.getElementById('test-results');
-    const btn = document.getElementById('run-tests');
     const client = new Client()
       .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1")
       .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID || "68d6cf15003d05dbd780");
     const account = new Account(client);
-    async function runTests() {
-      results.innerHTML = '<b>Test en cours...</b>';
-      let output = '';
-      // Test 1: Appwrite config
+    const databases = new Databases(client);
+    // Remplacez par vos propres valeurs
+    const dbId = import.meta.env.VITE_APPWRITE_DB_ID || "testdb";
+    const collectionId = import.meta.env.VITE_APPWRITE_COLLECTION_ID || "testcol";
+    // Affichage helper
+    function show(msg) { results.innerHTML = msg; }
+    // Bouton config
+    document.getElementById('btn-config').onclick = () => {
+      show(`<b>Endpoint:</b> ${client.config.endpoint}<br><b>Project:</b> ${client.config.project}`);
+    };
+    // Bouton auth
+    document.getElementById('btn-auth').onclick = async () => {
+      show('Test authentification...');
       try {
-        output += '<div>✅ Appwrite importé</div>';
-        output += `<div>Endpoint: ${client.config.endpoint}</div>`;
-        output += `<div>Project: ${client.config.project}</div>`;
+        const user = await account.get();
+        show('✅ Utilisateur authentifié : ' + user.email);
       } catch (e) {
-        output += '<div>❌ Erreur config Appwrite : ' + e.message + '</div>';
+        show('❌ Non authentifié : ' + (e.message || e.toString()));
       }
-      // Test 2: Authentification
+    };
+    // Bouton écrire DB
+    document.getElementById('btn-db-write').onclick = async () => {
+      show('Écriture dans la base...');
       try {
-        await account.get();
-        output += '<div>✅ Utilisateur authentifié</div>';
+        const doc = await databases.createDocument(dbId, collectionId, ID.unique(), { test: 'ok', date: new Date().toISOString() });
+        show('✅ Document créé : ' + doc.$id);
       } catch (e) {
-        output += '<div>⚠️ Utilisateur non authentifié : ' + (e.message || e.toString()) + '</div>';
+        show('❌ Erreur écriture DB : ' + (e.message || e.toString()));
       }
-      results.innerHTML = output;
-    }
-    btn.addEventListener('click', runTests);
+    };
+    // Bouton lire DB
+    document.getElementById('btn-db-read').onclick = async () => {
+      show('Lecture de la base...');
+      try {
+        const docs = await databases.listDocuments(dbId, collectionId);
+        show('✅ Documents lus :<br>' + docs.documents.map(d => JSON.stringify(d)).join('<br>'));
+      } catch (e) {
+        show('❌ Erreur lecture DB : ' + (e.message || e.toString()));
+      }
+    };
+    // Bouton signup
+    document.getElementById('btn-signup').onclick = async () => {
+      show('Création utilisateur...');
+      try {
+        const email = `test${Date.now()}@test.com`;
+        const password = 'Test1234!';
+        const user = await account.create(ID.unique(), email, password, 'Test User');
+        show('✅ Utilisateur créé : ' + user.email);
+      } catch (e) {
+        show('❌ Erreur création utilisateur : ' + (e.message || e.toString()));
+      }
+    };
+    // Bouton login
+    document.getElementById('btn-login').onclick = async () => {
+      show('Connexion utilisateur...');
+      try {
+        // Utilisez les mêmes identifiants que pour le signup ou modifiez ici
+        const email = prompt('Email ?');
+        const password = prompt('Mot de passe ?');
+        await account.createEmailPasswordSession(email, password);
+        show('✅ Connexion réussie');
+      } catch (e) {
+        show('❌ Erreur connexion : ' + (e.message || e.toString()));
+      }
+    };
   </script>
 </body>
 </html>
