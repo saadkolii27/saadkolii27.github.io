@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Appwrite - Lecture/Écriture</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Styles spécifiques à cette page */
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a6ed0;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #4a6ed0;
+            box-shadow: 0 0 0 2px rgba(74, 110, 208, 0.2);
+        }
+
+        button {
+            background: linear-gradient(135deg, #4a6ed0, #2d4ea3);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            box-shadow: 0 5px 15px rgba(74, 110, 208, 0.4);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .success {
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        .error {
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        .record-list {
+            margin-top: 2rem;
+        }
+
+        .record-item {
+            border-bottom: 1px solid #eee;
+            padding: 1rem 0;
+        }
+
+        .record-item:last-child {
+            border-bottom: none;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid #4a6ed0;
+            color: #4a6ed0;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(74, 110, 208, 0.3);
+            border-radius: 50%;
+            border-top-color: #4a6ed0;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .status {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+
+        .status.error {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Appwrite - Lecture/Écriture</h1>
+        <p>Utilisez cette page pour tester les opérations de lecture et d'écriture avec Appwrite.</p>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="write">Écriture</div>
+            <div class="tab" data-tab="read">Lecture</div>
+            <div class="tab" data-tab="config">Configuration</div>
+        </div>
+
+        <div class="tab-content active" id="write-tab">
+            <div class="card">
+                <h2>Ajouter un document</h2>
+                <form id="write-form">
+                    <div class="form-group">
+                        <label for="title">Titre</label>
+                        <input type="text" id="title" name="title" required placeholder="Entrez un titre">
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Contenu</label>
+                        <textarea id="content" name="content" rows="4" required placeholder="Entrez votre contenu"></textarea>
+                    </div>
+                    <button type="submit">Enregistrer <span class="loader hidden" id="write-loader"></span></button>
+                </form>
+                <div class="status hidden" id="write-status"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="read-tab">
+            <div class="card">
+                <h2>Lire les documents</h2>
+                <button id="refresh-btn">Actualiser <span class="loader hidden" id="read-loader"></span></button>
+                <div class="record-list" id="record-list">
+                    <p>Cliquez sur "Actualiser" pour charger les documents.</p>
+                </div>
+                <div class="status hidden" id="read-status"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="config-tab">
+            <div class="card">
+                <h2>Configuration Appwrite</h2>
+                <form id="config-form">
+                    <div class="form-group">
+                        <label for="project-id">ID du projet</label>
+                        <input type="text" id="project-id" name="project-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="database-id">ID de la base de données</label>
+                        <input type="text" id="database-id" name="database-id" required placeholder="Entrez l'ID de votre base de données">
+                    </div>
+                    <div class="form-group">
+                        <label for="collection-id">ID de la collection</label>
+                        <input type="text" id="collection-id" name="collection-id" required placeholder="Entrez l'ID de votre collection">
+                    </div>
+                    <button type="submit">Enregistrer la configuration</button>
+                </form>
+                <div class="status hidden" id="config-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    <script src="appwrite-client.js"></script>
+    <script>
+        // Initialiser le client Appwrite
+        const appwriteClient = new AppwriteClient();
+
+        // Chargement de la configuration depuis localStorage
+        function loadConfig() {
+            document.getElementById('project-id').value = appwriteClient.config.projectId;
+            document.getElementById('database-id').value = appwriteClient.config.databaseId;
+            document.getElementById('collection-id').value = appwriteClient.config.collectionId;
+        }
+
+        // Gestion des onglets
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Activer l'onglet cliqué
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Afficher le contenu correspondant
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
+            });
+        });
+
+        // Formulaire d'écriture
+        document.getElementById('write-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Vérifier la configuration
+            if (!appwriteClient.isConfigured()) {
+                showStatus('write-status', 'Veuillez d\'abord configurer la base de données et la collection.', 'error');
+                return;
+            }
+
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            // Afficher le loader
+            document.getElementById('write-loader').classList.remove('hidden');
+
+            try {
+                const response = await appwriteClient.createDocument({
+                    title,
+                    content,
+                    created_at: new Date().toISOString()
+                });
+
+                // Réinitialiser le formulaire
+                document.getElementById('write-form').reset();
+                showStatus('write-status', 'Document créé avec succès !', 'success');
+            } catch (error) {
+                showStatus('write-status', 'Erreur lors de la création du document : ' + error.message, 'error');
+                console.error('Erreur de création :', error);
+            } finally {
+                // Cacher le loader
+                document.getElementById('write-loader').classList.add('hidden');
+            }
+        });
+
+        // Bouton de rafraîchissement des documents
+        document.getElementById('refresh-btn').addEventListener('click', async () => {
+            // Vérifier la configuration
+            if (!appwriteClient.isConfigured()) {
+                showStatus('read-status', 'Veuillez d\'abord configurer la base de données et la collection.', 'error');
+                return;
+            }
+
+            // Afficher le loader
+            document.getElementById('read-loader').classList.remove('hidden');
+            
+            try {
+                const response = await appwriteClient.listDocuments();
+
+                const recordList = document.getElementById('record-list');
+                
+                if (response.documents.length === 0) {
+                    recordList.innerHTML = '<p>Aucun document trouvé.</p>';
+                } else {
+                    let html = '';
+                    response.documents.forEach(doc => {
+                        html += `
+                            <div class="record-item">
+                                <h3>${doc.title}</h3>
+                                <p>${doc.content}</p>
+                                <small>Créé le: ${new Date(doc.created_at).toLocaleString()}</small>
+                            </div>
+                        `;
+                    });
+                    recordList.innerHTML = html;
+                }
+                showStatus('read-status', 'Documents récupérés avec succès !', 'success');
+            } catch (error) {
+                showStatus('read-status', 'Erreur lors de la récupération des documents : ' + error.message, 'error');
+                console.error('Erreur de lecture :', error);
+            } finally {
+                // Cacher le loader
+                document.getElementById('read-loader').classList.add('hidden');
+            }
+        });
+
+        // Formulaire de configuration
+        document.getElementById('config-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const projectId = document.getElementById('project-id').value;
+            const databaseId = document.getElementById('database-id').value;
+            const collectionId = document.getElementById('collection-id').value;
+
+            if (!databaseId || !collectionId) {
+                showStatus('config-status', 'Veuillez remplir tous les champs.', 'error');
+                return;
+            }
+
+            // Mettre à jour la configuration
+            appwriteClient.setProject(projectId);
+            appwriteClient.saveConfig(databaseId, collectionId);
+
+            showStatus('config-status', 'Configuration enregistrée avec succès !', 'success');
+        });
+
+        // Fonction utilitaire pour afficher les messages de statut
+        function showStatus(elementId, message, type) {
+            const statusElement = document.getElementById(elementId);
+            statusElement.textContent = message;
+            statusElement.classList.remove('hidden', 'success', 'error');
+            statusElement.classList.add(type);
+            
+            // Cacher le message après 5 secondes
+            setTimeout(() => {
+                statusElement.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Charger la configuration au démarrage
+        loadConfig();
+    </script>
+</body>
+</html>
